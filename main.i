@@ -94,6 +94,11 @@ void updateInput();
 
 
 
+extern int encoding;
+
+
+
+
 
 
 typedef volatile struct {
@@ -104,9 +109,9 @@ typedef volatile struct {
 
 
 extern DMA *dma;
-# 253 "myLib.h"
+# 258 "myLib.h"
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt);
-# 347 "myLib.h"
+# 352 "myLib.h"
 typedef struct{
     const unsigned char* data;
     int length;

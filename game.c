@@ -5,7 +5,9 @@ int hOff;
 int vOff;
 
 ANISPRITE player;
-const int playerMaxSpeed = 2;
+const int playerMaxSpeed = 16;
+
+int encoding = 8;
 
 void init() {
     REG_DISPCTL = MODE0;
@@ -55,8 +57,8 @@ void updateGame() {
         }
     }
     if (BUTTON_HELD(BUTTON_DOWN)) {
-        if (vOff < MAPWH - SCREENHEIGHT) {
-            vOff = min(vOff + playerMaxSpeed, MAPWH - SCREENHEIGHT);
+        if (vOff < ENCODE(MAPWH - SCREENHEIGHT)) {
+            vOff = min(vOff + playerMaxSpeed, ENCODE(MAPWH - SCREENHEIGHT));
         }
     }
     if (BUTTON_HELD(BUTTON_LEFT)) {
@@ -65,8 +67,8 @@ void updateGame() {
         }
     }
     if (BUTTON_HELD(BUTTON_RIGHT)) {
-        if (hOff < MAPWH - SCREENWIDTH) {
-            hOff = min(hOff + playerMaxSpeed, MAPWH - SCREENWIDTH);
+        if (hOff < ENCODE(MAPWH - SCREENWIDTH)) {
+            hOff = min(hOff + playerMaxSpeed, ENCODE(MAPWH - SCREENWIDTH));
         }
     }
     
@@ -86,8 +88,8 @@ void updatePause() {
 }
 
 void handleVBlank() {
-    REG_BG0HOFF = hOff;
-    REG_BG0VOFF = vOff;
+    REG_BG0HOFF = DECODE(hOff);
+    REG_BG0VOFF = DECODE(vOff);
     DMANow(3, shadowOAM, OAM, 128);
 }
 

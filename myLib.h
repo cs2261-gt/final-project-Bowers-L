@@ -206,6 +206,11 @@ extern unsigned short buttons;
 
 void updateInput();
 
+// =================================== FIXED POINT ====================================
+
+extern int encoding;
+#define ENCODE(x) ((x) << encoding)
+#define DECODE(x) ((x) >> encoding)
 
 // =================================== DMA ====================================
 

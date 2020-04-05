@@ -94,6 +94,11 @@ void updateInput();
 
 
 
+extern int encoding;
+
+
+
+
 
 
 typedef volatile struct {
@@ -104,9 +109,9 @@ typedef volatile struct {
 
 
 extern DMA *dma;
-# 253 "myLib.h"
+# 258 "myLib.h"
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt);
-# 347 "myLib.h"
+# 352 "myLib.h"
 typedef struct{
     const unsigned char* data;
     int length;
@@ -187,7 +192,9 @@ int hOff;
 int vOff;
 
 ANISPRITE player;
-const int playerMaxSpeed = 2;
+const int playerMaxSpeed = 16;
+
+int encoding = 8;
 
 void init() {
     (*(unsigned short *)0x4000000) = 0;
@@ -230,7 +237,28 @@ void updateStart() {
 }
 
 void updateGame() {
-# 73 "game.c"
+
+    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<6)))) {
+        if (vOff > 0) {
+            vOff = max(vOff - playerMaxSpeed, 0);
+        }
+    }
+    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<7)))) {
+        if (vOff < ((512 - 160) << encoding)) {
+            vOff = min(vOff + playerMaxSpeed, ((512 - 160) << encoding));
+        }
+    }
+    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
+        if (hOff > 0) {
+            hOff = max(hOff - playerMaxSpeed, 0);
+        }
+    }
+    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
+        if (hOff < ((512 - 240) << encoding)) {
+            hOff = min(hOff + playerMaxSpeed, ((512 - 240) << encoding));
+        }
+    }
+
 }
 
 void updatePlayer() {
@@ -247,28 +275,8 @@ void updatePause() {
 }
 
 void handleVBlank() {
-    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<6)))) {
-        if (vOff > 0) {
-            vOff = max(vOff - playerMaxSpeed, 0);
-        }
-    }
-    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<7)))) {
-        if (vOff < 512 - 160) {
-            vOff = min(vOff + playerMaxSpeed, 512 - 160);
-        }
-    }
-    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
-        if (hOff > 0) {
-            hOff = max(hOff - playerMaxSpeed, 0);
-        }
-    }
-    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
-        if (hOff < 512 - 240) {
-            hOff = min(hOff + playerMaxSpeed, 512 - 240);
-        }
-    }
-    (*(volatile unsigned short *)0x04000010) = hOff;
-    (*(volatile unsigned short *)0x04000012) = vOff;
+    (*(volatile unsigned short *)0x04000010) = ((hOff) >> encoding);
+    (*(volatile unsigned short *)0x04000012) = ((vOff) >> encoding);
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 128);
 }
 

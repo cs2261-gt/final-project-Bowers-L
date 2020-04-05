@@ -105,31 +105,6 @@ init:
 	.word	interruptHandler
 	.size	init, .-init
 	.align	2
-	.global	update
-	.syntax unified
-	.arm
-	.fpu softvfp
-	.type	update, %function
-update:
-	@ Function supports interworking.
-	@ args = 0, pretend = 0, frame = 0
-	@ frame_needed = 0, uses_anonymous_args = 0
-	push	{r4, lr}
-	ldr	r3, .L12
-	mov	lr, pc
-	bx	r3
-	ldr	r3, .L12+4
-	mov	lr, pc
-	bx	r3
-	pop	{r4, lr}
-	bx	lr
-.L13:
-	.align	2
-.L12:
-	.word	updateInput
-	.word	hideSprites
-	.size	update, .-update
-	.align	2
 	.global	updateStart
 	.syntax unified
 	.arm
@@ -152,9 +127,125 @@ updateGame:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	@ link register save eliminated.
+	ldr	r3, .L21
+	ldrh	r1, [r3, #48]
+	ands	r1, r1, #64
+	push	{r4, lr}
+	bne	.L12
+	ldr	r4, .L21+4
+	ldr	r0, [r4]
+	cmp	r0, #0
+	bgt	.L17
+.L12:
+	ldr	r3, .L21
+	ldrh	r3, [r3, #48]
+	tst	r3, #128
+	bne	.L13
+	mov	r1, #352
+	ldr	r3, .L21+8
+	ldr	r4, .L21+4
+	ldr	r3, [r3]
+	ldr	r0, [r4]
+	cmp	r0, r1, lsl r3
+	lsl	r1, r1, r3
+	blt	.L18
+.L13:
+	ldr	r3, .L21
+	ldrh	r1, [r3, #48]
+	ands	r1, r1, #32
+	bne	.L14
+	ldr	r4, .L21+12
+	ldr	r0, [r4]
+	cmp	r0, #0
+	bgt	.L19
+.L14:
+	ldr	r3, .L21
+	ldrh	r3, [r3, #48]
+	tst	r3, #16
+	bne	.L11
+	mov	r1, #272
+	ldr	r3, .L21+8
+	ldr	r4, .L21+12
+	ldr	r3, [r3]
+	ldr	r0, [r4]
+	cmp	r0, r1, lsl r3
+	lsl	r1, r1, r3
+	blt	.L20
+.L11:
+	pop	{r4, lr}
 	bx	lr
+.L19:
+	ldr	r3, .L21+16
+	sub	r0, r0, #16
+	mov	lr, pc
+	bx	r3
+	str	r0, [r4]
+	b	.L14
+.L17:
+	ldr	r3, .L21+16
+	sub	r0, r0, #16
+	mov	lr, pc
+	bx	r3
+	str	r0, [r4]
+	b	.L12
+.L18:
+	ldr	r3, .L21+20
+	add	r0, r0, #16
+	mov	lr, pc
+	bx	r3
+	str	r0, [r4]
+	b	.L13
+.L20:
+	ldr	r3, .L21+20
+	add	r0, r0, #16
+	mov	lr, pc
+	bx	r3
+	str	r0, [r4]
+	pop	{r4, lr}
+	bx	lr
+.L22:
+	.align	2
+.L21:
+	.word	67109120
+	.word	vOff
+	.word	.LANCHOR0
+	.word	hOff
+	.word	max
+	.word	min
 	.size	updateGame, .-updateGame
+	.align	2
+	.global	update
+	.syntax unified
+	.arm
+	.fpu softvfp
+	.type	update, %function
+update:
+	@ Function supports interworking.
+	@ args = 0, pretend = 0, frame = 0
+	@ frame_needed = 0, uses_anonymous_args = 0
+	push	{r4, lr}
+	ldr	r3, .L27
+	mov	lr, pc
+	bx	r3
+	ldr	r3, .L27+4
+	mov	lr, pc
+	bx	r3
+	ldr	r3, .L27+8
+	ldrb	r3, [r3]	@ zero_extendqisi2
+	cmp	r3, #1
+	beq	.L26
+	pop	{r4, lr}
+	bx	lr
+.L26:
+	pop	{r4, lr}
+	b	updateGame
+.L28:
+	.align	2
+.L27:
+	.word	updateInput
+	.word	hideSprites
+	.word	gameState
+	.size	update, .-update
 	.align	2
 	.global	updatePlayer
 	.syntax unified
@@ -165,12 +256,12 @@ updatePlayer:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	r3, .L18
+	ldr	r3, .L31
 	add	r1, r3, #8
 	str	lr, [sp, #-4]!
 	ldm	r1, {r1, r2, lr}
-	ldr	ip, .L18+4
-	ldr	r0, .L18+8
+	ldr	ip, .L31+4
+	ldr	r0, .L31+8
 	add	r1, r1, lr
 	ldr	lr, [r3, #20]
 	ldr	ip, [ip]
@@ -184,9 +275,9 @@ updatePlayer:
 	str	r0, [r3, #4]
 	ldr	lr, [sp], #4
 	bx	lr
-.L19:
+.L32:
 	.align	2
-.L18:
+.L31:
 	.word	player
 	.word	vOff
 	.word	hOff
@@ -214,95 +305,39 @@ handleVBlank:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	r3, .L33
-	ldrh	r1, [r3, #48]
-	ands	r1, r1, #64
-	push	{r4, r5, r6, lr}
-	ldr	r4, .L33+4
-	bne	.L22
-	ldr	r0, [r4]
-	cmp	r0, #0
-	bgt	.L29
-.L22:
-	ldr	r3, .L33
-	ldrh	r3, [r3, #48]
-	tst	r3, #128
-	bne	.L23
-	ldr	r0, [r4]
-	cmp	r0, #352
-	blt	.L30
-.L23:
-	ldr	r3, .L33
-	ldrh	r1, [r3, #48]
-	ldr	r5, .L33+8
-	ands	r1, r1, #32
-	ldr	r0, [r5]
-	bne	.L24
-	cmp	r0, #0
-	bgt	.L31
-.L24:
-	ldr	r3, .L33
-	ldrh	r3, [r3, #48]
-	tst	r3, #16
-	bne	.L25
-	cmp	r0, #272
-	blt	.L32
-.L25:
-	mov	r2, #67108864
-	ldrh	r1, [r4]
-	lsl	r0, r0, #16
-	lsr	r0, r0, #16
-	strh	r0, [r2, #16]	@ movhi
-	ldr	r4, .L33+12
-	strh	r1, [r2, #18]	@ movhi
-	mov	r3, #128
+	mov	r1, #67108864
+	ldr	r2, .L36
+	ldr	r3, .L36+4
+	ldr	r0, [r2]
+	ldr	r2, [r3]
+	ldr	r3, .L36+8
+	ldr	r3, [r3]
+	push	{r4, lr}
+	asr	r2, r2, r0
+	asr	r3, r3, r0
+	lsl	r2, r2, #16
+	lsl	r3, r3, #16
+	lsr	r2, r2, #16
+	lsr	r3, r3, #16
+	strh	r2, [r1, #16]	@ movhi
+	ldr	r4, .L36+12
+	strh	r3, [r1, #18]	@ movhi
 	mov	r2, #117440512
+	mov	r3, #128
 	mov	r0, #3
-	ldr	r1, .L33+16
+	ldr	r1, .L36+16
 	mov	lr, pc
 	bx	r4
-	pop	{r4, r5, r6, lr}
+	pop	{r4, lr}
 	bx	lr
-.L31:
-	ldr	r3, .L33+20
-	sub	r0, r0, #2
-	mov	lr, pc
-	bx	r3
-	str	r0, [r5]
-	b	.L24
-.L29:
-	ldr	r3, .L33+20
-	sub	r0, r0, #2
-	mov	lr, pc
-	bx	r3
-	str	r0, [r4]
-	b	.L22
-.L30:
-	mov	r1, #352
-	ldr	r3, .L33+24
-	add	r0, r0, #2
-	mov	lr, pc
-	bx	r3
-	str	r0, [r4]
-	b	.L23
-.L32:
-	mov	r1, #272
-	ldr	r3, .L33+24
-	add	r0, r0, #2
-	mov	lr, pc
-	bx	r3
-	str	r0, [r5]
-	b	.L25
-.L34:
+.L37:
 	.align	2
-.L33:
-	.word	67109120
-	.word	vOff
+.L36:
+	.word	.LANCHOR0
 	.word	hOff
+	.word	vOff
 	.word	DMANow
 	.word	shadowOAM
-	.word	max
-	.word	min
 	.size	handleVBlank, .-handleVBlank
 	.align	2
 	.global	interruptHandler
@@ -315,26 +350,26 @@ interruptHandler:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	mov	r2, #0
-	ldr	r3, .L39
+	ldr	r3, .L42
 	ldrh	r1, [r3, #2]
 	cmp	r1, #1
 	push	{r4, lr}
 	strh	r2, [r3, #8]	@ movhi
-	beq	.L38
-.L36:
+	beq	.L41
+.L39:
 	mov	r1, #1
-	ldr	r3, .L39
+	ldr	r3, .L42
 	ldrh	r2, [r3, #2]
 	strh	r1, [r3, #8]	@ movhi
 	strh	r2, [r3, #2]	@ movhi
 	pop	{r4, lr}
 	bx	lr
-.L38:
+.L41:
 	bl	handleVBlank
-	b	.L36
-.L40:
+	b	.L39
+.L43:
 	.align	2
-.L39:
+.L42:
 	.word	67109376
 	.size	interruptHandler, .-interruptHandler
 	.align	2
@@ -351,25 +386,26 @@ setupInterrupts:
 	str	lr, [sp, #-4]!
 	mov	lr, #1
 	ldrh	r1, [r0, #4]
-	ldr	r3, .L43
+	ldr	r3, .L46
 	orr	r1, r1, #8
 	ldrh	r2, [r3]
-	ldr	ip, .L43+4
+	ldr	ip, .L46+4
 	strh	r1, [r0, #4]	@ movhi
-	ldr	r1, .L43+8
+	ldr	r1, .L46+8
 	orr	r2, r2, lr
 	strh	lr, [r3, #8]	@ movhi
 	strh	r2, [r3]	@ movhi
 	ldr	lr, [sp], #4
 	str	r1, [ip, #4092]
 	bx	lr
-.L44:
+.L47:
 	.align	2
-.L43:
+.L46:
 	.word	67109376
 	.word	50360320
 	.word	interruptHandler
 	.size	setupInterrupts, .-setupInterrupts
+	.global	encoding
 	.global	playerMaxSpeed
 	.comm	player,56,4
 	.comm	vOff,4,4
@@ -380,5 +416,12 @@ setupInterrupts:
 	.type	playerMaxSpeed, %object
 	.size	playerMaxSpeed, 4
 playerMaxSpeed:
-	.word	2
+	.word	16
+	.data
+	.align	2
+	.set	.LANCHOR0,. + 0
+	.type	encoding, %object
+	.size	encoding, 4
+encoding:
+	.word	8
 	.ident	"GCC: (devkitARM release 53) 9.1.0"
