@@ -204,6 +204,8 @@ extern unsigned short buttons;
 #define BUTTON_HELD(key)    (~(BUTTONS) & (key))
 #define BUTTON_PRESSED(key) (!(~(oldButtons)&(key)) && (~buttons & (key)))
 
+void updateInput();
+
 
 // =================================== DMA ====================================
 
@@ -290,6 +292,7 @@ void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned 
 
 //
 #define REG_INTERRUPT *(unsigned int*)0x3007FFC
+
 // DISPLAY STATUS
 #define REG_DISPSTAT *(unsigned short*)0x4000004
 
@@ -300,6 +303,8 @@ void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned 
 #define INT_VBLANK 1 << 0
 #define INT_TM1 1<<4
 #define INT_BUTTON 1 << 12
+
+
 
 // =================================== SOUND ====================================
 
@@ -354,6 +359,9 @@ typedef struct{
 
 // Miscellaneous Functions
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
+int max(int a, int b);
+int min(int a, int b);
+
 
 
 #endif
