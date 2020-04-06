@@ -5,11 +5,11 @@
 //
 //	map, 512x512@4, 
 //	+ palette 256 entries, not compressed
-//	+ 21 tiles (t|f|p reduced) not compressed
+//	+ 25 tiles (t|f|p reduced) not compressed
 //	+ regular map (in SBBs), not compressed, 64x64 
-//	Total size: 512 + 672 + 8192 = 9376
+//	Total size: 512 + 800 + 8192 = 9504
 //
-//	Time-stamp: 2020-04-05, 22:52:13
+//	Time-stamp: 2020-04-06, 00:01:51
 //	Exported by Cearn's GBA Image Transmogrifier, v0.8.3
 //	( http://www.coranac.com/projects/#grit )
 //
@@ -20,8 +20,8 @@
 
 #define MAPWH 512
 
-#define mapTilesLen 672
-extern const unsigned short mapTiles[336];
+#define mapTilesLen 800
+extern const unsigned short mapTiles[400];
 
 #define mapMapLen 8192
 extern const unsigned short mapMap[4096];

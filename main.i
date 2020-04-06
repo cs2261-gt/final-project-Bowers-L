@@ -141,7 +141,7 @@ extern const unsigned short SpritesheetPal[256];
 # 5 "game.h" 2
 # 1 "map.h" 1
 # 24 "map.h"
-extern const unsigned short mapTiles[336];
+extern const unsigned short mapTiles[400];
 
 
 extern const unsigned short mapMap[4096];
@@ -158,6 +158,10 @@ extern const unsigned short mapPal[256];
 extern const unsigned short mapCollisionBitmap[262144];
 # 5 "player.h" 2
 
+
+typedef enum {
+    LEFT, RIGHT
+} PlayerState;
 
 typedef struct {
 
@@ -182,8 +186,13 @@ typedef struct {
     int accelCurve;
     int decelCurve;
     int maxSpeed;
+
+    int isJumping;
+    int jumpCounter;
+    int jumpSpeed;
     int maxJump;
     int terminalVel;
+    int gravity;
 
     int direction;
 } Player;

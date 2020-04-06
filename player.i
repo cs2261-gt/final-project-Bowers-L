@@ -149,7 +149,7 @@ extern const unsigned short SpritesheetPal[256];
 # 5 "game.h" 2
 # 1 "map.h" 1
 # 24 "map.h"
-extern const unsigned short mapTiles[336];
+extern const unsigned short mapTiles[400];
 
 
 extern const unsigned short mapMap[4096];
@@ -193,6 +193,10 @@ void setupInterrupts();
 void interruptHandler();
 # 6 "player.h" 2
 
+typedef enum {
+    LEFT, RIGHT
+} PlayerState;
+
 typedef struct {
 
     int screenRow;
@@ -216,8 +220,13 @@ typedef struct {
     int accelCurve;
     int decelCurve;
     int maxSpeed;
+
+    int isJumping;
+    int jumpCounter;
+    int jumpSpeed;
     int maxJump;
     int terminalVel;
+    int gravity;
 
     int direction;
 } Player;
@@ -242,7 +251,7 @@ Player player;
 
 void initPlayer() {
     player.worldRow = ((487 - 16) << 8);
-    player.worldCol = 0;
+    player.worldCol = ((1) << 8);
     player.screenRow = player.worldRow - vOff;
     player.screenCol = player.worldCol - hOff;
     player.rdel = 0;
@@ -257,8 +266,14 @@ void initPlayer() {
     player.accelCurve = 64;
     player.decelCurve = 128;
     player.maxSpeed = 256;
-    player.maxJump = 128;
-    player.terminalVel = -5;
+
+    player.isJumping = 0;
+    player.jumpCounter = 0;
+    player.jumpSpeed = 256;
+    player.maxJump = 128
+    ;
+    player.terminalVel = 256;
+    player.gravity = 64;
 
     player.direction = 0;
 
@@ -272,7 +287,15 @@ void updatePlayer() {
         handlePlayerInput();
     }
 
-    player.rdel = clamp(player.rdel + player.raccel, player.terminalVel, player.maxJump);
+
+    if (onGround() || player.isJumping) {
+        player.raccel = 0;
+    } else {
+        player.raccel = player.gravity;
+    }
+
+
+    player.rdel = clamp(player.rdel + player.raccel, -player.jumpSpeed, player.terminalVel);
     player.cdel = clamp(player.cdel + player.caccel, -player.maxSpeed, player.maxSpeed);
 
 
@@ -285,6 +308,21 @@ void updatePlayer() {
         player.cdel = 0;
         player.caccel = 0;
     }
+
+    if ((noCollisionUp() && player.rdel < 0)
+        || (noCollisionDown() && player.rdel > 0)) {
+
+            player.worldRow = clamp(player.worldRow + player.rdel, 0, ((512) << 8) - player.height);
+            adjustvOff();
+    } else {
+        player.rdel = 0;
+        if (onGround()) {
+            player.raccel = 0;
+        } else {
+            player.raccel = player.gravity;
+        }
+    }
+
     player.worldRow = clamp(player.worldRow + player.rdel, 0, ((512) << 8) - player.height);
 
     player.screenRow = player.worldRow - vOff;
@@ -303,28 +341,46 @@ void handlePlayerInput() {
     if (!(~((*(volatile unsigned short *)0x04000130)) & ((1<<5))) && !(~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
 
         if (signOf(player.direction) == signOf(player.cdel)) {
+
             player.caccel = -1 * signOf(player.direction) * player.decelCurve;
         } else {
             player.cdel = 0;
             player.caccel = 0;
         }
-    }
-    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
-        player.direction = -1;
-        if (player.worldCol > 0) {
-            player.caccel = -player.accelCurve;
+    } else {
+        if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
+            player.direction = -1;
+            if (player.worldCol > 0) {
+                player.caccel = -player.accelCurve;
+            }
+        }
+        if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
+            player.direction = 1;
+            if (player.worldCol < ((512) << 8) - player.width) {
+                player.caccel = player.accelCurve;
+            }
         }
     }
-    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
-        player.direction = 1;
-        if (player.worldCol < ((512) << 8) - player.width) {
-            player.caccel = player.accelCurve;
+
+    if ((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0))))) {
+        if (onGround()) {
+            player.isJumping = 1;
+            player.jumpCounter = 0;
         }
     }
-}
 
-int playerInAir() {
+    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<0)))) {
+        if (player.jumpCounter == 0) {
+            player.isJumping = 1;
+        }
 
+        if (player.jumpCounter >= player.maxJump) {
+            player.isJumping = 0;
+        } else if (player.isJumping) {
+            player.rdel = -player.jumpSpeed;
+            player.jumpCounter++;
+        }
+    }
 }
 
 int noCollisionLeft() {
@@ -337,6 +393,23 @@ int noCollisionRight() {
     return player.worldCol + player.width < ((512) << 8)
         && mapCollisionBitmap[((((player.worldRow) >> 8))*(512)+(((player.worldCol + player.cdel + player.width - 1) >> 8)))]
         && mapCollisionBitmap[((((player.worldRow + player.height - 1) >> 8))*(512)+(((player.worldCol + player.cdel + player.width - 1) >> 8)))];
+}
+
+int noCollisionUp() {
+    return player.worldRow > 0
+        && mapCollisionBitmap[((((player.worldRow + player.rdel) >> 8))*(512)+(((player.worldCol) >> 8)))]
+        && mapCollisionBitmap[((((player.worldRow + player.rdel) >> 8))*(512)+(((player.worldCol + player.width - 1) >> 8)))];
+}
+
+int noCollisionDown() {
+    return player.worldRow < ((512) << 8)
+        && mapCollisionBitmap[((((player.worldRow + player.rdel + player.height - 1) >> 8))*(512)+(((player.worldCol) >> 8)))]
+        && mapCollisionBitmap[((((player.worldRow + player.rdel + player.height - 1) >> 8))*(512)+(((player.worldCol + player.width - 1) >> 8)))];
+}
+
+int onGround() {
+    return mapCollisionBitmap[((((player.worldRow + player.height) >> 8))*(512)+(((player.worldCol) >> 8)))]
+        && mapCollisionBitmap[((((player.worldRow + player.height) >> 8))*(512)+(((player.worldCol + player.width - 1) >> 8)))];
 }
 
 void adjusthOff() {

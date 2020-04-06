@@ -40,7 +40,7 @@ initGame:
 	str	r0, [r1]
 	strh	r3, [r5]	@ movhi
 	strh	r2, [r5, #8]	@ movhi
-	mov	r3, #336
+	mov	r3, #400
 	mov	r2, #100663296
 	mov	r0, #3
 	ldr	r1, .L4+20

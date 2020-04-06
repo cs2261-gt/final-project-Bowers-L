@@ -4,7 +4,7 @@ Player player;
 
 void initPlayer() {
     player.worldRow = ENCODE8(487 - 16);
-    player.worldCol = 0;
+    player.worldCol = ENCODE8(1);
     player.screenRow = player.worldRow - vOff;
     player.screenCol = player.worldCol - hOff;
     player.rdel = 0;
@@ -19,8 +19,14 @@ void initPlayer() {
     player.accelCurve = 64;
     player.decelCurve = 128;
     player.maxSpeed = 256;
-    player.maxJump = 128;
-    player.terminalVel = -5;
+
+    player.isJumping = 0;
+    player.jumpCounter = 0;
+    player.jumpSpeed = 256;
+    player.maxJump = 128
+    ;
+    player.terminalVel = 256;
+    player.gravity = 64;
 
     player.direction = 0;
     
@@ -33,8 +39,16 @@ void updatePlayer() {
     if (!debug) {    
         handlePlayerInput();
     }
+
+    //simulate gravity
+    if (onGround() || player.isJumping) {
+        player.raccel = 0;
+    } else {
+        player.raccel = player.gravity;
+    }
+
     //update player velocity
-    player.rdel = clamp(player.rdel + player.raccel, player.terminalVel, player.maxJump);
+    player.rdel = clamp(player.rdel + player.raccel, -player.jumpSpeed, player.terminalVel);
     player.cdel = clamp(player.cdel + player.caccel, -player.maxSpeed, player.maxSpeed);
 
     //update player's world and screen positions
@@ -47,6 +61,21 @@ void updatePlayer() {
         player.cdel = 0;
         player.caccel = 0;
     }
+
+    if ((noCollisionUp() && player.rdel < 0)
+        || (noCollisionDown() && player.rdel > 0)) {
+
+            player.worldRow = clamp(player.worldRow + player.rdel, 0, ENCODE8(MAPWH) - player.height);
+            adjustvOff();
+    } else {
+        player.rdel = 0;
+        if (onGround()) {
+            player.raccel = 0;
+        } else {
+            player.raccel = player.gravity;
+        }
+    }
+
     player.worldRow = clamp(player.worldRow + player.rdel, 0, ENCODE8(MAPWH) - player.height);
     
     player.screenRow = player.worldRow - vOff;
@@ -86,10 +115,25 @@ void handlePlayerInput() {
         }
     }
 
-}
+    if (BUTTON_PRESSED(BUTTON_A)) {
+        if (onGround()) {
+            player.isJumping = 1;
+            player.jumpCounter = 0;
+        }
+    }
 
-int playerInAir() {
+    if (BUTTON_HELD(BUTTON_A)) {
+        if (player.jumpCounter == 0) {
+            player.isJumping = 1;
+        }
 
+        if (player.jumpCounter >= player.maxJump) {
+            player.isJumping = 0;
+        } else if (player.isJumping) {
+            player.rdel = -player.jumpSpeed;
+            player.jumpCounter++;
+        } 
+    }
 }
 
 int noCollisionLeft() {
@@ -102,6 +146,23 @@ int noCollisionRight() {
     return player.worldCol + player.width < ENCODE8(MAPWH)
         && mapCollisionBitmap[OFFSET(DECODE8(player.worldCol + player.cdel + player.width - 1), DECODE8(player.worldRow), MAPWH)]
         && mapCollisionBitmap[OFFSET(DECODE8(player.worldCol + player.cdel + player.width - 1), DECODE8(player.worldRow + player.height - 1), MAPWH)];
+}
+
+int noCollisionUp() {
+    return player.worldRow > 0
+        && mapCollisionBitmap[OFFSET(DECODE8(player.worldCol), DECODE8(player.worldRow + player.rdel), MAPWH)]
+        && mapCollisionBitmap[OFFSET(DECODE8(player.worldCol + player.width - 1), DECODE8(player.worldRow + player.rdel), MAPWH)];
+}
+
+int noCollisionDown() {
+    return player.worldRow < ENCODE8(MAPWH)
+        && mapCollisionBitmap[OFFSET(DECODE8(player.worldCol), DECODE8(player.worldRow + player.rdel + player.height - 1), MAPWH)]
+        && mapCollisionBitmap[OFFSET(DECODE8(player.worldCol + player.width - 1), DECODE8(player.worldRow + player.rdel + player.height - 1), MAPWH)];
+}
+
+int onGround() {
+    return mapCollisionBitmap[OFFSET(DECODE8(player.worldCol), DECODE8(player.worldRow + player.height), MAPWH)]
+        && mapCollisionBitmap[OFFSET(DECODE8(player.worldCol + player.width - 1), DECODE8(player.worldRow + player.height), MAPWH)];
 }
 
 void adjusthOff() {

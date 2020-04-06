@@ -31,8 +31,13 @@ typedef struct {
     int accelCurve;
     int decelCurve;
     int maxSpeed;
+
+    int isJumping;
+    int jumpCounter;
+    int jumpSpeed;
     int maxJump;
     int terminalVel;
+    int gravity;
 
     int direction;
 } Player;
