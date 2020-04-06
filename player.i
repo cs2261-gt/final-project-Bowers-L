@@ -1,8 +1,8 @@
-# 1 "main.c"
+# 1 "player.c"
 # 1 "<built-in>"
 # 1 "<command-line>"
-# 1 "main.c"
-# 1 "game.h" 1
+# 1 "player.c"
+# 1 "player.h" 1
        
 
 # 1 "myLib.h" 1
@@ -129,7 +129,11 @@ typedef struct{
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
 int max(int a, int b);
 int min(int a, int b);
-# 4 "game.h" 2
+# 4 "player.h" 2
+# 1 "game.h" 1
+       
+
+
 # 1 "Spritesheet.h" 1
 # 21 "Spritesheet.h"
 extern const unsigned short SpritesheetTiles[16384];
@@ -147,20 +151,7 @@ extern const unsigned short mapMap[4096];
 
 extern const unsigned short mapPal[256];
 # 6 "game.h" 2
-# 1 "player.h" 1
-       
 
-
-
-
-extern ANISPRITE player;
-extern const int playerMaxSpeed;
-
-void initPlayer();
-void updatePlayer();
-
-void handlePlayerInput();
-# 7 "game.h" 2
 
 typedef enum {
     START, GAME, PAUSED
@@ -197,12 +188,53 @@ void updatePause();
 void handleVBlank();
 void setupInterrupts();
 void interruptHandler();
-# 2 "main.c" 2
+# 5 "player.h" 2
 
-int main() {
-    init();
+extern ANISPRITE player;
+extern const int playerMaxSpeed;
 
-    while(1) {
-        update();
+void initPlayer();
+void updatePlayer();
+
+void handlePlayerInput();
+# 2 "player.c" 2
+
+void initPlayer() {
+    player.worldRow = ((487 - 16) << 8);
+    player.worldCol = 0;
+    player.screenRow = player.worldRow - vOff;
+    player.screenCol = player.worldCol - hOff;
+    player.rdel = 0;
+    player.cdel = 0;
+    player.width = ((16) << 8);
+    player.height = ((16) << 8);
+    player.hide = 0;
+
+    shadowOAM[0].attr0 = ((player.screenRow) >> 8) | (0<<8) | (0<<13) | (0<<14);
+    shadowOAM[0].attr1 = ((player.screenCol) >> 8) | (1<<14);
+    shadowOAM[0].attr2 = ((0)*32+(0)) | ((0)<<12);
+}
+
+void updatePlayer() {
+    if (!debug) {
+        handlePlayerInput();
     }
+
+
+    player.worldRow += player.rdel;
+    player.worldCol += player.cdel;
+    player.screenRow = player.worldRow - vOff;
+    player.screenCol = player.worldCol - hOff;
+
+    shadowOAM[0].attr0 = ((player.screenRow) >> 8) | (0<<8) | (0<<13) | (0<<14);
+    shadowOAM[0].attr1 = ((player.screenCol) >> 8) | (1<<14);
+    shadowOAM[0].attr2 = ((0)*32+(0)) | ((0)<<12);
+
+    if (player.hide) {
+        shadowOAM[0].attr0 |= (2<<8);
+    }
+}
+
+void handlePlayerInput() {
+
 }

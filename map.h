@@ -20,14 +20,14 @@
 
 #define MAPWH 512
 
-#define mapSBBTilesLen 992
-extern const unsigned short mapSBBTiles[496];
+#define mapTilesLen 992
+extern const unsigned short mapTiles[496];
 
-#define mapSBBMapLen 8192
-extern const unsigned short mapSBBMap[4096];
+#define mapMapLen 8192
+extern const unsigned short mapMap[4096];
 
-#define mapSBBPalLen 512
-extern const unsigned short mapSBBPal[256];
+#define mapPalLen 512
+extern const unsigned short mapPal[256];
 
 #endif // GRIT_MAPSBB_H
 

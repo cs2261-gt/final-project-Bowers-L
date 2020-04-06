@@ -1,8 +1,9 @@
 #pragma once 
 
 #include "myLib.h"
-#include "mapFlat.h"
-#include "mapSBB.h"
+#include "Spritesheet.h"
+#include "map.h"
+#include "player.h"
 
 typedef enum {
     START, GAME, PAUSED
@@ -16,8 +17,8 @@ extern GameState gameState;
 extern int hOff;
 extern int vOff;
 
-extern ANISPRITE player;
-extern const int playerMaxSpeed;
+//used to look around the level without camera being tied to the player
+extern int debug;
 
 void init();
 
@@ -31,8 +32,6 @@ void update();
 void updateStart();
 void updateGame();
 void updatePause();
-
-void updatePlayer();
 
 //interrupts
 void handleVBlank();

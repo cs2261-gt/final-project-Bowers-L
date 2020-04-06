@@ -209,8 +209,8 @@ void updateInput();
 // =================================== FIXED POINT ====================================
 
 extern int encoding;
-#define ENCODE(x) ((x) << encoding)
-#define DECODE(x) ((x) >> encoding)
+#define ENCODE8(x) ((x) << 8)
+#define DECODE8(x) ((x) >> 8)
 
 // =================================== DMA ====================================
 
@@ -366,6 +366,7 @@ typedef struct{
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
 int max(int a, int b);
 int min(int a, int b);
+int clamp(int value, int min, int max);
 
 
 

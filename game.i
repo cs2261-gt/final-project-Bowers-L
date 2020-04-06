@@ -130,26 +130,37 @@ int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, i
 int max(int a, int b);
 int min(int a, int b);
 # 4 "game.h" 2
-# 1 "mapFlat.h" 1
-# 22 "mapFlat.h"
-extern const unsigned short mapFlatTiles[496];
+# 1 "Spritesheet.h" 1
+# 21 "Spritesheet.h"
+extern const unsigned short SpritesheetTiles[16384];
 
 
-extern const unsigned short mapFlatMap[4096];
-
-
-extern const unsigned short mapFlatPal[256];
+extern const unsigned short SpritesheetPal[256];
 # 5 "game.h" 2
-# 1 "mapSBB.h" 1
-# 24 "mapSBB.h"
-extern const unsigned short mapSBBTiles[496];
+# 1 "map.h" 1
+# 24 "map.h"
+extern const unsigned short mapTiles[496];
 
 
-extern const unsigned short mapSBBMap[4096];
+extern const unsigned short mapMap[4096];
 
 
-extern const unsigned short mapSBBPal[256];
+extern const unsigned short mapPal[256];
 # 6 "game.h" 2
+# 1 "player.h" 1
+       
+
+
+
+
+extern ANISPRITE player;
+extern const int playerMaxSpeed;
+
+void initPlayer();
+void updatePlayer();
+
+void handlePlayerInput();
+# 7 "game.h" 2
 
 typedef enum {
     START, GAME, PAUSED
@@ -166,6 +177,9 @@ extern int vOff;
 extern ANISPRITE player;
 extern const int playerMaxSpeed;
 
+
+extern int debug;
+
 void init();
 
 void initStart();
@@ -179,8 +193,6 @@ void updateStart();
 void updateGame();
 void updatePause();
 
-void updatePlayer();
-
 
 void handleVBlank();
 void setupInterrupts();
@@ -192,9 +204,9 @@ int hOff;
 int vOff;
 
 ANISPRITE player;
-const int playerMaxSpeed = 16;
+const int playerMaxSpeed = 2;
 
-int encoding = 8;
+int debug;
 
 void init() {
     (*(unsigned short *)0x4000000) = 0;
@@ -206,19 +218,27 @@ void initGame() {
 
     gameState = GAME;
     hOff = 0;
-    vOff = 0;
+    vOff = ((512 - 160) << 8);
+    debug = 1;
 
 
     (*(unsigned short *)0x4000000) |= (1<<8);
     (*(volatile unsigned short*)0x4000008) = (0<<7) | (3<<14) | ((0)<<2) | ((28)<<8);
-    DMANow(3, mapSBBTiles, &((charblock *)0x6000000)[0], 992 / 2);
-    DMANow(3, mapSBBMap, &((screenblock *)0x6000000)[28], 8192 / 2);
-    DMANow(3, mapSBBPal, ((unsigned short *)0x5000000), 512 / 2);
+    DMANow(3, mapTiles, &((charblock *)0x6000000)[0], 992 / 2);
+    DMANow(3, mapMap, &((screenblock *)0x6000000)[28], 8192 / 2);
+    DMANow(3, mapPal, ((unsigned short *)0x5000000), 512 / 2);
+
+
+    (*(unsigned short *)0x4000000) |= (1<<12);
+    hideSprites();
+    DMANow(3, SpritesheetTiles, &((charblock *)0x6000000)[4], 32768 / 2);
+    DMANow(3, SpritesheetPal, ((unsigned short *)0x5000200), 512 / 2);
+
+    initPlayer();
 }
 
 void update() {
     updateInput();
-    hideSprites();
     switch (gameState) {
         case START:
             updateStart();
@@ -237,15 +257,28 @@ void updateStart() {
 }
 
 void updateGame() {
+    if (debug) {
+        cameraDebug();
+    }
 
+    updatePlayer();
+}
+
+
+
+void updatePause() {
+
+}
+
+void cameraDebug() {
     if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<6)))) {
         if (vOff > 0) {
             vOff = max(vOff - playerMaxSpeed, 0);
         }
     }
     if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<7)))) {
-        if (vOff < ((512 - 160) << encoding)) {
-            vOff = min(vOff + playerMaxSpeed, ((512 - 160) << encoding));
+        if (vOff < ((512 - 160) << 8)) {
+            vOff = min(vOff + playerMaxSpeed, ((512 - 160) << 8));
         }
     }
     if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
@@ -254,30 +287,16 @@ void updateGame() {
         }
     }
     if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
-        if (hOff < ((512 - 240) << encoding)) {
-            hOff = min(hOff + playerMaxSpeed, ((512 - 240) << encoding));
+        if (hOff < ((512 - 240) << 8)) {
+            hOff = min(hOff + playerMaxSpeed, ((512 - 240) << 8));
         }
     }
-
-}
-
-void updatePlayer() {
-
-
-    player.worldRow += player.rdel;
-    player.worldCol += player.cdel;
-    player.screenRow = player.worldRow - vOff;
-    player.screenCol = player.worldCol - hOff;
-}
-
-void updatePause() {
-
 }
 
 void handleVBlank() {
-    (*(volatile unsigned short *)0x04000010) = ((hOff) >> encoding);
-    (*(volatile unsigned short *)0x04000012) = ((vOff) >> encoding);
-    DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 128);
+    (*(volatile unsigned short *)0x04000010) = ((hOff) >> 8);
+    (*(volatile unsigned short *)0x04000012) = ((vOff) >> 8);
+    DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 128 * 4);
 }
 
 void setupInterrupts() {
@@ -295,7 +314,7 @@ void setupInterrupts() {
 void interruptHandler() {
     *(unsigned short*)0x4000208 = 0;
 
-    if (*(volatile unsigned short*)0x4000202 == 1 << 0) {
+    if (*(volatile unsigned short*)0x4000202 & 1 << 0) {
         handleVBlank();
     }
 

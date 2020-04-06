@@ -21,53 +21,84 @@ initGame:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	push	{r4, lr}
-	mov	lr, #1
-	mov	r3, #67108864
-	mov	r2, #0
-	mov	r1, #56320
-	ldr	r0, .L4
-	ldr	ip, .L4+4
-	strb	lr, [r0]
-	ldr	r0, .L4+8
-	str	r2, [ip]
-	str	r2, [r0]
-	ldrh	r2, [r3]
-	orr	r2, r2, #256
-	ldr	r4, .L4+12
-	strh	r2, [r3]	@ movhi
-	strh	r1, [r3, #8]	@ movhi
-	mov	r2, #100663296
+	mov	r3, #1
+	push	{r4, r5, r6, lr}
+	mov	r1, #90112
+	mov	r5, #67108864
+	mov	ip, #0
+	mov	r2, #56320
+	ldr	lr, .L4
+	ldr	r0, .L4+4
+	str	r3, [lr]
+	strb	r3, [r0]
+	ldr	r3, .L4+8
+	str	r1, [r3]
+	ldrh	r3, [r5]
+	ldr	r0, .L4+12
+	orr	r3, r3, #256
+	str	ip, [r0]
+	ldr	r4, .L4+16
+	strh	r3, [r5]	@ movhi
+	strh	r2, [r5, #8]	@ movhi
 	mov	r3, #496
+	mov	r2, #100663296
 	mov	r0, #3
-	ldr	r1, .L4+16
+	ldr	r1, .L4+20
 	mov	lr, pc
 	bx	r4
 	mov	r3, #4096
 	mov	r0, #3
-	ldr	r2, .L4+20
-	ldr	r1, .L4+24
-	mov	lr, pc
-	bx	r4
-	mov	r3, #256
-	mov	r2, #83886080
-	mov	r0, #3
+	ldr	r2, .L4+24
 	ldr	r1, .L4+28
 	mov	lr, pc
 	bx	r4
-	pop	{r4, lr}
+	mov	r2, #83886080
+	mov	r0, #3
+	ldr	r1, .L4+32
+	mov	r3, #256
+	mov	lr, pc
+	bx	r4
+	ldrh	r3, [r5]
+	orr	r3, r3, #4096
+	strh	r3, [r5]	@ movhi
+	ldr	r3, .L4+36
+	mov	lr, pc
+	bx	r3
+	mov	r3, #16384
+	mov	r0, #3
+	ldr	r2, .L4+40
+	ldr	r1, .L4+44
+	mov	lr, pc
+	bx	r4
+	mov	r3, #256
+	mov	r0, #3
+	ldr	r2, .L4+48
+	ldr	r1, .L4+52
+	mov	lr, pc
+	bx	r4
+	ldr	r3, .L4+56
+	mov	lr, pc
+	bx	r3
+	pop	{r4, r5, r6, lr}
 	bx	lr
 .L5:
 	.align	2
 .L4:
+	.word	debug
 	.word	gameState
-	.word	hOff
 	.word	vOff
+	.word	hOff
 	.word	DMANow
-	.word	mapSBBTiles
+	.word	mapTiles
 	.word	100720640
-	.word	mapSBBMap
-	.word	mapSBBPal
+	.word	mapMap
+	.word	mapPal
+	.word	hideSprites
+	.word	100728832
+	.word	SpritesheetTiles
+	.word	83886592
+	.word	SpritesheetPal
+	.word	initPlayer
 	.size	initGame, .-initGame
 	.align	2
 	.global	init
@@ -118,171 +149,6 @@ updateStart:
 	bx	lr
 	.size	updateStart, .-updateStart
 	.align	2
-	.global	updateGame
-	.syntax unified
-	.arm
-	.fpu softvfp
-	.type	updateGame, %function
-updateGame:
-	@ Function supports interworking.
-	@ args = 0, pretend = 0, frame = 0
-	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	r3, .L21
-	ldrh	r1, [r3, #48]
-	ands	r1, r1, #64
-	push	{r4, lr}
-	bne	.L12
-	ldr	r4, .L21+4
-	ldr	r0, [r4]
-	cmp	r0, #0
-	bgt	.L17
-.L12:
-	ldr	r3, .L21
-	ldrh	r3, [r3, #48]
-	tst	r3, #128
-	bne	.L13
-	mov	r1, #352
-	ldr	r3, .L21+8
-	ldr	r4, .L21+4
-	ldr	r3, [r3]
-	ldr	r0, [r4]
-	cmp	r0, r1, lsl r3
-	lsl	r1, r1, r3
-	blt	.L18
-.L13:
-	ldr	r3, .L21
-	ldrh	r1, [r3, #48]
-	ands	r1, r1, #32
-	bne	.L14
-	ldr	r4, .L21+12
-	ldr	r0, [r4]
-	cmp	r0, #0
-	bgt	.L19
-.L14:
-	ldr	r3, .L21
-	ldrh	r3, [r3, #48]
-	tst	r3, #16
-	bne	.L11
-	mov	r1, #272
-	ldr	r3, .L21+8
-	ldr	r4, .L21+12
-	ldr	r3, [r3]
-	ldr	r0, [r4]
-	cmp	r0, r1, lsl r3
-	lsl	r1, r1, r3
-	blt	.L20
-.L11:
-	pop	{r4, lr}
-	bx	lr
-.L19:
-	ldr	r3, .L21+16
-	sub	r0, r0, #16
-	mov	lr, pc
-	bx	r3
-	str	r0, [r4]
-	b	.L14
-.L17:
-	ldr	r3, .L21+16
-	sub	r0, r0, #16
-	mov	lr, pc
-	bx	r3
-	str	r0, [r4]
-	b	.L12
-.L18:
-	ldr	r3, .L21+20
-	add	r0, r0, #16
-	mov	lr, pc
-	bx	r3
-	str	r0, [r4]
-	b	.L13
-.L20:
-	ldr	r3, .L21+20
-	add	r0, r0, #16
-	mov	lr, pc
-	bx	r3
-	str	r0, [r4]
-	pop	{r4, lr}
-	bx	lr
-.L22:
-	.align	2
-.L21:
-	.word	67109120
-	.word	vOff
-	.word	.LANCHOR0
-	.word	hOff
-	.word	max
-	.word	min
-	.size	updateGame, .-updateGame
-	.align	2
-	.global	update
-	.syntax unified
-	.arm
-	.fpu softvfp
-	.type	update, %function
-update:
-	@ Function supports interworking.
-	@ args = 0, pretend = 0, frame = 0
-	@ frame_needed = 0, uses_anonymous_args = 0
-	push	{r4, lr}
-	ldr	r3, .L27
-	mov	lr, pc
-	bx	r3
-	ldr	r3, .L27+4
-	mov	lr, pc
-	bx	r3
-	ldr	r3, .L27+8
-	ldrb	r3, [r3]	@ zero_extendqisi2
-	cmp	r3, #1
-	beq	.L26
-	pop	{r4, lr}
-	bx	lr
-.L26:
-	pop	{r4, lr}
-	b	updateGame
-.L28:
-	.align	2
-.L27:
-	.word	updateInput
-	.word	hideSprites
-	.word	gameState
-	.size	update, .-update
-	.align	2
-	.global	updatePlayer
-	.syntax unified
-	.arm
-	.fpu softvfp
-	.type	updatePlayer, %function
-updatePlayer:
-	@ Function supports interworking.
-	@ args = 0, pretend = 0, frame = 0
-	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	r3, .L31
-	add	r1, r3, #8
-	str	lr, [sp, #-4]!
-	ldm	r1, {r1, r2, lr}
-	ldr	ip, .L31+4
-	ldr	r0, .L31+8
-	add	r1, r1, lr
-	ldr	lr, [r3, #20]
-	ldr	ip, [ip]
-	ldr	r0, [r0]
-	add	r2, r2, lr
-	sub	ip, r1, ip
-	sub	r0, r2, r0
-	str	r1, [r3, #8]
-	str	ip, [r3]
-	str	r2, [r3, #12]
-	str	r0, [r3, #4]
-	ldr	lr, [sp], #4
-	bx	lr
-.L32:
-	.align	2
-.L31:
-	.word	player
-	.word	vOff
-	.word	hOff
-	.size	updatePlayer, .-updatePlayer
-	.align	2
 	.global	updatePause
 	.syntax unified
 	.arm
@@ -296,6 +162,167 @@ updatePause:
 	bx	lr
 	.size	updatePause, .-updatePause
 	.align	2
+	.global	cameraDebug
+	.syntax unified
+	.arm
+	.fpu softvfp
+	.type	cameraDebug, %function
+cameraDebug:
+	@ Function supports interworking.
+	@ args = 0, pretend = 0, frame = 0
+	@ frame_needed = 0, uses_anonymous_args = 0
+	ldr	r3, .L22
+	ldrh	r1, [r3, #48]
+	ands	r1, r1, #64
+	push	{r4, lr}
+	bne	.L13
+	ldr	r4, .L22+4
+	ldr	r0, [r4]
+	cmp	r0, #0
+	bgt	.L18
+.L13:
+	ldr	r3, .L22
+	ldrh	r3, [r3, #48]
+	tst	r3, #128
+	bne	.L14
+	ldr	r4, .L22+4
+	ldr	r0, [r4]
+	cmp	r0, #90112
+	blt	.L19
+.L14:
+	ldr	r3, .L22
+	ldrh	r1, [r3, #48]
+	ands	r1, r1, #32
+	bne	.L15
+	ldr	r4, .L22+8
+	ldr	r0, [r4]
+	cmp	r0, #0
+	bgt	.L20
+.L15:
+	ldr	r3, .L22
+	ldrh	r3, [r3, #48]
+	tst	r3, #16
+	bne	.L12
+	ldr	r4, .L22+8
+	ldr	r0, [r4]
+	cmp	r0, #69632
+	blt	.L21
+.L12:
+	pop	{r4, lr}
+	bx	lr
+.L20:
+	ldr	r3, .L22+12
+	sub	r0, r0, #2
+	mov	lr, pc
+	bx	r3
+	str	r0, [r4]
+	b	.L15
+.L18:
+	ldr	r3, .L22+12
+	sub	r0, r0, #2
+	mov	lr, pc
+	bx	r3
+	str	r0, [r4]
+	b	.L13
+.L19:
+	mov	r1, #90112
+	ldr	r3, .L22+16
+	add	r0, r0, #2
+	mov	lr, pc
+	bx	r3
+	str	r0, [r4]
+	b	.L14
+.L21:
+	mov	r1, #69632
+	ldr	r3, .L22+16
+	add	r0, r0, #2
+	mov	lr, pc
+	bx	r3
+	str	r0, [r4]
+	pop	{r4, lr}
+	bx	lr
+.L23:
+	.align	2
+.L22:
+	.word	67109120
+	.word	vOff
+	.word	hOff
+	.word	max
+	.word	min
+	.size	cameraDebug, .-cameraDebug
+	.align	2
+	.global	updateGame
+	.syntax unified
+	.arm
+	.fpu softvfp
+	.type	updateGame, %function
+updateGame:
+	@ Function supports interworking.
+	@ args = 0, pretend = 0, frame = 0
+	@ frame_needed = 0, uses_anonymous_args = 0
+	ldr	r3, .L31
+	ldr	r3, [r3]
+	cmp	r3, #0
+	push	{r4, lr}
+	bne	.L30
+.L25:
+	ldr	r3, .L31+4
+	mov	lr, pc
+	bx	r3
+	pop	{r4, lr}
+	bx	lr
+.L30:
+	bl	cameraDebug
+	b	.L25
+.L32:
+	.align	2
+.L31:
+	.word	debug
+	.word	updatePlayer
+	.size	updateGame, .-updateGame
+	.align	2
+	.global	update
+	.syntax unified
+	.arm
+	.fpu softvfp
+	.type	update, %function
+update:
+	@ Function supports interworking.
+	@ args = 0, pretend = 0, frame = 0
+	@ frame_needed = 0, uses_anonymous_args = 0
+	ldr	r3, .L42
+	push	{r4, lr}
+	mov	lr, pc
+	bx	r3
+	ldr	r3, .L42+4
+	ldrb	r3, [r3]	@ zero_extendqisi2
+	cmp	r3, #1
+	beq	.L40
+	pop	{r4, lr}
+	bx	lr
+.L40:
+	ldr	r3, .L42+8
+	ldr	r3, [r3]
+	cmp	r3, #0
+	bne	.L41
+.L35:
+	ldr	r3, .L42+12
+	mov	lr, pc
+	bx	r3
+	pop	{r4, lr}
+	bx	lr
+.L41:
+	bl	cameraDebug
+	b	.L35
+.L43:
+	.align	2
+.L42:
+	.word	updateInput
+	.word	gameState
+	.word	debug
+	.word	updatePlayer
+	.size	update, .-update
+	.align	2
 	.global	handleVBlank
 	.syntax unified
 	.arm
@@ -305,35 +332,32 @@ handleVBlank:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	mov	r1, #67108864
-	ldr	r2, .L36
-	ldr	r3, .L36+4
-	ldr	r0, [r2]
-	ldr	r2, [r3]
-	ldr	r3, .L36+8
+	mov	r2, #67108864
+	ldr	r3, .L46
 	ldr	r3, [r3]
-	push	{r4, lr}
-	asr	r2, r2, r0
-	asr	r3, r3, r0
-	lsl	r2, r2, #16
+	asr	r3, r3, #8
 	lsl	r3, r3, #16
-	lsr	r2, r2, #16
 	lsr	r3, r3, #16
-	strh	r2, [r1, #16]	@ movhi
-	ldr	r4, .L36+12
-	strh	r3, [r1, #18]	@ movhi
+	push	{r4, lr}
+	strh	r3, [r2, #16]	@ movhi
+	ldr	r3, .L46+4
+	ldr	r3, [r3]
+	asr	r3, r3, #8
+	lsl	r3, r3, #16
+	lsr	r3, r3, #16
+	strh	r3, [r2, #18]	@ movhi
+	ldr	r4, .L46+8
+	mov	r3, #512
 	mov	r2, #117440512
-	mov	r3, #128
 	mov	r0, #3
-	ldr	r1, .L36+16
+	ldr	r1, .L46+12
 	mov	lr, pc
 	bx	r4
 	pop	{r4, lr}
 	bx	lr
-.L37:
+.L47:
 	.align	2
-.L36:
-	.word	.LANCHOR0
+.L46:
 	.word	hOff
 	.word	vOff
 	.word	DMANow
@@ -350,26 +374,26 @@ interruptHandler:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	mov	r2, #0
-	ldr	r3, .L42
+	ldr	r3, .L55
 	ldrh	r1, [r3, #2]
-	cmp	r1, #1
+	tst	r1, #1
 	push	{r4, lr}
 	strh	r2, [r3, #8]	@ movhi
-	beq	.L41
-.L39:
+	bne	.L54
+.L49:
 	mov	r1, #1
-	ldr	r3, .L42
+	ldr	r3, .L55
 	ldrh	r2, [r3, #2]
 	strh	r1, [r3, #8]	@ movhi
 	strh	r2, [r3, #2]	@ movhi
 	pop	{r4, lr}
 	bx	lr
-.L41:
+.L54:
 	bl	handleVBlank
-	b	.L39
-.L43:
+	b	.L49
+.L56:
 	.align	2
-.L42:
+.L55:
 	.word	67109376
 	.size	interruptHandler, .-interruptHandler
 	.align	2
@@ -386,26 +410,26 @@ setupInterrupts:
 	str	lr, [sp, #-4]!
 	mov	lr, #1
 	ldrh	r1, [r0, #4]
-	ldr	r3, .L46
+	ldr	r3, .L59
 	orr	r1, r1, #8
 	ldrh	r2, [r3]
-	ldr	ip, .L46+4
+	ldr	ip, .L59+4
 	strh	r1, [r0, #4]	@ movhi
-	ldr	r1, .L46+8
+	ldr	r1, .L59+8
 	orr	r2, r2, lr
 	strh	lr, [r3, #8]	@ movhi
 	strh	r2, [r3]	@ movhi
 	ldr	lr, [sp], #4
 	str	r1, [ip, #4092]
 	bx	lr
-.L47:
+.L60:
 	.align	2
-.L46:
+.L59:
 	.word	67109376
 	.word	50360320
 	.word	interruptHandler
 	.size	setupInterrupts, .-setupInterrupts
-	.global	encoding
+	.comm	debug,4,4
 	.global	playerMaxSpeed
 	.comm	player,56,4
 	.comm	vOff,4,4
@@ -416,12 +440,5 @@ setupInterrupts:
 	.type	playerMaxSpeed, %object
 	.size	playerMaxSpeed, 4
 playerMaxSpeed:
-	.word	16
-	.data
-	.align	2
-	.set	.LANCHOR0,. + 0
-	.type	encoding, %object
-	.size	encoding, 4
-encoding:
-	.word	8
+	.word	2
 	.ident	"GCC: (devkitARM release 53) 9.1.0"
