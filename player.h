@@ -1,7 +1,12 @@
 #pragma once
 
 #include "myLib.h"
+#include "mapCollision.h"
 #include "game.h"
+
+typedef enum {
+    LEFT, RIGHT
+} PlayerState;
 
 typedef struct {
     //animated sprite 
@@ -22,6 +27,14 @@ typedef struct {
 
     int raccel;
     int caccel;
+
+    int accelCurve;
+    int decelCurve;
+    int maxSpeed;
+    int maxJump;
+    int terminalVel;
+
+    int direction;
 } Player;
 
 extern Player player;
@@ -31,3 +44,10 @@ void initPlayer();
 void updatePlayer();
 
 void handlePlayerInput();
+
+void adjusthOff();
+void adjustvOff();
+
+int playerInAir();
+int noCollisionLeft();
+int noCollisionRight();

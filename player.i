@@ -129,7 +129,13 @@ typedef struct{
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
 int max(int a, int b);
 int min(int a, int b);
+int clamp(int value, int min, int max);
+int signOf(int value);
 # 4 "player.h" 2
+# 1 "mapCollision.h" 1
+# 20 "mapCollision.h"
+extern const unsigned short mapCollisionBitmap[262144];
+# 5 "player.h" 2
 # 1 "game.h" 1
        
 
@@ -143,7 +149,7 @@ extern const unsigned short SpritesheetPal[256];
 # 5 "game.h" 2
 # 1 "map.h" 1
 # 24 "map.h"
-extern const unsigned short mapTiles[496];
+extern const unsigned short mapTiles[336];
 
 
 extern const unsigned short mapMap[4096];
@@ -165,9 +171,6 @@ extern GameState gameState;
 extern int hOff;
 extern int vOff;
 
-extern ANISPRITE player;
-extern const int playerMaxSpeed;
-
 
 extern int debug;
 
@@ -188,16 +191,54 @@ void updatePause();
 void handleVBlank();
 void setupInterrupts();
 void interruptHandler();
-# 5 "player.h" 2
+# 6 "player.h" 2
 
-extern ANISPRITE player;
+typedef struct {
+
+    int screenRow;
+    int screenCol;
+    int worldRow;
+    int worldCol;
+    int rdel;
+    int cdel;
+    int width;
+    int height;
+    int aniCounter;
+    int aniState;
+    int prevAniState;
+    int curFrame;
+    int numFrames;
+    int hide;
+
+    int raccel;
+    int caccel;
+
+    int accelCurve;
+    int decelCurve;
+    int maxSpeed;
+    int maxJump;
+    int terminalVel;
+
+    int direction;
+} Player;
+
+extern Player player;
 extern const int playerMaxSpeed;
 
 void initPlayer();
 void updatePlayer();
 
 void handlePlayerInput();
+
+void adjusthOff();
+void adjustvOff();
+
+int playerInAir();
+int noCollisionLeft();
+int noCollisionRight();
 # 2 "player.c" 2
+
+Player player;
 
 void initPlayer() {
     player.worldRow = ((487 - 16) << 8);
@@ -206,12 +247,23 @@ void initPlayer() {
     player.screenCol = player.worldCol - hOff;
     player.rdel = 0;
     player.cdel = 0;
-    player.width = ((16) << 8);
+    player.width = ((8) << 8);
     player.height = ((16) << 8);
     player.hide = 0;
 
-    shadowOAM[0].attr0 = ((player.screenRow) >> 8) | (0<<8) | (0<<13) | (0<<14);
-    shadowOAM[0].attr1 = ((player.screenCol) >> 8) | (1<<14);
+    player.raccel = 0;
+    player.caccel = 0;
+
+    player.accelCurve = 64;
+    player.decelCurve = 128;
+    player.maxSpeed = 256;
+    player.maxJump = 128;
+    player.terminalVel = -5;
+
+    player.direction = 0;
+
+    shadowOAM[0].attr0 = ((player.screenRow) >> 8) | (0<<8) | (0<<13) | (2<<14);
+    shadowOAM[0].attr1 = ((player.screenCol) >> 8) | (0<<14);
     shadowOAM[0].attr2 = ((0)*32+(0)) | ((0)<<12);
 }
 
@@ -220,14 +272,26 @@ void updatePlayer() {
         handlePlayerInput();
     }
 
+    player.rdel = clamp(player.rdel + player.raccel, player.terminalVel, player.maxJump);
+    player.cdel = clamp(player.cdel + player.caccel, -player.maxSpeed, player.maxSpeed);
 
-    player.worldRow += player.rdel;
-    player.worldCol += player.cdel;
+
+    if ((noCollisionLeft() && player.cdel < 0)
+        || (noCollisionRight() && player.cdel > 0)) {
+
+            player.worldCol = clamp(player.worldCol + player.cdel, 0, ((512) << 8) - player.width);
+            adjusthOff();
+    } else {
+        player.cdel = 0;
+        player.caccel = 0;
+    }
+    player.worldRow = clamp(player.worldRow + player.rdel, 0, ((512) << 8) - player.height);
+
     player.screenRow = player.worldRow - vOff;
     player.screenCol = player.worldCol - hOff;
 
-    shadowOAM[0].attr0 = ((player.screenRow) >> 8) | (0<<8) | (0<<13) | (0<<14);
-    shadowOAM[0].attr1 = ((player.screenCol) >> 8) | (1<<14);
+    shadowOAM[0].attr0 = ((player.screenRow) >> 8) | (0<<8) | (0<<13) | (2<<14);
+    shadowOAM[0].attr1 = ((player.screenCol) >> 8) | (0<<14);
     shadowOAM[0].attr2 = ((0)*32+(0)) | ((0)<<12);
 
     if (player.hide) {
@@ -236,5 +300,65 @@ void updatePlayer() {
 }
 
 void handlePlayerInput() {
+    if (!(~((*(volatile unsigned short *)0x04000130)) & ((1<<5))) && !(~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
 
+        if (signOf(player.direction) == signOf(player.cdel)) {
+            player.caccel = -1 * signOf(player.direction) * player.decelCurve;
+        } else {
+            player.cdel = 0;
+            player.caccel = 0;
+        }
+    }
+    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
+        player.direction = -1;
+        if (player.worldCol > 0) {
+            player.caccel = -player.accelCurve;
+        }
+    }
+    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
+        player.direction = 1;
+        if (player.worldCol < ((512) << 8) - player.width) {
+            player.caccel = player.accelCurve;
+        }
+    }
+}
+
+int playerInAir() {
+
+}
+
+int noCollisionLeft() {
+    return player.worldCol > 0
+        && mapCollisionBitmap[((((player.worldRow) >> 8))*(512)+(((player.worldCol + player.cdel) >> 8)))]
+        && mapCollisionBitmap[((((player.worldRow + player.height - 1) >> 8))*(512)+(((player.worldCol + player.cdel) >> 8)))];
+}
+
+int noCollisionRight() {
+    return player.worldCol + player.width < ((512) << 8)
+        && mapCollisionBitmap[((((player.worldRow) >> 8))*(512)+(((player.worldCol + player.cdel + player.width - 1) >> 8)))]
+        && mapCollisionBitmap[((((player.worldRow + player.height - 1) >> 8))*(512)+(((player.worldCol + player.cdel + player.width - 1) >> 8)))];
+}
+
+void adjusthOff() {
+    if (player.cdel < 0) {
+        if ((hOff > 0) && (player.screenCol + player.width / 2 < ((240 / 2) << 8))) {
+            hOff = max(hOff + player.cdel, 0);
+        }
+    } else if (player.cdel > 0) {
+        if ((hOff + ((240 - 1) << 8) < ((512) << 8)) && (player.screenCol + player.width / 2 > ((240 / 2) << 8))) {
+            hOff = min(hOff + player.cdel, ((512 - 240) << 8));
+        }
+    }
+}
+
+void adjustvOff() {
+    if (player.rdel < 0) {
+        if ((vOff > 0) && (player.screenRow + player.height / 2 < ((160 / 2) << 8))) {
+            hOff += player.cdel;
+        }
+    } else if (player.rdel > 0) {
+        if ((vOff + ((240 - 1) << 8) < ((512) << 8)) && (player.screenRow + player.height / 2 > ((160 / 2) << 8))) {
+            vOff += player.rdel;
+        }
+    }
 }

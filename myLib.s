@@ -659,6 +659,46 @@ min:
 	movge	r0, r1
 	bx	lr
 	.size	min, .-min
+	.align	2
+	.global	clamp
+	.syntax unified
+	.arm
+	.fpu softvfp
+	.type	clamp, %function
+clamp:
+	@ Function supports interworking.
+	@ args = 0, pretend = 0, frame = 0
+	@ frame_needed = 0, uses_anonymous_args = 0
+	@ link register save eliminated.
+	cmp	r0, r1
+	blt	.L108
+	cmp	r0, r2
+	movge	r0, r2
+	bx	lr
+.L108:
+	mov	r0, r1
+	bx	lr
+	.size	clamp, .-clamp
+	.align	2
+	.global	signOf
+	.syntax unified
+	.arm
+	.fpu softvfp
+	.type	signOf, %function
+signOf:
+	@ Function supports interworking.
+	@ args = 0, pretend = 0, frame = 0
+	@ frame_needed = 0, uses_anonymous_args = 0
+	@ link register save eliminated.
+	cmp	r0, #0
+	blt	.L111
+	movne	r0, #1
+	moveq	r0, #0
+	bx	lr
+.L111:
+	mvn	r0, #0
+	bx	lr
+	.size	signOf, .-signOf
 	.comm	buttons,2,2
 	.comm	oldButtons,2,2
 	.comm	shadowOAM,1024,4

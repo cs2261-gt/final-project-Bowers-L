@@ -19,9 +19,9 @@
 SpritesheetPal:
 	.short	32767
 	.short	28539
+	.short	0
 	.short	16912
-	.short	0
-	.short	0
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -276,37 +276,37 @@ SpritesheetPal:
 	.type	SpritesheetTiles, %object
 	.size	SpritesheetTiles, 32768
 SpritesheetTiles:
+	.short	8738
+	.short	8738
+	.short	16706
+	.short	9236
+	.short	17218
+	.short	9268
+	.short	17474
+	.short	9284
+	.short	17474
+	.short	9284
+	.short	8738
+	.short	8738
+	.short	8704
+	.short	34
+	.short	8736
+	.short	546
 	.short	0
-	.short	13104
 	.short	0
-	.short	304
 	.short	0
-	.short	560
 	.short	0
-	.short	48
 	.short	0
-	.short	13104
 	.short	0
-	.short	13056
 	.short	0
-	.short	13056
 	.short	0
-	.short	13104
-	.short	819
 	.short	0
-	.short	784
 	.short	0
-	.short	800
 	.short	0
-	.short	768
 	.short	0
-	.short	819
 	.short	0
-	.short	51
 	.short	0
-	.short	51
 	.short	0
-	.short	819
 	.short	0
 	.short	0
 	.short	0
@@ -788,37 +788,37 @@ SpritesheetTiles:
 	.short	0
 	.short	0
 	.short	0
+	.short	8736
+	.short	546
+	.short	8736
+	.short	546
+	.short	8736
+	.short	546
+	.short	8704
+	.short	34
+	.short	8704
+	.short	34
+	.short	512
+	.short	32
+	.short	512
+	.short	32
+	.short	512
+	.short	32
 	.short	0
-	.short	13104
 	.short	0
-	.short	13104
 	.short	0
-	.short	13104
 	.short	0
-	.short	13056
 	.short	0
-	.short	13056
 	.short	0
-	.short	768
 	.short	0
-	.short	768
 	.short	0
-	.short	768
-	.short	819
 	.short	0
-	.short	819
 	.short	0
-	.short	819
 	.short	0
-	.short	51
 	.short	0
-	.short	51
 	.short	0
-	.short	48
 	.short	0
-	.short	48
 	.short	0
-	.short	48
 	.short	0
 	.short	0
 	.short	0

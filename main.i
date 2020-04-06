@@ -129,6 +129,8 @@ typedef struct{
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
 int max(int a, int b);
 int min(int a, int b);
+int clamp(int value, int min, int max);
+int signOf(int value);
 # 4 "game.h" 2
 # 1 "Spritesheet.h" 1
 # 21 "Spritesheet.h"
@@ -139,7 +141,7 @@ extern const unsigned short SpritesheetPal[256];
 # 5 "game.h" 2
 # 1 "map.h" 1
 # 24 "map.h"
-extern const unsigned short mapTiles[496];
+extern const unsigned short mapTiles[336];
 
 
 extern const unsigned short mapMap[4096];
@@ -151,15 +153,55 @@ extern const unsigned short mapPal[256];
        
 
 
+# 1 "mapCollision.h" 1
+# 20 "mapCollision.h"
+extern const unsigned short mapCollisionBitmap[262144];
+# 5 "player.h" 2
 
 
-extern ANISPRITE player;
+typedef struct {
+
+    int screenRow;
+    int screenCol;
+    int worldRow;
+    int worldCol;
+    int rdel;
+    int cdel;
+    int width;
+    int height;
+    int aniCounter;
+    int aniState;
+    int prevAniState;
+    int curFrame;
+    int numFrames;
+    int hide;
+
+    int raccel;
+    int caccel;
+
+    int accelCurve;
+    int decelCurve;
+    int maxSpeed;
+    int maxJump;
+    int terminalVel;
+
+    int direction;
+} Player;
+
+extern Player player;
 extern const int playerMaxSpeed;
 
 void initPlayer();
 void updatePlayer();
 
 void handlePlayerInput();
+
+void adjusthOff();
+void adjustvOff();
+
+int playerInAir();
+int noCollisionLeft();
+int noCollisionRight();
 # 7 "game.h" 2
 
 typedef enum {
@@ -173,9 +215,6 @@ typedef enum {
 extern GameState gameState;
 extern int hOff;
 extern int vOff;
-
-extern ANISPRITE player;
-extern const int playerMaxSpeed;
 
 
 extern int debug;
@@ -202,7 +241,7 @@ void interruptHandler();
 int main() {
     init();
 
-    while(1) {
+    while (1) {
         update();
     }
 }

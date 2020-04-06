@@ -8,8 +8,8 @@ int debug;
 
 void init() {
     REG_DISPCTL = MODE0;
-    setupInterrupts();
     initGame();
+    setupInterrupts();
 }
 
 void initGame() {
@@ -17,7 +17,7 @@ void initGame() {
     gameState = GAME;
     hOff = 0;
     vOff = ENCODE8(MAPWH - SCREENHEIGHT);
-    debug = 1;
+    debug = 0;
 
     //setup background
     REG_DISPCTL |= BG0_ENABLE;
@@ -48,6 +48,7 @@ void update() {
             updatePause();
             break;
     }
+    waitForVBlank();
 }
 
 void updateStart() {
@@ -69,24 +70,26 @@ void updatePause() {
 }
 
 void cameraDebug() {
+    static int cameraSpeed = 2;
+
     if (BUTTON_HELD(BUTTON_UP)) {
         if (vOff > 0) {
-            vOff = max(vOff - playerMaxSpeed, 0);
+            vOff = max(vOff - cameraSpeed, 0);
         }
     }
     if (BUTTON_HELD(BUTTON_DOWN)) {
         if (vOff < ENCODE8(MAPWH - SCREENHEIGHT)) {
-            vOff = min(vOff + playerMaxSpeed, ENCODE8(MAPWH - SCREENHEIGHT));
+            vOff = min(vOff + cameraSpeed, ENCODE8(MAPWH - SCREENHEIGHT));
         }
     }
     if (BUTTON_HELD(BUTTON_LEFT)) {
         if (hOff > 0) {
-            hOff = max(hOff - playerMaxSpeed, 0);
+            hOff = max(hOff - cameraSpeed, 0);
         }
     }
     if (BUTTON_HELD(BUTTON_RIGHT)) {
         if (hOff < ENCODE8(MAPWH - SCREENWIDTH)) {
-            hOff = min(hOff + playerMaxSpeed, ENCODE8(MAPWH - SCREENWIDTH));
+            hOff = min(hOff + cameraSpeed, ENCODE8(MAPWH - SCREENWIDTH));
         }
     }
 }

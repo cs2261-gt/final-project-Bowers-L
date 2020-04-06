@@ -126,6 +126,8 @@ typedef struct{
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
 int max(int a, int b);
 int min(int a, int b);
+int clamp(int value, int min, int max);
+int signOf(int value);
 # 2 "myLib.c" 2
 
 
@@ -297,5 +299,27 @@ int min(int a, int b) {
         return a;
     } else {
         return b;
+    }
+}
+
+int clamp(int value, int min, int max) {
+    if (value < min) {
+        return min;
+    }
+
+    if (value > max) {
+        return max;
+    }
+
+    return value;
+}
+
+int signOf(int value) {
+    if (value < 0) {
+        return -1;
+    } else if (value > 0) {
+        return 1;
+    } else {
+        return 0;
     }
 }

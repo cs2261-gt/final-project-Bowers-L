@@ -367,6 +367,7 @@ int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, i
 int max(int a, int b);
 int min(int a, int b);
 int clamp(int value, int min, int max);
+int signOf(int value);
 
 
 

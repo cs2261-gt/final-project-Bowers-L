@@ -21,26 +21,26 @@ initGame:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	mov	r3, #1
+	mov	ip, #1
 	push	{r4, r5, r6, lr}
-	mov	r1, #90112
+	mov	r3, #0
 	mov	r5, #67108864
-	mov	ip, #0
+	mov	r0, #90112
 	mov	r2, #56320
-	ldr	lr, .L4
-	ldr	r0, .L4+4
+	ldr	r1, .L4
+	ldr	lr, .L4+4
+	strb	ip, [r1]
+	ldr	ip, .L4+8
 	str	r3, [lr]
-	strb	r3, [r0]
-	ldr	r3, .L4+8
-	str	r1, [r3]
+	str	r3, [ip]
 	ldrh	r3, [r5]
-	ldr	r0, .L4+12
+	ldr	r1, .L4+12
 	orr	r3, r3, #256
-	str	ip, [r0]
 	ldr	r4, .L4+16
+	str	r0, [r1]
 	strh	r3, [r5]	@ movhi
 	strh	r2, [r5, #8]	@ movhi
-	mov	r3, #496
+	mov	r3, #336
 	mov	r2, #100663296
 	mov	r0, #3
 	ldr	r1, .L4+20
@@ -84,10 +84,10 @@ initGame:
 .L5:
 	.align	2
 .L4:
-	.word	debug
 	.word	gameState
-	.word	vOff
 	.word	hOff
+	.word	debug
+	.word	vOff
 	.word	DMANow
 	.word	mapTiles
 	.word	100720640
@@ -110,24 +110,25 @@ init:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	mov	r1, #67108864
-	mov	ip, #0
-	str	lr, [sp, #-4]!
-	mov	lr, #1
-	ldrh	r0, [r1, #4]
+	push	{r4, lr}
+	mov	r3, #0
+	mov	r4, #67108864
+	strh	r3, [r4]	@ movhi
+	bl	initGame
+	mov	ip, #1
+	ldrh	r1, [r4, #4]
 	ldr	r3, .L8
-	orr	r0, r0, #8
+	orr	r1, r1, #8
 	ldrh	r2, [r3]
-	strh	ip, [r1]	@ movhi
-	strh	r0, [r1, #4]	@ movhi
-	ldr	ip, .L8+4
+	ldr	r0, .L8+4
+	strh	r1, [r4, #4]	@ movhi
 	ldr	r1, .L8+8
-	orr	r2, r2, lr
-	strh	lr, [r3, #8]	@ movhi
+	orr	r2, r2, ip
 	strh	r2, [r3]	@ movhi
-	ldr	lr, [sp], #4
-	str	r1, [ip, #4092]
-	b	initGame
+	strh	ip, [r3, #8]	@ movhi
+	pop	{r4, lr}
+	str	r1, [r0, #4092]
+	bx	lr
 .L9:
 	.align	2
 .L8:
@@ -298,19 +299,22 @@ update:
 	ldrb	r3, [r3]	@ zero_extendqisi2
 	cmp	r3, #1
 	beq	.L40
-	pop	{r4, lr}
-	bx	lr
-.L40:
+.L34:
 	ldr	r3, .L42+8
-	ldr	r3, [r3]
-	cmp	r3, #0
-	bne	.L41
-.L35:
-	ldr	r3, .L42+12
 	mov	lr, pc
 	bx	r3
 	pop	{r4, lr}
 	bx	lr
+.L40:
+	ldr	r3, .L42+12
+	ldr	r3, [r3]
+	cmp	r3, #0
+	bne	.L41
+.L35:
+	ldr	r3, .L42+16
+	mov	lr, pc
+	bx	r3
+	b	.L34
 .L41:
 	bl	cameraDebug
 	b	.L35
@@ -319,6 +323,7 @@ update:
 .L42:
 	.word	updateInput
 	.word	gameState
+	.word	waitForVBlank
 	.word	debug
 	.word	updatePlayer
 	.size	update, .-update
@@ -430,15 +435,7 @@ setupInterrupts:
 	.word	interruptHandler
 	.size	setupInterrupts, .-setupInterrupts
 	.comm	debug,4,4
-	.global	playerMaxSpeed
-	.comm	player,56,4
 	.comm	vOff,4,4
 	.comm	hOff,4,4
 	.comm	gameState,1,1
-	.section	.rodata
-	.align	2
-	.type	playerMaxSpeed, %object
-	.size	playerMaxSpeed, 4
-playerMaxSpeed:
-	.word	2
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

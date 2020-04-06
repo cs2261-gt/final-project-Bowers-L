@@ -129,6 +129,8 @@ typedef struct{
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
 int max(int a, int b);
 int min(int a, int b);
+int clamp(int value, int min, int max);
+int signOf(int value);
 # 4 "game.h" 2
 # 1 "Spritesheet.h" 1
 # 21 "Spritesheet.h"
@@ -139,7 +141,7 @@ extern const unsigned short SpritesheetPal[256];
 # 5 "game.h" 2
 # 1 "map.h" 1
 # 24 "map.h"
-extern const unsigned short mapTiles[496];
+extern const unsigned short mapTiles[336];
 
 
 extern const unsigned short mapMap[4096];
@@ -151,15 +153,55 @@ extern const unsigned short mapPal[256];
        
 
 
+# 1 "mapCollision.h" 1
+# 20 "mapCollision.h"
+extern const unsigned short mapCollisionBitmap[262144];
+# 5 "player.h" 2
 
 
-extern ANISPRITE player;
+typedef struct {
+
+    int screenRow;
+    int screenCol;
+    int worldRow;
+    int worldCol;
+    int rdel;
+    int cdel;
+    int width;
+    int height;
+    int aniCounter;
+    int aniState;
+    int prevAniState;
+    int curFrame;
+    int numFrames;
+    int hide;
+
+    int raccel;
+    int caccel;
+
+    int accelCurve;
+    int decelCurve;
+    int maxSpeed;
+    int maxJump;
+    int terminalVel;
+
+    int direction;
+} Player;
+
+extern Player player;
 extern const int playerMaxSpeed;
 
 void initPlayer();
 void updatePlayer();
 
 void handlePlayerInput();
+
+void adjusthOff();
+void adjustvOff();
+
+int playerInAir();
+int noCollisionLeft();
+int noCollisionRight();
 # 7 "game.h" 2
 
 typedef enum {
@@ -173,9 +215,6 @@ typedef enum {
 extern GameState gameState;
 extern int hOff;
 extern int vOff;
-
-extern ANISPRITE player;
-extern const int playerMaxSpeed;
 
 
 extern int debug;
@@ -203,15 +242,12 @@ GameState gameState;
 int hOff;
 int vOff;
 
-ANISPRITE player;
-const int playerMaxSpeed = 2;
-
 int debug;
 
 void init() {
     (*(unsigned short *)0x4000000) = 0;
-    setupInterrupts();
     initGame();
+    setupInterrupts();
 }
 
 void initGame() {
@@ -219,12 +255,12 @@ void initGame() {
     gameState = GAME;
     hOff = 0;
     vOff = ((512 - 160) << 8);
-    debug = 1;
+    debug = 0;
 
 
     (*(unsigned short *)0x4000000) |= (1<<8);
     (*(volatile unsigned short*)0x4000008) = (0<<7) | (3<<14) | ((0)<<2) | ((28)<<8);
-    DMANow(3, mapTiles, &((charblock *)0x6000000)[0], 992 / 2);
+    DMANow(3, mapTiles, &((charblock *)0x6000000)[0], 672 / 2);
     DMANow(3, mapMap, &((screenblock *)0x6000000)[28], 8192 / 2);
     DMANow(3, mapPal, ((unsigned short *)0x5000000), 512 / 2);
 
@@ -250,6 +286,7 @@ void update() {
             updatePause();
             break;
     }
+    waitForVBlank();
 }
 
 void updateStart() {
@@ -271,24 +308,26 @@ void updatePause() {
 }
 
 void cameraDebug() {
+    static int cameraSpeed = 2;
+
     if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<6)))) {
         if (vOff > 0) {
-            vOff = max(vOff - playerMaxSpeed, 0);
+            vOff = max(vOff - cameraSpeed, 0);
         }
     }
     if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<7)))) {
         if (vOff < ((512 - 160) << 8)) {
-            vOff = min(vOff + playerMaxSpeed, ((512 - 160) << 8));
+            vOff = min(vOff + cameraSpeed, ((512 - 160) << 8));
         }
     }
     if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
         if (hOff > 0) {
-            hOff = max(hOff - playerMaxSpeed, 0);
+            hOff = max(hOff - cameraSpeed, 0);
         }
     }
     if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
         if (hOff < ((512 - 240) << 8)) {
-            hOff = min(hOff + playerMaxSpeed, ((512 - 240) << 8));
+            hOff = min(hOff + cameraSpeed, ((512 - 240) << 8));
         }
     }
 }
