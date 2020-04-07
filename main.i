@@ -91,16 +91,7 @@ extern unsigned short buttons;
 
 
 void updateInput();
-
-
-
-extern int encoding;
-
-
-
-
-
-
+# 219 "myLib.h"
 typedef volatile struct {
     volatile const void *src;
     volatile void *dst;
@@ -109,9 +100,9 @@ typedef volatile struct {
 
 
 extern DMA *dma;
-# 258 "myLib.h"
+# 259 "myLib.h"
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt);
-# 352 "myLib.h"
+# 353 "myLib.h"
 typedef struct{
     const unsigned char* data;
     int length;
@@ -141,7 +132,7 @@ extern const unsigned short SpritesheetPal[256];
 # 5 "game.h" 2
 # 1 "map.h" 1
 # 24 "map.h"
-extern const unsigned short mapTiles[400];
+extern const unsigned short mapTiles[480];
 
 
 extern const unsigned short mapMap[4096];
@@ -180,18 +171,21 @@ typedef struct {
     int numFrames;
     int hide;
 
+
     int raccel;
     int caccel;
+
 
     int accelCurve;
     int decelCurve;
     int maxSpeed;
+    int terminalVel;
+
 
     int isJumping;
-    int jumpCounter;
+    int jumpHeight;
+    int jumpTime;
     int jumpSpeed;
-    int maxJump;
-    int terminalVel;
     int gravity;
 
     int direction;
@@ -202,6 +196,7 @@ extern const int playerMaxSpeed;
 
 void initPlayer();
 void updatePlayer();
+void showPlayer();
 
 void handlePlayerInput();
 
@@ -250,7 +245,7 @@ void interruptHandler();
 int main() {
     init();
 
-    while (1) {
+    while(1) {
         update();
     }
 }

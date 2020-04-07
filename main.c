@@ -3,7 +3,7 @@
 int main() {
     init();
 
-    while (1) {
+    while(1) {
         update();
     }
 }

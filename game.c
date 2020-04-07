@@ -16,7 +16,7 @@ void initGame() {
     //initialize variables
     gameState = GAME;
     hOff = 0;
-    vOff = ENCODE8(MAPWH - SCREENHEIGHT);
+    vOff = ENCODE4(MAPWH - SCREENHEIGHT);
     debug = 0;
 
     //setup background
@@ -56,11 +56,20 @@ void updateStart() {
 }
 
 void updateGame() {
-    if (debug) {
-        cameraDebug();
+    if (BUTTON_PRESSED(BUTTON_L)) {
+        if (debug > 0) {
+            debug = 0;
+        } else {
+            debug = 1;
+        }
     }
 
-    updatePlayer();
+    if (debug) {
+        cameraDebug();
+        showPlayer();
+    } else {
+        updatePlayer();
+    }
 }
 
 
@@ -70,7 +79,7 @@ void updatePause() {
 }
 
 void cameraDebug() {
-    static int cameraSpeed = 2;
+    static int cameraSpeed = 32;
 
     if (BUTTON_HELD(BUTTON_UP)) {
         if (vOff > 0) {
@@ -78,8 +87,8 @@ void cameraDebug() {
         }
     }
     if (BUTTON_HELD(BUTTON_DOWN)) {
-        if (vOff < ENCODE8(MAPWH - SCREENHEIGHT)) {
-            vOff = min(vOff + cameraSpeed, ENCODE8(MAPWH - SCREENHEIGHT));
+        if (vOff < ENCODE4(MAPWH - SCREENHEIGHT)) {
+            vOff = min(vOff + cameraSpeed, ENCODE4(MAPWH - SCREENHEIGHT));
         }
     }
     if (BUTTON_HELD(BUTTON_LEFT)) {
@@ -88,15 +97,15 @@ void cameraDebug() {
         }
     }
     if (BUTTON_HELD(BUTTON_RIGHT)) {
-        if (hOff < ENCODE8(MAPWH - SCREENWIDTH)) {
-            hOff = min(hOff + cameraSpeed, ENCODE8(MAPWH - SCREENWIDTH));
+        if (hOff < ENCODE4(MAPWH - SCREENWIDTH)) {
+            hOff = min(hOff + cameraSpeed, ENCODE4(MAPWH - SCREENWIDTH));
         }
     }
 }
 
 void handleVBlank() {
-    REG_BG0HOFF = DECODE8(hOff);
-    REG_BG0VOFF = DECODE8(vOff);
+    REG_BG0HOFF = DECODE4(hOff);
+    REG_BG0VOFF = DECODE4(vOff);
     DMANow(3, shadowOAM, OAM, 128 * 4);
 }
 

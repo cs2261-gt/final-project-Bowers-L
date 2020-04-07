@@ -91,16 +91,7 @@ extern unsigned short buttons;
 
 
 void updateInput();
-
-
-
-extern int encoding;
-
-
-
-
-
-
+# 219 "myLib.h"
 typedef volatile struct {
     volatile const void *src;
     volatile void *dst;
@@ -109,9 +100,9 @@ typedef volatile struct {
 
 
 extern DMA *dma;
-# 258 "myLib.h"
+# 259 "myLib.h"
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt);
-# 352 "myLib.h"
+# 353 "myLib.h"
 typedef struct{
     const unsigned char* data;
     int length;
@@ -141,7 +132,7 @@ extern const unsigned short SpritesheetPal[256];
 # 5 "game.h" 2
 # 1 "map.h" 1
 # 24 "map.h"
-extern const unsigned short mapTiles[400];
+extern const unsigned short mapTiles[480];
 
 
 extern const unsigned short mapMap[4096];
@@ -180,18 +171,21 @@ typedef struct {
     int numFrames;
     int hide;
 
+
     int raccel;
     int caccel;
+
 
     int accelCurve;
     int decelCurve;
     int maxSpeed;
+    int terminalVel;
+
 
     int isJumping;
-    int jumpCounter;
+    int jumpHeight;
+    int jumpTime;
     int jumpSpeed;
-    int maxJump;
-    int terminalVel;
     int gravity;
 
     int direction;
@@ -202,6 +196,7 @@ extern const int playerMaxSpeed;
 
 void initPlayer();
 void updatePlayer();
+void showPlayer();
 
 void handlePlayerInput();
 
@@ -263,13 +258,13 @@ void initGame() {
 
     gameState = GAME;
     hOff = 0;
-    vOff = ((512 - 160) << 8);
+    vOff = ((512 - 160) << 4);
     debug = 0;
 
 
     (*(unsigned short *)0x4000000) |= (1<<8);
     (*(volatile unsigned short*)0x4000008) = (0<<7) | (3<<14) | ((0)<<2) | ((28)<<8);
-    DMANow(3, mapTiles, &((charblock *)0x6000000)[0], 800 / 2);
+    DMANow(3, mapTiles, &((charblock *)0x6000000)[0], 960 / 2);
     DMANow(3, mapMap, &((screenblock *)0x6000000)[28], 8192 / 2);
     DMANow(3, mapPal, ((unsigned short *)0x5000000), 512 / 2);
 
@@ -303,11 +298,20 @@ void updateStart() {
 }
 
 void updateGame() {
-    if (debug) {
-        cameraDebug();
+    if ((!(~(oldButtons)&((1<<9))) && (~buttons & ((1<<9))))) {
+        if (debug > 0) {
+            debug = 0;
+        } else {
+            debug = 1;
+        }
     }
 
-    updatePlayer();
+    if (debug) {
+        cameraDebug();
+        showPlayer();
+    } else {
+        updatePlayer();
+    }
 }
 
 
@@ -317,7 +321,7 @@ void updatePause() {
 }
 
 void cameraDebug() {
-    static int cameraSpeed = 2;
+    static int cameraSpeed = 32;
 
     if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<6)))) {
         if (vOff > 0) {
@@ -325,8 +329,8 @@ void cameraDebug() {
         }
     }
     if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<7)))) {
-        if (vOff < ((512 - 160) << 8)) {
-            vOff = min(vOff + cameraSpeed, ((512 - 160) << 8));
+        if (vOff < ((512 - 160) << 4)) {
+            vOff = min(vOff + cameraSpeed, ((512 - 160) << 4));
         }
     }
     if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
@@ -335,15 +339,15 @@ void cameraDebug() {
         }
     }
     if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
-        if (hOff < ((512 - 240) << 8)) {
-            hOff = min(hOff + cameraSpeed, ((512 - 240) << 8));
+        if (hOff < ((512 - 240) << 4)) {
+            hOff = min(hOff + cameraSpeed, ((512 - 240) << 4));
         }
     }
 }
 
 void handleVBlank() {
-    (*(volatile unsigned short *)0x04000010) = ((hOff) >> 8);
-    (*(volatile unsigned short *)0x04000012) = ((vOff) >> 8);
+    (*(volatile unsigned short *)0x04000010) = ((hOff) >> 4);
+    (*(volatile unsigned short *)0x04000012) = ((vOff) >> 4);
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 128 * 4);
 }
 

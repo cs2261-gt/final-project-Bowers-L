@@ -9,7 +9,7 @@ typedef enum {
 } PlayerState;
 
 typedef struct {
-    //animated sprite 
+    //animated sprite stuff
     int screenRow;
     int screenCol;
     int worldRow;
@@ -25,18 +25,21 @@ typedef struct {
     int numFrames;
     int hide;
 
+    //acceleration
     int raccel;
     int caccel;
 
+    //platforming factors
     int accelCurve;
     int decelCurve;
     int maxSpeed;
-
-    int isJumping;
-    int jumpCounter;
-    int jumpSpeed;
-    int maxJump;
     int terminalVel;
+
+    //jumping
+    int isJumping;
+    int jumpHeight;
+    int jumpTime;
+    int jumpSpeed;
     int gravity;
 
     int direction;
@@ -47,6 +50,7 @@ extern const int playerMaxSpeed;
 
 void initPlayer();
 void updatePlayer();
+void showPlayer();
 
 void handlePlayerInput();
 

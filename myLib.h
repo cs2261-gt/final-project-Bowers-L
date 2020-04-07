@@ -208,7 +208,8 @@ void updateInput();
 
 // =================================== FIXED POINT ====================================
 
-extern int encoding;
+#define ENCODE4(x) ((x) << 4)
+#define DECODE4(x) ((x) >> 4)
 #define ENCODE8(x) ((x) << 8)
 #define DECODE8(x) ((x) >> 8)
 

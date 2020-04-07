@@ -88,16 +88,7 @@ extern unsigned short buttons;
 
 
 void updateInput();
-
-
-
-extern int encoding;
-
-
-
-
-
-
+# 219 "myLib.h"
 typedef volatile struct {
     volatile const void *src;
     volatile void *dst;
@@ -106,9 +97,9 @@ typedef volatile struct {
 
 
 extern DMA *dma;
-# 258 "myLib.h"
+# 259 "myLib.h"
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt);
-# 352 "myLib.h"
+# 353 "myLib.h"
 typedef struct{
     const unsigned char* data;
     int length;
