@@ -131,13 +131,8 @@ extern const unsigned short mapCollisionBitmap[262144];
        
 
 
-# 1 "Spritesheet.h" 1
-# 21 "Spritesheet.h"
-extern const unsigned short SpritesheetTiles[16384];
 
 
-extern const unsigned short SpritesheetPal[256];
-# 5 "game.h" 2
 # 1 "map.h" 1
 # 22 "map.h"
 extern const unsigned short mapTiles[160];
@@ -147,17 +142,41 @@ extern const unsigned short mapMap[4096];
 
 
 extern const unsigned short mapPal[256];
-# 6 "game.h" 2
+# 7 "game.h" 2
+# 1 "SplashScreen.h" 1
+# 22 "SplashScreen.h"
+extern const unsigned short SplashScreen_StartTiles[1696];
+
+
+extern const unsigned short SplashScreen_StartMap[1024];
+
+
+extern const unsigned short SplashScreen_InstructionsTiles[1696];
+
+
+extern const unsigned short SplashScreen_InstructionsMap[1024];
+
+
+extern const unsigned short SplashScreenPal[256];
+# 8 "game.h" 2
+# 1 "Spritesheet.h" 1
+# 21 "Spritesheet.h"
+extern const unsigned short SpritesheetTiles[16384];
+
+
+extern const unsigned short SpritesheetPal[256];
+# 9 "game.h" 2
+
 
 
 
 
 typedef enum {
-    START, GAME, PAUSED
+    SPLASH, INSTRUCTIONS, GAME, PAUSED, WIN
 } GameState;
 
 typedef enum {
-    TITLE
+    OPTSTART, OPTINST
 } MenuState;
 
 extern GameState gameState;
@@ -169,20 +188,25 @@ extern int debug;
 
 void init();
 
-void initStart();
+void initSplash();
+void initInstructions();
 void initGame();
 void initPause();
+void initWin();
 void setupBackground();
 
 void update();
 
-void updateStart();
+void updateSplash();
+void updateInstructions();
 void updateGame();
 void updatePause();
+void updateWin();
+
 
 
 void handleVBlank();
-void setupInterrupts();
+void setupDisplayInterrupt();
 void interruptHandler();
 # 6 "player.h" 2
 

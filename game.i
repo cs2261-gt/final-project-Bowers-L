@@ -123,13 +123,8 @@ int min(int a, int b);
 int clamp(int value, int min, int max);
 int signOf(int value);
 # 4 "game.h" 2
-# 1 "Spritesheet.h" 1
-# 21 "Spritesheet.h"
-extern const unsigned short SpritesheetTiles[16384];
 
 
-extern const unsigned short SpritesheetPal[256];
-# 5 "game.h" 2
 # 1 "map.h" 1
 # 22 "map.h"
 extern const unsigned short mapTiles[160];
@@ -139,7 +134,31 @@ extern const unsigned short mapMap[4096];
 
 
 extern const unsigned short mapPal[256];
-# 6 "game.h" 2
+# 7 "game.h" 2
+# 1 "SplashScreen.h" 1
+# 22 "SplashScreen.h"
+extern const unsigned short SplashScreen_StartTiles[1696];
+
+
+extern const unsigned short SplashScreen_StartMap[1024];
+
+
+extern const unsigned short SplashScreen_InstructionsTiles[1696];
+
+
+extern const unsigned short SplashScreen_InstructionsMap[1024];
+
+
+extern const unsigned short SplashScreenPal[256];
+# 8 "game.h" 2
+# 1 "Spritesheet.h" 1
+# 21 "Spritesheet.h"
+extern const unsigned short SpritesheetTiles[16384];
+
+
+extern const unsigned short SpritesheetPal[256];
+# 9 "game.h" 2
+
 # 1 "player.h" 1
        
 
@@ -210,16 +229,16 @@ int collisionBelow();
 
 int resolveCollisionX();
 int resolveCollisionY();
-# 7 "game.h" 2
+# 11 "game.h" 2
 
 
 
 typedef enum {
-    START, GAME, PAUSED
+    SPLASH, INSTRUCTIONS, GAME, PAUSED, WIN
 } GameState;
 
 typedef enum {
-    TITLE
+    OPTSTART, OPTINST
 } MenuState;
 
 extern GameState gameState;
@@ -231,20 +250,25 @@ extern int debug;
 
 void init();
 
-void initStart();
+void initSplash();
+void initInstructions();
 void initGame();
 void initPause();
+void initWin();
 void setupBackground();
 
 void update();
 
-void updateStart();
+void updateSplash();
+void updateInstructions();
 void updateGame();
 void updatePause();
+void updateWin();
+
 
 
 void handleVBlank();
-void setupInterrupts();
+void setupDisplayInterrupt();
 void interruptHandler();
 # 2 "game.c" 2
 
@@ -256,8 +280,28 @@ int debug;
 
 void init() {
     (*(unsigned short *)0x4000000) = 0;
-    initGame();
-    setupInterrupts();
+    initSplash();
+    setupDisplayInterrupt();
+
+    debug = 0;
+}
+
+void initSplash() {
+    gameState = SPLASH;
+    hOff = 0;
+    vOff = 0;
+
+    (*(unsigned short *)0x4000000) |= (1<<8);
+    (*(volatile unsigned short*)0x4000008) = (0<<7) | (3<<14) | ((0)<<2) | ((28)<<8);
+    DMANow(3, SplashScreen_StartTiles, &((charblock *)0x6000000)[0], 3392/2);
+    DMANow(3, SplashScreen_StartMap, &((screenblock *)0x6000000)[28], 2048/2);
+    DMANow(3, SplashScreenPal, ((unsigned short *)0x5000000), 512/2);
+
+
+}
+
+void initInstructions() {
+
 }
 
 void initGame() {
@@ -265,11 +309,13 @@ void initGame() {
     gameState = GAME;
     hOff = 0;
     vOff = ((512 - 160) << 4);
-    debug = 0;
 
 
-    (*(unsigned short *)0x4000000) |= (1<<8);
-    (*(volatile unsigned short*)0x4000008) = (0<<7) | (3<<14) | ((0)<<2) | ((28)<<8);
+
+    (*(unsigned short *)0x4000000) |= (1<<9);
+    (*(unsigned short *)0x4000000) &= ~(1<<8);
+
+    (*(volatile unsigned short*)0x400000A) = (0<<7) | (3<<14) | ((1)<<2) | ((28)<<8);
     DMANow(3, mapTiles, &((charblock *)0x6000000)[0], 320 / 2);
     DMANow(3, mapMap, &((screenblock *)0x6000000)[28], 8192 / 2);
     DMANow(3, mapPal, ((unsigned short *)0x5000000), 512 / 2);
@@ -283,11 +329,26 @@ void initGame() {
     initPlayer();
 }
 
+void resumeGame() {
+
+}
+
+void initPause() {
+
+}
+
+void initWin() {
+
+}
+
 void update() {
     updateInput();
     switch (gameState) {
-        case START:
-            updateStart();
+        case SPLASH:
+            updateSplash();
+            break;
+        case INSTRUCTIONS:
+            updateInstructions();
             break;
         case GAME:
             updateGame();
@@ -295,11 +356,40 @@ void update() {
         case PAUSED:
             updatePause();
             break;
+        case WIN:
+            updateWin();
+            break;
     }
     waitForVBlank();
 }
 
-void updateStart() {
+void updateSplash() {
+    static int menuState = OPTSTART;
+    if ((!(~(oldButtons)&((1<<7))) && (~buttons & ((1<<7)))) && (menuState == OPTSTART)) {
+        menuState = OPTINST;
+        DMANow(3, SplashScreen_InstructionsTiles, &((charblock *)0x6000000)[0], 3392/2);
+        DMANow(3, SplashScreen_InstructionsMap, &((screenblock *)0x6000000)[28], 2048/2);
+    }
+
+    if ((!(~(oldButtons)&((1<<6))) && (~buttons & ((1<<6)))) && (menuState == OPTINST)) {
+        menuState = OPTSTART;
+        DMANow(3, SplashScreen_StartTiles, &((charblock *)0x6000000)[0], 3392/2);
+        DMANow(3, SplashScreen_StartMap, &((screenblock *)0x6000000)[28], 2048/2);
+    }
+
+    if ((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0))))) {
+        switch (menuState) {
+            case OPTSTART:
+                initGame();
+                break;
+            case OPTINST:
+                initInstructions();
+                break;
+        }
+    }
+}
+
+void updateInstructions() {
 
 }
 
@@ -323,6 +413,10 @@ void updateGame() {
 
 
 void updatePause() {
+
+}
+
+void updateWin() {
 
 }
 
@@ -352,12 +446,12 @@ void cameraDebug() {
 }
 
 void handleVBlank() {
-    (*(volatile unsigned short *)0x04000010) = ((hOff) >> 4);
-    (*(volatile unsigned short *)0x04000012) = ((vOff) >> 4);
+    (*(volatile unsigned short *)0x04000014) = ((hOff) >> 4);
+    (*(volatile unsigned short *)0x04000016) = ((vOff) >> 4);
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 128 * 4);
 }
 
-void setupInterrupts() {
+void setupDisplayInterrupt() {
     *(unsigned short*)0x4000208 = 0;
     *(unsigned int*)0x3007FFC = interruptHandler;
 

@@ -1,18 +1,22 @@
 #pragma once 
 
 #include "myLib.h"
-#include "Spritesheet.h"
+
+//backgrounds
 #include "map.h"
+#include "SplashScreen.h"
+#include "Spritesheet.h"
+
 #include "player.h"
 
 #define MAPWH 512
 
 typedef enum {
-    START, GAME, PAUSED
+    SPLASH, INSTRUCTIONS, GAME, PAUSED, WIN
 } GameState;
 
 typedef enum {
-    TITLE
+    OPTSTART, OPTINST
 } MenuState;
 
 extern GameState gameState;
@@ -24,18 +28,23 @@ extern int debug;
 
 void init();
 
-void initStart();
+void initSplash();
+void initInstructions();
 void initGame();
 void initPause();
+void initWin();
 void setupBackground();
 
 void update();
 
-void updateStart();
+void updateSplash();
+void updateInstructions();
 void updateGame();
 void updatePause();
+void updateWin();
+
 
 //interrupts
 void handleVBlank();
-void setupInterrupts();
+void setupDisplayInterrupt();
 void interruptHandler();
