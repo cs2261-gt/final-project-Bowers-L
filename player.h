@@ -57,6 +57,10 @@ void handlePlayerInput();
 void adjusthOff();
 void adjustvOff();
 
-int playerInAir();
-int noCollisionLeft();
-int noCollisionRight();
+int collisionLeft();
+int collisionRight();
+int collisionAbove();
+int collisionBelow();
+
+int resolveCollisionX();
+int resolveCollisionY();

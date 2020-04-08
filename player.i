@@ -139,8 +139,8 @@ extern const unsigned short SpritesheetTiles[16384];
 extern const unsigned short SpritesheetPal[256];
 # 5 "game.h" 2
 # 1 "map.h" 1
-# 24 "map.h"
-extern const unsigned short mapTiles[480];
+# 22 "map.h"
+extern const unsigned short mapTiles[160];
 
 
 extern const unsigned short mapMap[4096];
@@ -148,6 +148,8 @@ extern const unsigned short mapMap[4096];
 
 extern const unsigned short mapPal[256];
 # 6 "game.h" 2
+
+
 
 
 typedef enum {
@@ -237,16 +239,20 @@ void handlePlayerInput();
 void adjusthOff();
 void adjustvOff();
 
-int playerInAir();
-int noCollisionLeft();
-int noCollisionRight();
+int collisionLeft();
+int collisionRight();
+int collisionAbove();
+int collisionBelow();
+
+int resolveCollisionX();
+int resolveCollisionY();
 # 2 "player.c" 2
 
 Player player;
 
 void initPlayer() {
-    player.worldRow = ((499 - 16) << 4);
-    player.worldCol = ((1) << 4);
+    player.worldRow = ((450) << 4);
+    player.worldCol = ((15) << 4);
     player.screenRow = player.worldRow - vOff;
     player.screenCol = player.worldCol - hOff;
     player.rdel = 0;
@@ -264,8 +270,8 @@ void initPlayer() {
     player.terminalVel = 64;
 
     player.isJumping = 0;
-    player.jumpHeight = 1024;
-    player.jumpTime = 24;
+    player.jumpHeight = 512;
+    player.jumpTime = 16;
 
     player.gravity = (2 * player.jumpHeight) / (player.jumpTime * player.jumpTime);
     player.jumpSpeed = player.gravity * player.jumpTime;
@@ -281,7 +287,7 @@ void updatePlayer() {
     handlePlayerInput();
 
 
-    if (!noCollisionBelow(player.rdel)) {
+    if (collisionBelow()) {
         player.raccel = 0;
     } else {
         player.raccel = player.gravity;
@@ -292,63 +298,15 @@ void updatePlayer() {
     player.cdel = clamp(player.cdel + player.caccel, -player.maxSpeed, player.maxSpeed);
 
 
-    updatePlayerPosition();
+    player.worldCol = clamp(player.worldCol + player.cdel, 0, ((512) << 4) - player.width);
+    resolveCollisionX();
+    adjusthOff();
+
+    player.worldRow = clamp(player.worldRow + player.rdel, 0, ((512) << 4) - player.height);
+    resolveCollisionY();
+    adjustvOff();
 
     showPlayer();
-}
-
-void updatePlayerPosition() {
-    if ((noCollisionLeft(player.cdel) && player.cdel < 0)
-        || (noCollisionRight(player.cdel) && player.cdel > 0)) {
-
-            player.worldCol = clamp(player.worldCol + player.cdel, 0, ((512) << 4) - player.width);
-            adjusthOff();
-    } else {
-
-
-
-        if (player.cdel < 0) {
-            while (noCollisionLeft(-1)) {
-                player.worldCol--;
-            }
-        }
-        if (player.cdel > 0) {
-            while (noCollisionRight(1)) {
-                player.worldCol++;
-            }
-        }
-
-        player.cdel = 0;
-        player.caccel = 0;
-    }
-
-    if ((noCollisionAbove(player.rdel) && player.rdel < 0)
-        || (noCollisionBelow(player.rdel) && player.rdel > 0)) {
-
-            player.worldRow = clamp(player.worldRow + player.rdel, 0, ((512) << 4) - player.height);
-            adjustvOff();
-    } else {
-
-
-
-        if (player.rdel < 0) {
-            while (noCollisionAbove(-1)) {
-                player.worldRow--;
-            }
-        }
-        if (player.rdel > 0) {
-            while (noCollisionBelow(1)) {
-                player.worldRow++;
-            }
-        }
-
-        player.rdel = 0;
-        if (!noCollisionBelow(player.rdel)) {
-            player.raccel = 0;
-        } else {
-            player.raccel = player.gravity;
-        }
-    }
 }
 
 void showPlayer() {
@@ -371,7 +329,6 @@ void showPlayer() {
         shadowOAM[0].attr0 |= (2<<8);
     }
 }
-
 
 
 void handlePlayerInput() {
@@ -400,7 +357,7 @@ void handlePlayerInput() {
     }
 
     if ((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0))))) {
-        if (!noCollisionBelow(1)) {
+        if (collisionBelow()) {
             player.isJumping = 1;
             player.rdel = -player.jumpSpeed;
         }
@@ -413,29 +370,54 @@ void handlePlayerInput() {
         }
     }
 }
-
-int noCollisionLeft(int cdel) {
-    return player.worldCol > 0
-        && mapCollisionBitmap[((((player.worldRow) >> 4))*(512)+(((player.worldCol + cdel) >> 4)))]
-        && mapCollisionBitmap[((((player.worldRow + player.height - 1) >> 4))*(512)+(((player.worldCol + cdel) >> 4)))];
+# 145 "player.c"
+int collisionLeft() {
+    return player.worldCol < 0
+        || mapCollisionBitmap[((((player.worldRow) >> 4))*(512)+(((player.worldCol) >> 4)))]
+        || mapCollisionBitmap[((((player.worldRow + player.height - 1) >> 4))*(512)+(((player.worldCol) >> 4)))];
 }
 
-int noCollisionRight(int cdel) {
-    return player.worldCol + player.width < ((512) << 4)
-        && mapCollisionBitmap[((((player.worldRow) >> 4))*(512)+(((player.worldCol + player.width - 1 + player.cdel) >> 4)))]
-        && mapCollisionBitmap[((((player.worldRow + player.height - 1) >> 4))*(512)+(((player.worldCol + player.width - 1 + player.cdel) >> 4)))];
+int collisionRight() {
+    return player.worldCol + player.width >= ((512) << 4)
+        || mapCollisionBitmap[((((player.worldRow) >> 4))*(512)+(((player.worldCol + player.width - 1) >> 4)))]
+        || mapCollisionBitmap[((((player.worldRow + player.height - 1) >> 4))*(512)+(((player.worldCol + player.width - 1) >> 4)))];
 }
 
-int noCollisionAbove(int rdel) {
-    return player.worldRow > 0
-        && mapCollisionBitmap[((((player.worldRow + rdel) >> 4))*(512)+(((player.worldCol) >> 4)))]
-        && mapCollisionBitmap[((((player.worldRow + rdel) >> 4))*(512)+(((player.worldCol + player.width - 1) >> 4)))];
+int collisionAbove() {
+    return player.worldRow < 0
+        || mapCollisionBitmap[((((player.worldRow) >> 4))*(512)+(((player.worldCol) >> 4)))]
+        || mapCollisionBitmap[((((player.worldRow) >> 4))*(512)+(((player.worldCol + player.width - 1) >> 4)))];
 }
 
-int noCollisionBelow(int rdel) {
-    return player.worldRow < ((512) << 4)
-        && mapCollisionBitmap[((((player.worldRow + player.height - 1 + rdel) >> 4))*(512)+(((player.worldCol) >> 4)))]
-        && mapCollisionBitmap[((((player.worldRow + player.height - 1 + rdel) >> 4))*(512)+(((player.worldCol + player.width - 1) >> 4)))];
+int collisionBelow() {
+    return player.worldRow + player.height >= ((512) << 4)
+        || mapCollisionBitmap[((((player.worldRow + player.height - 1) >> 4))*(512)+(((player.worldCol) >> 4)))]
+        || mapCollisionBitmap[((((player.worldRow + player.height - 1) >> 4))*(512)+(((player.worldCol + player.width - 1) >> 4)))];
+}
+
+int resolveCollisionX() {
+
+    while (collisionLeft()) {
+        player.worldCol++;
+        player.cdel = 0;
+    }
+
+    while (collisionRight()) {
+        player.worldCol--;
+        player.cdel = 0;
+    }
+}
+
+int resolveCollisionY() {
+    while (collisionAbove()) {
+        player.rdel = 0;
+        player.worldRow++;
+    }
+
+    while (collisionBelow()) {
+        player.rdel = 0;
+        player.worldRow--;
+    }
 }
 
 void adjusthOff() {

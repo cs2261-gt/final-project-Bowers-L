@@ -5,6 +5,8 @@
 #include "map.h"
 #include "player.h"
 
+#define MAPWH 512
+
 typedef enum {
     START, GAME, PAUSED
 } GameState;

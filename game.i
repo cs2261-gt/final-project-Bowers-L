@@ -131,8 +131,8 @@ extern const unsigned short SpritesheetTiles[16384];
 extern const unsigned short SpritesheetPal[256];
 # 5 "game.h" 2
 # 1 "map.h" 1
-# 24 "map.h"
-extern const unsigned short mapTiles[480];
+# 22 "map.h"
+extern const unsigned short mapTiles[160];
 
 
 extern const unsigned short mapMap[4096];
@@ -203,10 +203,16 @@ void handlePlayerInput();
 void adjusthOff();
 void adjustvOff();
 
-int playerInAir();
-int noCollisionLeft();
-int noCollisionRight();
+int collisionLeft();
+int collisionRight();
+int collisionAbove();
+int collisionBelow();
+
+int resolveCollisionX();
+int resolveCollisionY();
 # 7 "game.h" 2
+
+
 
 typedef enum {
     START, GAME, PAUSED
@@ -264,7 +270,7 @@ void initGame() {
 
     (*(unsigned short *)0x4000000) |= (1<<8);
     (*(volatile unsigned short*)0x4000008) = (0<<7) | (3<<14) | ((0)<<2) | ((28)<<8);
-    DMANow(3, mapTiles, &((charblock *)0x6000000)[0], 960 / 2);
+    DMANow(3, mapTiles, &((charblock *)0x6000000)[0], 320 / 2);
     DMANow(3, mapMap, &((screenblock *)0x6000000)[28], 8192 / 2);
     DMANow(3, mapPal, ((unsigned short *)0x5000000), 512 / 2);
 
