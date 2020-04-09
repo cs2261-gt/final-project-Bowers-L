@@ -5,8 +5,10 @@
 //backgrounds
 #include "map.h"
 #include "SplashScreen.h"
+#include "InstructionsScreen.h"
 #include "PauseScreen_Resume.h"
 #include "PauseScreen_Quit.h"
+#include "WinScreen.h"
 #include "Spritesheet.h"
 
 #include "player.h"
@@ -22,6 +24,7 @@ typedef enum {
 } MenuState;
 
 extern GameState gameState;
+extern MenuState menuState;
 extern int hOff;
 extern int vOff;
 

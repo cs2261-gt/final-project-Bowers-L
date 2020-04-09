@@ -1,6 +1,7 @@
 #include "game.h"
 
 GameState gameState;
+MenuState menuState;
 int hOff;
 int vOff;
 
@@ -16,6 +17,7 @@ void init() {
 
 void initSplash() {
     gameState = SPLASH;
+    menuState = OPTSTART;
     hOff = 0;
     vOff = 0;
 
@@ -27,7 +29,9 @@ void initSplash() {
 }
 
 void initInstructions() {
-
+    gameState = INSTRUCTIONS;
+    DMANow(3, InstructionsScreenTiles, &CHARBLOCK[0], InstructionsScreenTilesLen/2);
+    DMANow(3, InstructionsScreenMap, &SCREENBLOCK[28], InstructionsScreenMapLen/2);
 }
 
 void initGame() {
@@ -67,6 +71,7 @@ void resumeGame() {
 
 void initPause() {
     gameState = PAUSED;
+    menuState = OPTRESUME;
     REG_DISPCTL &= ~SPRITE_ENABLE;
     REG_BG0CNT = BG_4BPP | BG_SIZE_SMALL | BG_CHARBLOCK(0) | BG_SCREENBLOCK(28);
     //waitForVBlank();    //need to do or else the offset update will lag
@@ -78,7 +83,13 @@ void initPause() {
 }
 
 void initWin() {
+    gameState = WIN;
+    REG_DISPCTL &= ~SPRITE_ENABLE;
+    REG_BG0CNT = BG_4BPP | BG_SIZE_SMALL | BG_CHARBLOCK(0) | BG_SCREENBLOCK(28);
 
+    DMANow(3, WinScreenTiles, &CHARBLOCK[0], WinScreenTilesLen/2);
+    DMANow(3, WinScreenMap, &SCREENBLOCK[28], WinScreenMapLen/2);
+    DMANow(3, WinScreenPal, PALETTE, WinScreenPalLen/2);
 }
 
 void update() {
@@ -104,7 +115,6 @@ void update() {
 }
 
 void updateSplash() {
-    static int menuState = OPTSTART;
     if (BUTTON_PRESSED(BUTTON_DOWN) && (menuState == OPTSTART)) {
         menuState = OPTINST;
         DMANow(3, SplashScreen_InstructionsTiles, &CHARBLOCK[0], SplashScreen_InstructionsTilesLen/2);
@@ -144,6 +154,11 @@ void updateGame() {
         }
     }
 
+    //THIS IS TEMPORARY!
+    if (BUTTON_PRESSED(BUTTON_R)) {
+        initWin();
+    }
+
     if (BUTTON_PRESSED(BUTTON_SELECT)) {
         initPause();
     }
@@ -159,7 +174,6 @@ void updateGame() {
 
 
 void updatePause() {
-    static int menuState = OPTRESUME;
     if (BUTTON_PRESSED(BUTTON_DOWN) && (menuState == OPTRESUME)) {
         menuState = OPTQUIT;
         DMANow(3, PauseScreen_QuitTiles, &CHARBLOCK[0], PauseScreen_QuitTilesLen/2);
@@ -185,7 +199,9 @@ void updatePause() {
 }
 
 void updateWin() {
-
+    if (BUTTON_PRESSED(BUTTON_SELECT)) {
+        initSplash();
+    }
 }
 
 void cameraDebug() {
