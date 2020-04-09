@@ -350,7 +350,6 @@ void initGame() {
 
 
 
-
     (*(volatile unsigned short*)0x4000008) = (0<<7) | (3<<14) | ((0)<<2) | ((28)<<8);
     DMANow(3, mapTiles, &((charblock *)0x6000000)[0], 320 / 2);
     DMANow(3, mapMap, &((screenblock *)0x6000000)[28], 8192 / 2);

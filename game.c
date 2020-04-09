@@ -40,7 +40,6 @@ void initGame() {
     hOff = 0;
     vOff = ENCODE4(MAPWH - SCREENHEIGHT);
     
-
     //setup background(s)
 
     //As convention I am using charblock 0 for background 0 tiles and screenblocks 28-31 for displaying the large background
