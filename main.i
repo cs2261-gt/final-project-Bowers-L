@@ -151,13 +151,30 @@ extern const unsigned short SplashScreen_InstructionsMap[1024];
 
 extern const unsigned short SplashScreenPal[256];
 # 8 "game.h" 2
+# 1 "PauseScreen_Resume.h" 1
+# 22 "PauseScreen_Resume.h"
+extern const unsigned short PauseScreen_ResumeTiles[848];
+
+
+extern const unsigned short PauseScreen_ResumeMap[1024];
+
+
+extern const unsigned short PauseScreen_ResumePal[256];
+# 9 "game.h" 2
+# 1 "PauseScreen_Quit.h" 1
+# 21 "PauseScreen_Quit.h"
+extern const unsigned short PauseScreen_QuitTiles[848];
+
+
+extern const unsigned short PauseScreen_QuitMap[1024];
+# 10 "game.h" 2
 # 1 "Spritesheet.h" 1
 # 21 "Spritesheet.h"
 extern const unsigned short SpritesheetTiles[16384];
 
 
 extern const unsigned short SpritesheetPal[256];
-# 9 "game.h" 2
+# 11 "game.h" 2
 
 # 1 "player.h" 1
        
@@ -229,7 +246,7 @@ int collisionBelow();
 
 int resolveCollisionX();
 int resolveCollisionY();
-# 11 "game.h" 2
+# 13 "game.h" 2
 
 
 
@@ -238,7 +255,7 @@ typedef enum {
 } GameState;
 
 typedef enum {
-    OPTSTART, OPTINST
+    OPTSTART, OPTINST, OPTRESUME, OPTQUIT
 } MenuState;
 
 extern GameState gameState;

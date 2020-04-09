@@ -5,6 +5,8 @@
 //backgrounds
 #include "map.h"
 #include "SplashScreen.h"
+#include "PauseScreen_Resume.h"
+#include "PauseScreen_Quit.h"
 #include "Spritesheet.h"
 
 #include "player.h"
@@ -16,7 +18,7 @@ typedef enum {
 } GameState;
 
 typedef enum {
-    OPTSTART, OPTINST
+    OPTSTART, OPTINST, OPTRESUME, OPTQUIT
 } MenuState;
 
 extern GameState gameState;

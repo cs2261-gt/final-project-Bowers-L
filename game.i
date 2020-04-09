@@ -151,13 +151,30 @@ extern const unsigned short SplashScreen_InstructionsMap[1024];
 
 extern const unsigned short SplashScreenPal[256];
 # 8 "game.h" 2
+# 1 "PauseScreen_Resume.h" 1
+# 22 "PauseScreen_Resume.h"
+extern const unsigned short PauseScreen_ResumeTiles[848];
+
+
+extern const unsigned short PauseScreen_ResumeMap[1024];
+
+
+extern const unsigned short PauseScreen_ResumePal[256];
+# 9 "game.h" 2
+# 1 "PauseScreen_Quit.h" 1
+# 21 "PauseScreen_Quit.h"
+extern const unsigned short PauseScreen_QuitTiles[848];
+
+
+extern const unsigned short PauseScreen_QuitMap[1024];
+# 10 "game.h" 2
 # 1 "Spritesheet.h" 1
 # 21 "Spritesheet.h"
 extern const unsigned short SpritesheetTiles[16384];
 
 
 extern const unsigned short SpritesheetPal[256];
-# 9 "game.h" 2
+# 11 "game.h" 2
 
 # 1 "player.h" 1
        
@@ -229,7 +246,7 @@ int collisionBelow();
 
 int resolveCollisionX();
 int resolveCollisionY();
-# 11 "game.h" 2
+# 13 "game.h" 2
 
 
 
@@ -238,7 +255,7 @@ typedef enum {
 } GameState;
 
 typedef enum {
-    OPTSTART, OPTINST
+    OPTSTART, OPTINST, OPTRESUME, OPTQUIT
 } MenuState;
 
 extern GameState gameState;
@@ -292,12 +309,10 @@ void initSplash() {
     vOff = 0;
 
     (*(unsigned short *)0x4000000) |= (1<<8);
-    (*(volatile unsigned short*)0x4000008) = (0<<7) | (3<<14) | ((0)<<2) | ((28)<<8);
+    (*(volatile unsigned short*)0x4000008) = (0<<7) | (0<<14) | ((0)<<2) | ((28)<<8);
     DMANow(3, SplashScreen_StartTiles, &((charblock *)0x6000000)[0], 3392/2);
     DMANow(3, SplashScreen_StartMap, &((screenblock *)0x6000000)[28], 2048/2);
     DMANow(3, SplashScreenPal, ((unsigned short *)0x5000000), 512/2);
-
-
 }
 
 void initInstructions() {
@@ -312,10 +327,9 @@ void initGame() {
 
 
 
-    (*(unsigned short *)0x4000000) |= (1<<9);
-    (*(unsigned short *)0x4000000) &= ~(1<<8);
 
-    (*(volatile unsigned short*)0x400000A) = (0<<7) | (3<<14) | ((1)<<2) | ((28)<<8);
+
+    (*(volatile unsigned short*)0x4000008) = (0<<7) | (3<<14) | ((0)<<2) | ((28)<<8);
     DMANow(3, mapTiles, &((charblock *)0x6000000)[0], 320 / 2);
     DMANow(3, mapMap, &((screenblock *)0x6000000)[28], 8192 / 2);
     DMANow(3, mapPal, ((unsigned short *)0x5000000), 512 / 2);
@@ -330,10 +344,25 @@ void initGame() {
 }
 
 void resumeGame() {
+    (*(unsigned short *)0x4000000) |= (1<<12);
+    gameState = GAME;
+
+    (*(volatile unsigned short*)0x4000008) = (0<<7) | (3<<14) | ((0)<<2) | ((28)<<8);
+    DMANow(3, mapTiles, &((charblock *)0x6000000)[0], 320 / 2);
+    DMANow(3, mapMap, &((screenblock *)0x6000000)[28], 8192 / 2);
+    DMANow(3, mapPal, ((unsigned short *)0x5000000), 512 / 2);
 
 }
 
 void initPause() {
+    gameState = PAUSED;
+    (*(unsigned short *)0x4000000) &= ~(1<<12);
+    (*(volatile unsigned short*)0x4000008) = (0<<7) | (0<<14) | ((0)<<2) | ((28)<<8);
+
+
+    DMANow(3, PauseScreen_ResumeTiles, &((charblock *)0x6000000)[0], 1696/2);
+    DMANow(3, PauseScreen_ResumeMap, &((screenblock *)0x6000000)[28], 2048/2);
+    DMANow(3, PauseScreen_ResumePal, ((unsigned short *)0x5000000), 512/2);
 
 }
 
@@ -390,7 +419,9 @@ void updateSplash() {
 }
 
 void updateInstructions() {
-
+    if ((!(~(oldButtons)&((1<<2))) && (~buttons & ((1<<2))))) {
+        initSplash();
+    }
 }
 
 void updateGame() {
@@ -400,6 +431,10 @@ void updateGame() {
         } else {
             debug = 1;
         }
+    }
+
+    if ((!(~(oldButtons)&((1<<2))) && (~buttons & ((1<<2))))) {
+        initPause();
     }
 
     if (debug) {
@@ -413,7 +448,29 @@ void updateGame() {
 
 
 void updatePause() {
+    static int menuState = OPTRESUME;
+    if ((!(~(oldButtons)&((1<<7))) && (~buttons & ((1<<7)))) && (menuState == OPTRESUME)) {
+        menuState = OPTQUIT;
+        DMANow(3, PauseScreen_QuitTiles, &((charblock *)0x6000000)[0], 1696/2);
+        DMANow(3, PauseScreen_QuitMap, &((screenblock *)0x6000000)[28], 2048/2);
+    }
 
+    if ((!(~(oldButtons)&((1<<6))) && (~buttons & ((1<<6)))) && (menuState == OPTQUIT)) {
+        menuState = OPTRESUME;
+        DMANow(3, PauseScreen_ResumeTiles, &((charblock *)0x6000000)[0], 1696/2);
+        DMANow(3, PauseScreen_ResumeMap, &((screenblock *)0x6000000)[28], 2048/2);
+    }
+
+    if ((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0))))) {
+        switch (menuState) {
+            case OPTRESUME:
+                resumeGame();
+                break;
+            case OPTQUIT:
+                initSplash();
+                break;
+        }
+    }
 }
 
 void updateWin() {
@@ -446,9 +503,15 @@ void cameraDebug() {
 }
 
 void handleVBlank() {
-    (*(volatile unsigned short *)0x04000014) = ((hOff) >> 4);
-    (*(volatile unsigned short *)0x04000016) = ((vOff) >> 4);
+    if (gameState == GAME) {
+        (*(volatile unsigned short *)0x04000010) = ((hOff) >> 4);
+        (*(volatile unsigned short *)0x04000012) = ((vOff) >> 4);
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 128 * 4);
+    } else {
+        (*(volatile unsigned short *)0x04000010) = 0;
+        (*(volatile unsigned short *)0x04000012) = 0;
+    }
+
 }
 
 void setupDisplayInterrupt() {
