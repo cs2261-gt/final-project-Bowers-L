@@ -209304,30 +209304,30 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -209640,22 +209640,6 @@ mapCollisionBitmap:
 	.short	32767
 	.short	32767
 	.short	32767
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
 	.short	0
 	.short	0
 	.short	0
@@ -209832,14 +209816,30 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -210328,30 +210328,30 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -210664,22 +210664,6 @@ mapCollisionBitmap:
 	.short	32767
 	.short	32767
 	.short	32767
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
 	.short	0
 	.short	0
 	.short	0
@@ -210856,14 +210840,30 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -211352,30 +211352,30 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -211688,23 +211688,6 @@ mapCollisionBitmap:
 	.short	32767
 	.short	32767
 	.short	32767
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
 	.short	0
 	.short	0
 	.short	0
@@ -211881,13 +211864,30 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -212200,7 +212200,6 @@ mapCollisionBitmap:
 	.short	32767
 	.short	32767
 	.short	32767
-	.short	0
 	.short	0
 	.short	0
 	.short	0
@@ -212377,29 +212376,30 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -212712,23 +212712,6 @@ mapCollisionBitmap:
 	.short	32767
 	.short	32767
 	.short	32767
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
 	.short	0
 	.short	0
 	.short	0
@@ -212905,13 +212888,30 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -213288,30 +213288,15 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
 	.short	0
 	.short	0
 	.short	0
@@ -213519,6 +213504,21 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
 	.short	32767
 	.short	32767
 	.short	0
@@ -213800,30 +213800,15 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
 	.short	0
 	.short	0
 	.short	0
@@ -214031,6 +214016,21 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
 	.short	32767
 	.short	32767
 	.short	0
@@ -214312,30 +214312,6 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -214543,8 +214519,6 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	32767
-	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -214569,6 +214543,8 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -214576,12 +214552,34 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
 	.short	32767
 	.short	32767
 	.short	32767
@@ -214736,6 +214734,8 @@ mapCollisionBitmap:
 	.short	32767
 	.short	32767
 	.short	32767
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -214824,30 +214824,21 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
 	.short	0
 	.short	0
 	.short	0
@@ -215055,6 +215046,15 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
 	.short	32767
 	.short	32767
 	.short	0
@@ -215336,30 +215336,20 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
 	.short	0
 	.short	0
 	.short	0
@@ -215567,6 +215557,16 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
 	.short	32767
 	.short	32767
 	.short	0
@@ -215848,30 +215848,18 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
 	.short	0
 	.short	0
 	.short	0
@@ -216079,6 +216067,18 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
 	.short	32767
 	.short	32767
 	.short	0
@@ -216360,30 +216360,17 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
 	.short	0
 	.short	0
 	.short	0
@@ -216591,6 +216578,19 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	0
 	.short	32767
 	.short	32767
 	.short	0
@@ -216624,16 +216624,6 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
 	.short	32767
 	.short	32767
 	.short	32767
@@ -216770,108 +216760,6 @@ mapCollisionBitmap:
 	.short	32767
 	.short	32767
 	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	32767
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
 	.short	32767
 	.short	32767
 	.short	32767
@@ -216896,45 +216784,6 @@ mapCollisionBitmap:
 	.short	32767
 	.short	32767
 	.short	32767
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
 	.short	0
 	.short	0
 	.short	0
@@ -217103,8 +216952,6 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	32767
-	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -217256,6 +217103,8 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -217617,30 +217466,28 @@ mapCollisionBitmap:
 	.short	0
 	.short	32767
 	.short	32767
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -217768,6 +217615,8 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -218129,23 +217978,28 @@ mapCollisionBitmap:
 	.short	0
 	.short	32767
 	.short	32767
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -218273,6 +218127,8 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -218632,6 +218488,30 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -218639,8 +218519,6 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	32767
-	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -218761,6 +218639,8 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -219120,6 +219000,30 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -219151,8 +219055,6 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	32767
-	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -219249,6 +219151,8 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -219608,6 +219512,30 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -219663,8 +219591,6 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	32767
-	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -219737,6 +219663,8 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -220096,6 +220024,30 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -220175,8 +220127,6 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	32767
-	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -220225,6 +220175,8 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -220584,6 +220536,30 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -220687,8 +220663,6 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
-	.short	32767
-	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -220713,6 +220687,8 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0
@@ -221072,6 +221048,30 @@ mapCollisionBitmap:
 	.short	0
 	.short	0
 	.short	0
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
+	.short	32767
 	.short	0
 	.short	0
 	.short	0

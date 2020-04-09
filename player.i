@@ -309,6 +309,7 @@ int resolveCollisionY();
 
 Player player;
 
+
 void initPlayer() {
     player.worldRow = ((512 - 14) << 4) - player.height;
     player.worldCol = ((15) << 4);
@@ -327,6 +328,7 @@ void initPlayer() {
     player.decelCurve = 8;
     player.maxSpeed = 16;
     player.terminalVel = 64;
+
 
     player.isJumping = 0;
     player.jumpHeight = 512;
@@ -427,7 +429,7 @@ void handlePlayerInput() {
         }
     }
 }
-# 143 "player.c"
+# 145 "player.c"
 int collisionLeft() {
     return player.worldCol < 0
         || mapCollisionBitmap[((((player.worldRow) >> 4))*(512)+(((player.worldCol) >> 4)))]
@@ -453,8 +455,8 @@ int collisionBelow() {
 }
 
 int touchingGround() {
-    return mapCollisionBitmap[((((player.worldRow + player.height - 1 + 16) >> 4))*(512)+(((player.worldCol) >> 4)))]
-    || mapCollisionBitmap[((((player.worldRow + player.height - 1 + 16) >> 4))*(512)+(((player.worldCol + player.width - 1) >> 4)))];
+    return mapCollisionBitmap[((((player.worldRow + player.height - 1 + 1) >> 4))*(512)+(((player.worldCol) >> 4)))]
+    || mapCollisionBitmap[((((player.worldRow + player.height - 1 + 1) >> 4))*(512)+(((player.worldCol + player.width - 1) >> 4)))];
 }
 
 int resolveCollisions() {
@@ -470,14 +472,12 @@ int resolveCollisions() {
     if (collisionLeft()) {
         collisionOnLeft = 1;
         while (collisionLeft()) {
-            player.cdel = 0;
             player.worldCol += step;
             xDepth++;
         }
         player.worldCol -= xDepth * step;
     } else {
         while (collisionRight()) {
-            player.cdel = 0;
             player.worldCol-= step;
             xDepth++;
         }
@@ -487,14 +487,12 @@ int resolveCollisions() {
     if (collisionAbove()) {
         collisionOnAbove = 1;
         while (collisionAbove()) {
-            player.rdel = 0;
             player.worldRow += step;
             yDepth++;
         }
         player.worldRow -= yDepth * step;
     } else {
         while (collisionBelow()) {
-            player.rdel = 0;
             player.worldRow-= step;
             yDepth++;
         }
@@ -502,12 +500,18 @@ int resolveCollisions() {
     }
 
     if (xDepth <= yDepth) {
+        if (xDepth != 0) {
+            player.cdel = 0;
+        }
         if (collisionOnLeft) {
             player.worldCol += xDepth * step;
         } else {
             player.worldCol -= xDepth * step;
         }
     } else {
+        if (yDepth != 0) {
+            player.rdel = 0;
+        }
         if (collisionOnAbove) {
             player.worldRow += yDepth * step;
         } else {
