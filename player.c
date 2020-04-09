@@ -2,7 +2,20 @@
 
 Player player;
 
+/*
+Note about collisions: 
+I've tried several ways of handling collisions, which each come with some associated problems.
+The current method of handling collisions waits until the player's position conflicts with an occupied
+pixel in the collision map and resolves it by pushing the player in the direction that results in the shortest
+distance traveled for there not to be a collision. 
 
+The main arguable downside is a rounding effect on corners of overhead platforms where the 
+player clips to the left or right edge rather than being stopped by the corner.
+
+There is also a known bug where the player sometimes stops one pixel below the ground rather than completely on the ground.
+My belief is that this has to do with the positions not lining up with the subpixel speeds (each pixel is split into 16 subpixels)
+associated with the gravity calculations. If I can't fix this by M3, then I'll change the precision to single pixels.
+*/
 void initPlayer() {
     player.worldRow = ENCODE4(MAPWH - 14) - player.height;
     player.worldCol = ENCODE4(15);
