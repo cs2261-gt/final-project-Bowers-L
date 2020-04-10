@@ -9,6 +9,10 @@ DMA *dma = (DMA *)0x40000B0;
 // The shadowOAM
 OBJ_ATTR shadowOAM[128];
 
+// Input
+u16 oldButtons;
+u16 buttons;
+
 // Set a pixel on the screen in Mode 3
 void setPixel3(int col, int row, unsigned short color) {
     videoBuffer[OFFSET(col, row, SCREENWIDTH)] = color;
@@ -120,6 +124,12 @@ void flipPage() {
     REG_DISPCTL ^= DISP_BACKBUFFER;
 }
 
+//Updates the input variables
+void updateInput() {
+    oldButtons = buttons;
+    buttons = BUTTONS;
+}
+
 // Set up and begin a DMA transfer
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt) {
 
@@ -143,5 +153,43 @@ int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, i
 void hideSprites() {
     for (int i = 0; i < 128; i++) {
         shadowOAM[i].attr0 = ATTR0_HIDE;
+    }
+}
+
+int max(int a, int b) {
+    if (a > b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+int min(int a, int b) {
+    if (a < b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+int clamp(int value, int min, int max) {
+    if (value < min) {
+        return min;
+    }
+
+    if (value > max) {
+        return max;
+    }
+
+    return value;
+}
+
+int signOf(int value) {
+    if (value < 0) {
+        return -1;
+    } else if (value > 0) {
+        return 1;
+    } else {
+        return 0;
     }
 }
