@@ -7,7 +7,8 @@
 #include "camera.h"
 #include "item.h"
 
-#define MAPWH 512
+#define MAPWH 1024
+#define MAPSB 22
 
 //used to look around the level without camera being tied to the player
 extern int debug;

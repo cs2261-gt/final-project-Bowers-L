@@ -13,9 +13,9 @@
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
-# 64 "myLib.h"
+# 66 "myLib.h"
 extern unsigned short *videoBuffer;
-# 88 "myLib.h"
+# 90 "myLib.h"
 typedef struct {
  u16 tileimg[8192];
 } charblock;
@@ -58,7 +58,7 @@ typedef struct {
 
 
 extern OBJ_ATTR shadowOAM[];
-# 160 "myLib.h"
+# 162 "myLib.h"
 void hideSprites();
 
 
@@ -82,7 +82,7 @@ typedef struct {
     int numFrames;
     int hide;
 } ANISPRITE;
-# 203 "myLib.h"
+# 205 "myLib.h"
 extern unsigned short oldButtons;
 extern unsigned short buttons;
 
@@ -91,7 +91,7 @@ extern unsigned short buttons;
 
 
 void updateInput();
-# 222 "myLib.h"
+# 224 "myLib.h"
 typedef volatile struct {
     volatile const void *src;
     volatile void *dst;
@@ -100,9 +100,9 @@ typedef volatile struct {
 
 
 extern DMA *dma;
-# 262 "myLib.h"
+# 264 "myLib.h"
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt);
-# 356 "myLib.h"
+# 358 "myLib.h"
 typedef struct{
     const unsigned char* data;
     int length;
@@ -141,7 +141,7 @@ int lerp(int a, int b, int curr, int max);
 extern const unsigned short mapTiles[1696];
 
 
-extern const unsigned short mapMap[8192];
+extern const unsigned short mapMap[16384];
 
 
 extern const unsigned short mapPal[256];
@@ -233,7 +233,7 @@ void updateWin();
 
 # 1 "mapCollision.h" 1
 # 20 "mapCollision.h"
-extern const unsigned short mapCollisionBitmap[524288];
+extern const unsigned short mapCollisionBitmap[1048576];
 # 5 "player.h" 2
 
 
@@ -333,6 +333,7 @@ void showItem(Item* item);
 
 
 
+
 extern int debug;
 
 void init();
@@ -342,24 +343,40 @@ void initGame();
 void resumeGame();
 void updateGame();
 
+void drawGame();
+
+void setupMap();
 
 
-void handleVBlank();
+
 void setupDisplayInterrupt();
 void interruptHandler();
 # 6 "camera.h" 2
 
 
+
+
 typedef struct {
+
     int row;
     int col;
+
+
+
+    int sbbrow;
+    int sbbcol;
 } Camera;
 
 extern Camera camera;
 
-void cameraDebug();
+
 void initCamera();
-void updateCamer();
+void updateCamera();
+
+void cameraDebug();
+void centerCameraToPlayer();
+
+void updateSBB();
 # 2 "camera.c" 2
 
 Camera camera;
@@ -367,9 +384,62 @@ Camera camera;
 void initCamera(int col, int row) {
     camera.col = col;
     camera.row = row;
+    camera.sbbcol = clamp(((col) >> 4) / 256, 0, (1024 / 256) - 2);
+    camera.sbbrow = clamp(((row) >> 4) / 256, 0, (1024 / 256) - 2);
 }
 
 void updateCamera() {
+    if (debug) {
+        cameraDebug();
+    } else {
+        centerCameraToPlayer();
+    }
+
+    updateSBB();
+}
+
+void updateSBB() {
+
+
+
+    if (((camera.col) >> 4) < (camera.sbbcol) * 256
+        && camera.sbbcol > 0) {
+        camera.sbbcol--;
+
+
+        for (int i = 0; i < (1024 / 256)-1; i++) {
+            DMANow( 3,
+                    &mapMap[1024*((i+1)*((1024 / 256))+(camera.sbbcol))],
+                    &((screenblock *)0x6000000)[22 + ((i+1)*(2)+(camera.sbbcol))],
+                    1024);
+        }
+    }
+
+    if (((camera.col) >> 4) > (camera.sbbcol + 1) * 256
+        && camera.sbbcol < (1024 / 256) - 2) {
+        camera.sbbcol++;
+
+
+        for (int i = 0; i < (1024 / 256)-1; i++) {
+            DMANow( 3,
+                    &mapMap[1024*((i)*((1024 / 256))+(camera.sbbcol+1))],
+                    &((screenblock *)0x6000000)[22 + ((i)*(2)+(camera.sbbcol+1))],
+                    1024);
+        }
+    }
+
+    if (((camera.row) >> 4) < (camera.sbbrow) * 256
+        && camera.sbbrow > 0) {
+        camera.sbbrow--;
+    }
+
+    if (((camera.row) >> 4) > (camera.sbbrow + 1) * 256
+        && camera.sbbrow < (1024 / 256) - 2) {
+        camera.sbbrow++;
+    }
+}
+
+void centerCameraToPlayer() {
     if (player.cdel < 0) {
 
         if ((camera.col > 0) && (player.screenCol + player.width / 2 < ((240 / 2) << 4))) {
@@ -377,8 +447,8 @@ void updateCamera() {
         }
     } else if (player.cdel > 0) {
 
-        if ((camera.col + ((240 - 1) << 4) < ((512) << 4)) && (player.screenCol + player.width / 2 > ((240 / 2) << 4))) {
-            camera.col = min(camera.col + player.cdel, ((512 - 240) << 4));
+        if ((camera.col + ((240 - 1) << 4) < ((1024) << 4)) && (player.screenCol + player.width / 2 > ((240 / 2) << 4))) {
+            camera.col = min(camera.col + player.cdel, ((1024 - 240) << 4));
         }
     }
 
@@ -389,8 +459,8 @@ void updateCamera() {
         }
     } else if (player.rdel > 0) {
 
-        if ((camera.row + ((160 - 1) << 4) < ((512) << 4)) && (player.screenRow + player.height / 2 > ((160 / 2) << 4))) {
-            camera.row = min(camera.row + player.rdel, ((512 - 160) << 4));
+        if ((camera.row + ((160 - 1) << 4) < ((1024) << 4)) && (player.screenRow + player.height / 2 > ((160 / 2) << 4))) {
+            camera.row = min(camera.row + player.rdel, ((1024 - 160) << 4));
         }
     }
 }
@@ -404,8 +474,8 @@ void cameraDebug() {
         }
     }
     if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
-        if (camera.col < ((512 - 240) << 4)) {
-            camera.col = min(camera.col + cameraSpeed, ((512 - 240) << 4));
+        if (camera.col < ((1024 - 240) << 4)) {
+            camera.col = min(camera.col + cameraSpeed, ((1024 - 240) << 4));
         }
     }
 
@@ -415,9 +485,8 @@ void cameraDebug() {
         }
     }
     if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<7)))) {
-        if (camera.row < ((512 - 160) << 4)) {
-            camera.row = min(camera.row + cameraSpeed, ((512 - 160) << 4));
+        if (camera.row < ((1024 - 160) << 4)) {
+            camera.row = min(camera.row + cameraSpeed, ((1024 - 160) << 4));
         }
     }
-
 }

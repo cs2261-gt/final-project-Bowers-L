@@ -10,9 +10,9 @@
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
-# 64 "myLib.h"
+# 66 "myLib.h"
 extern unsigned short *videoBuffer;
-# 88 "myLib.h"
+# 90 "myLib.h"
 typedef struct {
  u16 tileimg[8192];
 } charblock;
@@ -55,7 +55,7 @@ typedef struct {
 
 
 extern OBJ_ATTR shadowOAM[];
-# 160 "myLib.h"
+# 162 "myLib.h"
 void hideSprites();
 
 
@@ -79,7 +79,7 @@ typedef struct {
     int numFrames;
     int hide;
 } ANISPRITE;
-# 203 "myLib.h"
+# 205 "myLib.h"
 extern unsigned short oldButtons;
 extern unsigned short buttons;
 
@@ -88,7 +88,7 @@ extern unsigned short buttons;
 
 
 void updateInput();
-# 222 "myLib.h"
+# 224 "myLib.h"
 typedef volatile struct {
     volatile const void *src;
     volatile void *dst;
@@ -97,9 +97,9 @@ typedef volatile struct {
 
 
 extern DMA *dma;
-# 262 "myLib.h"
+# 264 "myLib.h"
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt);
-# 356 "myLib.h"
+# 358 "myLib.h"
 typedef struct{
     const unsigned char* data;
     int length;

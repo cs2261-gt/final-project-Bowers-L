@@ -38,7 +38,7 @@ initPlayer:
 	ldr	r1, [r3, #28]
 	str	r7, [r3, #28]
 	ldr	r7, [r0]
-	rsb	r1, r1, #7744
+	rsb	r1, r1, #15488
 	str	r1, [r3, #8]
 	ldr	r0, [r0, #4]
 	sub	r1, r1, r7
@@ -165,7 +165,7 @@ collisionLeft:
 	blt	.L21
 	ldr	r1, [r0, #8]
 	asr	r2, r1, #4
-	lsl	r2, r2, #9
+	lsl	r2, r2, #10
 	add	r2, r2, r3, asr #4
 	ldr	ip, .L23+4
 	lsl	r2, r2, #1
@@ -181,7 +181,7 @@ collisionLeft:
 	add	r1, r1, r2
 	sub	r1, r1, #1
 	asr	r1, r1, #4
-	add	r3, r3, r1, lsl #9
+	add	r3, r3, r1, lsl #10
 	lsl	r3, r3, #1
 	ldrh	r0, [ip, r3]
 	subs	r0, r0, #0
@@ -208,12 +208,12 @@ collisionRight:
 	ldr	r3, [r1, #12]
 	ldr	r2, [r1, #24]
 	add	r3, r3, r2
-	cmp	r3, #8192
+	cmp	r3, #16384
 	bge	.L28
 	ldr	r0, [r1, #8]
 	asr	r2, r0, #4
 	sub	r3, r3, #1
-	lsl	r2, r2, #9
+	lsl	r2, r2, #10
 	add	r2, r2, r3, asr #4
 	ldr	ip, .L30+4
 	lsl	r2, r2, #1
@@ -229,7 +229,7 @@ collisionRight:
 	add	r0, r0, r2
 	sub	r0, r0, #1
 	asr	r0, r0, #4
-	add	r3, r3, r0, lsl #9
+	add	r3, r3, r0, lsl #10
 	lsl	r3, r3, #1
 	ldrh	r0, [ip, r3]
 	subs	r0, r0, #0
@@ -259,12 +259,12 @@ collisionAbove:
 	ldr	r0, [r1, #12]
 	asr	r3, r3, #4
 	asr	r2, r0, #4
-	add	r2, r2, r3, lsl #9
+	add	r2, r2, r3, lsl #10
 	ldr	ip, .L37+4
 	lsl	r2, r2, #1
 	ldrh	r2, [ip, r2]
 	cmp	r2, #0
-	lsl	r3, r3, #9
+	lsl	r3, r3, #10
 	beq	.L36
 .L35:
 	mov	r0, #1
@@ -300,18 +300,18 @@ collisionBelow:
 	ldr	r3, [r2, #8]
 	ldr	r1, [r2, #28]
 	add	r3, r3, r1
-	cmp	r3, #8192
+	cmp	r3, #16384
 	bge	.L42
 	ldr	r0, [r2, #12]
 	sub	r3, r3, #1
 	asr	r3, r3, #4
 	asr	r1, r0, #4
-	add	r1, r1, r3, lsl #9
+	add	r1, r1, r3, lsl #10
 	ldr	ip, .L44+4
 	lsl	r1, r1, #1
 	ldrh	r1, [ip, r1]
 	cmp	r1, #0
-	lsl	r3, r3, #9
+	lsl	r3, r3, #10
 	beq	.L43
 .L42:
 	mov	r0, #1
@@ -350,12 +350,12 @@ touchingGround:
 	add	r3, r3, r2
 	asr	r3, r3, #4
 	asr	r2, r1, #4
-	add	r2, r2, r3, lsl #9
+	add	r2, r2, r3, lsl #10
 	ldr	ip, .L49+4
 	lsl	r2, r2, #1
 	ldrh	r2, [ip, r2]
 	cmp	r2, #0
-	lsl	r3, r3, #9
+	lsl	r3, r3, #10
 	bne	.L48
 	ldr	r2, [r0, #24]
 	add	r1, r1, r2
@@ -456,7 +456,7 @@ handlePlayerInput:
 	ldr	r3, .L82+4
 	ldr	r2, [r3, #24]
 	ldr	r0, [r3, #12]
-	rsb	r2, r2, #8192
+	rsb	r2, r2, #16384
 	cmp	r0, r2
 	ldrlt	r2, [r3, #64]
 	str	r1, [r3, #100]
@@ -639,7 +639,7 @@ updatePlayer:
 	ldr	r0, [r4, #12]
 	mov	r1, #0
 	add	r0, r3, r0
-	rsb	r2, r2, #8192
+	rsb	r2, r2, #16384
 	str	r3, [r4, #20]
 	mov	lr, pc
 	bx	r5
@@ -647,7 +647,7 @@ updatePlayer:
 	ldr	r1, [r4, #16]
 	ldr	r2, [r4, #28]
 	ldr	r0, [r4, #8]
-	rsb	r2, r2, #8192
+	rsb	r2, r2, #16384
 	add	r0, r0, r1
 	mov	r1, #0
 	str	r3, [r4, #12]

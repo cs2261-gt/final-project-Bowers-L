@@ -59,6 +59,7 @@ typedef unsigned int u32;
 // Display Constants
 #define SCREENHEIGHT 160
 #define SCREENWIDTH  240
+#define SBBWH 256
 #define SBBSIZE 1024
 
 // Video Buffer

@@ -13,9 +13,9 @@
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
-# 64 "myLib.h"
+# 66 "myLib.h"
 extern unsigned short *videoBuffer;
-# 88 "myLib.h"
+# 90 "myLib.h"
 typedef struct {
  u16 tileimg[8192];
 } charblock;
@@ -58,7 +58,7 @@ typedef struct {
 
 
 extern OBJ_ATTR shadowOAM[];
-# 160 "myLib.h"
+# 162 "myLib.h"
 void hideSprites();
 
 
@@ -82,7 +82,7 @@ typedef struct {
     int numFrames;
     int hide;
 } ANISPRITE;
-# 203 "myLib.h"
+# 205 "myLib.h"
 extern unsigned short oldButtons;
 extern unsigned short buttons;
 
@@ -91,7 +91,7 @@ extern unsigned short buttons;
 
 
 void updateInput();
-# 222 "myLib.h"
+# 224 "myLib.h"
 typedef volatile struct {
     volatile const void *src;
     volatile void *dst;
@@ -100,9 +100,9 @@ typedef volatile struct {
 
 
 extern DMA *dma;
-# 262 "myLib.h"
+# 264 "myLib.h"
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt);
-# 356 "myLib.h"
+# 358 "myLib.h"
 typedef struct{
     const unsigned char* data;
     int length;
@@ -131,7 +131,7 @@ int lerp(int a, int b, int curr, int max);
 extern const unsigned short mapTiles[1696];
 
 
-extern const unsigned short mapMap[8192];
+extern const unsigned short mapMap[16384];
 
 
 extern const unsigned short mapPal[256];
@@ -206,7 +206,7 @@ extern const unsigned short SpritesheetPal[256];
 
 # 1 "mapCollision.h" 1
 # 20 "mapCollision.h"
-extern const unsigned short mapCollisionBitmap[524288];
+extern const unsigned short mapCollisionBitmap[1048576];
 # 5 "player.h" 2
 
 
@@ -274,22 +274,28 @@ int resolveCollisionY();
 # 7 "game.h" 2
 # 1 "camera.h" 1
        
-
-
-
-
-
-
+# 10 "camera.h"
 typedef struct {
+
     int row;
     int col;
+
+
+
+    int sbbrow;
+    int sbbcol;
 } Camera;
 
 extern Camera camera;
 
-void cameraDebug();
+
 void initCamera();
-void updateCamer();
+void updateCamera();
+
+void cameraDebug();
+void centerCameraToPlayer();
+
+void updateSBB();
 # 8 "game.h" 2
 # 1 "item.h" 1
        
@@ -324,6 +330,7 @@ void showItem(Item* item);
 
 
 
+
 extern int debug;
 
 void init();
@@ -333,9 +340,12 @@ void initGame();
 void resumeGame();
 void updateGame();
 
+void drawGame();
+
+void setupMap();
 
 
-void handleVBlank();
+
 void setupDisplayInterrupt();
 void interruptHandler();
 # 15 "stateMachine.h" 2
@@ -367,16 +377,16 @@ void initSplash() {
     menuState = OPTSTART;
 
     (*(unsigned short *)0x4000000) |= (1<<8);
-    (*(volatile unsigned short*)0x4000008) = (0<<7) | (0<<14) | ((0)<<2) | ((28)<<8);
+    (*(volatile unsigned short*)0x4000008) = (0<<7) | (0<<14) | ((0)<<2) | ((22)<<8);
     DMANow(3, SplashScreen_StartTiles, &((charblock *)0x6000000)[0], 3392/2);
-    DMANow(3, SplashScreen_StartMap, &((screenblock *)0x6000000)[28], 2048/2);
-    DMANow(3, SplashScreenPal, ((unsigned short *)0x5000000), 512/2);
+    DMANow(3, SplashScreen_StartMap, &((screenblock *)0x6000000)[22], 2048/2);
+    DMANow(3, SplashScreenPal, ((unsigned short *)0x5000000), 256);
 }
 
 void initInstructions() {
     gameState = INSTRUCTIONS;
     DMANow(3, InstructionsScreenTiles, &((charblock *)0x6000000)[0], 3552/2);
-    DMANow(3, InstructionsScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
+    DMANow(3, InstructionsScreenMap, &((screenblock *)0x6000000)[22], 2048/2);
 }
 
 
@@ -385,36 +395,38 @@ void initPause() {
     gameState = PAUSED;
     menuState = OPTRESUME;
     (*(unsigned short *)0x4000000) &= ~(1<<12);
-    (*(volatile unsigned short*)0x4000008) = (0<<7) | (0<<14) | ((0)<<2) | ((28)<<8);
+    (*(unsigned short *)0x4000000) |= (1<<8);
+    (*(volatile unsigned short*)0x4000008) = (0<<7) | (0<<14) | ((0)<<2) | ((22)<<8);
 
 
     DMANow(3, PauseScreen_ResumeTiles, &((charblock *)0x6000000)[0], 1696/2);
-    DMANow(3, PauseScreen_ResumeMap, &((screenblock *)0x6000000)[28], 2048/2);
-    DMANow(3, PauseScreen_ResumePal, ((unsigned short *)0x5000000), 512/2);
+    DMANow(3, PauseScreen_ResumeMap, &((screenblock *)0x6000000)[22], 2048/2);
+    DMANow(3, PauseScreen_ResumePal, ((unsigned short *)0x5000000), 256);
 
 }
 
 void initWin() {
     gameState = WIN;
     (*(unsigned short *)0x4000000) &= ~(1<<12);
-    (*(volatile unsigned short*)0x4000008) = (0<<7) | (0<<14) | ((0)<<2) | ((28)<<8);
+    (*(unsigned short *)0x4000000) |= (1<<8);
+    (*(volatile unsigned short*)0x4000008) = (0<<7) | (0<<14) | ((0)<<2) | ((22)<<8);
 
     DMANow(3, WinScreenTiles, &((charblock *)0x6000000)[0], 2464/2);
-    DMANow(3, WinScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
-    DMANow(3, WinScreenPal, ((unsigned short *)0x5000000), 512/2);
+    DMANow(3, WinScreenMap, &((screenblock *)0x6000000)[22], 2048/2);
+    DMANow(3, WinScreenPal, ((unsigned short *)0x5000000), 256);
 }
 
 void updateSplash() {
     if ((!(~(oldButtons)&((1<<7))) && (~buttons & ((1<<7)))) && (menuState == OPTSTART)) {
         menuState = OPTINST;
         DMANow(3, SplashScreen_InstructionsTiles, &((charblock *)0x6000000)[0], 3392/2);
-        DMANow(3, SplashScreen_InstructionsMap, &((screenblock *)0x6000000)[28], 2048/2);
+        DMANow(3, SplashScreen_InstructionsMap, &((screenblock *)0x6000000)[22], 2048/2);
     }
 
     if ((!(~(oldButtons)&((1<<6))) && (~buttons & ((1<<6)))) && (menuState == OPTINST)) {
         menuState = OPTSTART;
         DMANow(3, SplashScreen_StartTiles, &((charblock *)0x6000000)[0], 3392/2);
-        DMANow(3, SplashScreen_StartMap, &((screenblock *)0x6000000)[28], 2048/2);
+        DMANow(3, SplashScreen_StartMap, &((screenblock *)0x6000000)[22], 2048/2);
     }
 
     if ((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0))))) {
@@ -439,13 +451,13 @@ void updatePause() {
     if ((!(~(oldButtons)&((1<<7))) && (~buttons & ((1<<7)))) && (menuState == OPTRESUME)) {
         menuState = OPTQUIT;
         DMANow(3, PauseScreen_QuitTiles, &((charblock *)0x6000000)[0], 1696/2);
-        DMANow(3, PauseScreen_QuitMap, &((screenblock *)0x6000000)[28], 2048/2);
+        DMANow(3, PauseScreen_QuitMap, &((screenblock *)0x6000000)[22], 2048/2);
     }
 
     if ((!(~(oldButtons)&((1<<6))) && (~buttons & ((1<<6)))) && (menuState == OPTQUIT)) {
         menuState = OPTRESUME;
         DMANow(3, PauseScreen_ResumeTiles, &((charblock *)0x6000000)[0], 1696/2);
-        DMANow(3, PauseScreen_ResumeMap, &((screenblock *)0x6000000)[28], 2048/2);
+        DMANow(3, PauseScreen_ResumeMap, &((screenblock *)0x6000000)[22], 2048/2);
     }
 
     if ((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0))))) {

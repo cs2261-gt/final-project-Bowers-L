@@ -5,11 +5,62 @@ Camera camera;
 void initCamera(int col, int row) {
     camera.col = col;
     camera.row = row;
-    camera.sbbcol = col / 256;
-    camera.sbbrow = row / 256;
+    camera.sbbcol = clamp(DECODE4(col) / SBBWH, 0, SBBROWLEN - 2);
+    camera.sbbrow = clamp(DECODE4(row) / SBBWH, 0, SBBROWLEN - 2);
 }
 
 void updateCamera() {
+    if (debug) {
+        cameraDebug();
+    } else {
+        centerCameraToPlayer();
+    }
+
+    updateSBB();
+}
+
+void updateSBB() {
+    //handle changes in SBB
+    
+    //left
+    if (DECODE4(camera.col) < (camera.sbbcol) * SBBWH
+        && camera.sbbcol > 0) {
+        camera.sbbcol--;
+
+        //dma bottom left half of map into screenblocks
+        for (int i = 0; i < SBBROWLEN-1; i++) {
+            DMANow( 3, 
+                    &mapMap[SBBSIZE*OFFSET(camera.sbbcol, i+1, SBBROWLEN)],
+                    &SCREENBLOCK[MAPSB + OFFSET(camera.sbbcol, i+1, 2)],
+                    SBBSIZE);
+        }
+    }
+    //right
+    if (DECODE4(camera.col) > (camera.sbbcol + 1) * SBBWH
+        && camera.sbbcol < SBBROWLEN - 2) {
+        camera.sbbcol++;
+
+        //dma top right half of map into screenblocks
+        for (int i = 0; i < SBBROWLEN-1; i++) {
+            DMANow( 3, 
+                    &mapMap[SBBSIZE*OFFSET(camera.sbbcol+1, i, SBBROWLEN)],
+                    &SCREENBLOCK[MAPSB + OFFSET(camera.sbbcol+1, i, 2)],
+                    SBBSIZE);
+        }
+    }
+    //up
+    if (DECODE4(camera.row) < (camera.sbbrow) * SBBWH
+        && camera.sbbrow > 0) {
+        camera.sbbrow--;
+    }
+    //down
+    if (DECODE4(camera.row) > (camera.sbbrow + 1) * SBBWH
+        && camera.sbbrow < SBBROWLEN - 2) {
+        camera.sbbrow++;
+    }
+}
+
+void centerCameraToPlayer() {
     if (player.cdel < 0) {
         //left
         if ((camera.col > 0) && (player.screenCol + player.width / 2 < ENCODE4(SCREENWIDTH / 2))) {
@@ -59,5 +110,4 @@ void cameraDebug() {
             camera.row = min(camera.row + cameraSpeed, ENCODE4(MAPWH - SCREENHEIGHT));
         }
     }
-
 }

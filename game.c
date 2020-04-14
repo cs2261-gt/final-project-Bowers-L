@@ -34,13 +34,13 @@ void initGame() {
 }
 
 void resumeGame() {
-    REG_DISPCTL |= SPRITE_ENABLE;
+    REG_DISPCTL |= SPRITE_ENABLE | BG1_ENABLE;
+    REG_DISPCTL &= ~BG0_ENABLE;
     gameState = GAME;
 
-    REG_BG0CNT = BG_4BPP | BG_SIZE_LARGE | BG_CHARBLOCK(0) | BG_SCREENBLOCK(27);
-    DMANow(3, mapTiles, &CHARBLOCK[0], mapTilesLen / 2);
-    DMANow(3, mapMap, &SCREENBLOCK[28], mapMapLen / 2);
-    DMANow(3, mapPal, PALETTE, mapPalLen / 2);
+    REG_BG1CNT = BG_4BPP | BG_SIZE_LARGE | BG_CHARBLOCK(1) | BG_SCREENBLOCK(MAPSB + OFFSET(camera.sbbcol, camera.sbbrow, 2));
+
+    DMANow(3, &mapPal[16], &PALETTE[16], 16);
 }
 
 void update() {
@@ -83,12 +83,10 @@ void updateGame() {
         initPause();
     }
 
-    if (debug) {
-        cameraDebug();
-    } else {
+    if (!debug) {
         updatePlayer();
-        updateItem(&boots);
     }
+    updateItem(&boots);
     updateCamera();
 
     showPlayer();
@@ -96,7 +94,7 @@ void updateGame() {
 }
 
 void drawGame() {
-    REG_BG1CNT = BG_4BPP | BG_SIZE_LARGE | BG_CHARBLOCK(1) | BG_SCREENBLOCK(23 + OFFSET(camera.sbbcol, camera.sbbrow, 2));
+    REG_BG1CNT = BG_4BPP | BG_SIZE_LARGE | BG_CHARBLOCK(1) | BG_SCREENBLOCK(MAPSB + OFFSET(camera.sbbcol, camera.sbbrow, 2));
     REG_BG1HOFF = DECODE4(camera.col) - camera.sbbcol * 256;
     REG_BG1VOFF = DECODE4(camera.row) - camera.sbbrow * 256;
 
@@ -105,16 +103,40 @@ void drawGame() {
 
 void setupMap() {
     /*
-    1024x1024 map using 9 screenblocks. Game starts at screeenblock 4
+    1024x1024 map using 10 screenblocks. Game starts at screeenblock 4.
+    Initially, 0-7 is set to cover the leftmost 512x1024, and 8-9 are set accordingly.
+    Changes in the hoff trigger certain DMA calls that load parts of the map offscreen.
+    VRAM
     |-------------------|
     |   0   1   2   3   |
     |   2   3   4   5   |
     |   4   5   6   7   |
     |   6   7   8   9   |
     |-------------------|
+
+    map.h
+    |-------------------|
+    |   0   1   2   3   |
+    |   4   5   6   7   |
+    |   8   9  10  11   |
+    |  12  13  14  15   |
+    |-------------------|
     */
-    REG_BG1CNT = BG_4BPP | BG_SIZE_LARGE | BG_CHARBLOCK(1) | BG_SCREENBLOCK(23 + OFFSET(camera.sbbcol, camera.sbbrow, 2));
-    
+    REG_BG1CNT = BG_4BPP | BG_SIZE_LARGE | BG_CHARBLOCK(1) | BG_SCREENBLOCK(MAPSB + OFFSET(camera.sbbcol, camera.sbbrow, 2));
+
+    /* DMA Arguments
+    src: mapMap[SBBSIZE * coordinate in map.h visual]
+    dest: &SCREENBLOCK[MAPSB + cooresponding coordinate in VRAM]
+    cnt: SBBSIZE * however many screenblocks to copy
+    */
+    for (int i = 0; i < 4; i++) {
+        DMANow(3, &mapMap[SBBSIZE * i * 4], &SCREENBLOCK[MAPSB + 2*i], SBBSIZE * 2);
+    }
+    DMANow(3, &mapMap[SBBSIZE * 14], &SCREENBLOCK[MAPSB + 8], SBBSIZE * 2);
+
+    //dma the charblock and palette as well
+    DMANow(3, mapTiles, &CHARBLOCK[1], mapTilesLen / 2);
+    DMANow(3, &mapPal[16], &PALETTE[16], 16);
 }
 
 void setupDisplayInterrupt() {

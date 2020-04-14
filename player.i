@@ -13,9 +13,9 @@
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
-# 64 "myLib.h"
+# 66 "myLib.h"
 extern unsigned short *videoBuffer;
-# 88 "myLib.h"
+# 90 "myLib.h"
 typedef struct {
  u16 tileimg[8192];
 } charblock;
@@ -58,7 +58,7 @@ typedef struct {
 
 
 extern OBJ_ATTR shadowOAM[];
-# 160 "myLib.h"
+# 162 "myLib.h"
 void hideSprites();
 
 
@@ -82,7 +82,7 @@ typedef struct {
     int numFrames;
     int hide;
 } ANISPRITE;
-# 203 "myLib.h"
+# 205 "myLib.h"
 extern unsigned short oldButtons;
 extern unsigned short buttons;
 
@@ -91,7 +91,7 @@ extern unsigned short buttons;
 
 
 void updateInput();
-# 222 "myLib.h"
+# 224 "myLib.h"
 typedef volatile struct {
     volatile const void *src;
     volatile void *dst;
@@ -100,9 +100,9 @@ typedef volatile struct {
 
 
 extern DMA *dma;
-# 262 "myLib.h"
+# 264 "myLib.h"
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt);
-# 356 "myLib.h"
+# 358 "myLib.h"
 typedef struct{
     const unsigned char* data;
     int length;
@@ -126,7 +126,7 @@ int lerp(int a, int b, int curr, int max);
 # 4 "player.h" 2
 # 1 "mapCollision.h" 1
 # 20 "mapCollision.h"
-extern const unsigned short mapCollisionBitmap[524288];
+extern const unsigned short mapCollisionBitmap[1048576];
 # 5 "player.h" 2
 # 1 "game.h" 1
        
@@ -144,7 +144,7 @@ extern const unsigned short mapCollisionBitmap[524288];
 extern const unsigned short mapTiles[1696];
 
 
-extern const unsigned short mapMap[8192];
+extern const unsigned short mapMap[16384];
 
 
 extern const unsigned short mapPal[256];
@@ -233,22 +233,28 @@ void updateWin();
 
 # 1 "camera.h" 1
        
-
-
-
-
-
-
+# 10 "camera.h"
 typedef struct {
+
     int row;
     int col;
+
+
+
+    int sbbrow;
+    int sbbcol;
 } Camera;
 
 extern Camera camera;
 
-void cameraDebug();
+
 void initCamera();
-void updateCamer();
+void updateCamera();
+
+void cameraDebug();
+void centerCameraToPlayer();
+
+void updateSBB();
 # 8 "game.h" 2
 # 1 "item.h" 1
        
@@ -283,6 +289,7 @@ void showItem(Item* item);
 
 
 
+
 extern int debug;
 
 void init();
@@ -292,9 +299,12 @@ void initGame();
 void resumeGame();
 void updateGame();
 
+void drawGame();
+
+void setupMap();
 
 
-void handleVBlank();
+
 void setupDisplayInterrupt();
 void interruptHandler();
 # 6 "player.h" 2
@@ -365,7 +375,7 @@ int resolveCollisionY();
 Player player;
 
 void initPlayer() {
-    player.worldRow = ((512 - 28) << 4) - player.height;
+    player.worldRow = ((1024 - 56) << 4) - player.height;
     player.worldCol = ((30) << 4);
     player.screenRow = player.worldRow - camera.row;
     player.screenCol = player.worldCol - camera.col;
@@ -413,8 +423,8 @@ void updatePlayer() {
     player.cdel = clamp(player.cdel + player.caccel, -player.maxSpeed, player.maxSpeed);
 
 
-    player.worldCol = clamp(player.worldCol + player.cdel, 0, ((512) << 4) - player.width);
-    player.worldRow = clamp(player.worldRow + player.rdel, 0, ((512) << 4) - player.height);
+    player.worldCol = clamp(player.worldCol + player.cdel, 0, ((1024) << 4) - player.width);
+    player.worldRow = clamp(player.worldRow + player.rdel, 0, ((1024) << 4) - player.height);
     resolveCollisions();
 
 }
@@ -460,7 +470,7 @@ void handlePlayerInput() {
         }
         if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
             player.direction = 1;
-            if (player.worldCol < ((512) << 4) - player.width) {
+            if (player.worldCol < ((1024) << 4) - player.width) {
                 player.caccel = player.accelCurve;
             }
         }
@@ -483,31 +493,31 @@ void handlePlayerInput() {
 # 141 "player.c"
 int collisionLeft() {
     return player.worldCol < 0
-        || mapCollisionBitmap[((((player.worldRow) >> 4))*(512)+(((player.worldCol) >> 4)))]
-        || mapCollisionBitmap[((((player.worldRow + player.height - 1) >> 4))*(512)+(((player.worldCol) >> 4)))];
+        || mapCollisionBitmap[((((player.worldRow) >> 4))*(1024)+(((player.worldCol) >> 4)))]
+        || mapCollisionBitmap[((((player.worldRow + player.height - 1) >> 4))*(1024)+(((player.worldCol) >> 4)))];
 }
 
 int collisionRight() {
-    return player.worldCol + player.width >= ((512) << 4)
-        || mapCollisionBitmap[((((player.worldRow) >> 4))*(512)+(((player.worldCol + player.width - 1) >> 4)))]
-        || mapCollisionBitmap[((((player.worldRow + player.height - 1) >> 4))*(512)+(((player.worldCol + player.width - 1) >> 4)))];
+    return player.worldCol + player.width >= ((1024) << 4)
+        || mapCollisionBitmap[((((player.worldRow) >> 4))*(1024)+(((player.worldCol + player.width - 1) >> 4)))]
+        || mapCollisionBitmap[((((player.worldRow + player.height - 1) >> 4))*(1024)+(((player.worldCol + player.width - 1) >> 4)))];
 }
 
 int collisionAbove() {
     return player.worldRow < 0
-        || mapCollisionBitmap[((((player.worldRow) >> 4))*(512)+(((player.worldCol) >> 4)))]
-        || mapCollisionBitmap[((((player.worldRow) >> 4))*(512)+(((player.worldCol + player.width - 1) >> 4)))];
+        || mapCollisionBitmap[((((player.worldRow) >> 4))*(1024)+(((player.worldCol) >> 4)))]
+        || mapCollisionBitmap[((((player.worldRow) >> 4))*(1024)+(((player.worldCol + player.width - 1) >> 4)))];
 }
 
 int collisionBelow() {
-    return player.worldRow + player.height >= ((512) << 4)
-        || mapCollisionBitmap[((((player.worldRow + player.height - 1) >> 4))*(512)+(((player.worldCol) >> 4)))]
-        || mapCollisionBitmap[((((player.worldRow + player.height - 1) >> 4))*(512)+(((player.worldCol + player.width - 1) >> 4)))];
+    return player.worldRow + player.height >= ((1024) << 4)
+        || mapCollisionBitmap[((((player.worldRow + player.height - 1) >> 4))*(1024)+(((player.worldCol) >> 4)))]
+        || mapCollisionBitmap[((((player.worldRow + player.height - 1) >> 4))*(1024)+(((player.worldCol + player.width - 1) >> 4)))];
 }
 
 int touchingGround() {
-    return mapCollisionBitmap[((((player.worldRow + player.height - 1 + 1) >> 4))*(512)+(((player.worldCol) >> 4)))]
-    || mapCollisionBitmap[((((player.worldRow + player.height - 1 + 1) >> 4))*(512)+(((player.worldCol + player.width - 1) >> 4)))];
+    return mapCollisionBitmap[((((player.worldRow + player.height - 1 + 1) >> 4))*(1024)+(((player.worldCol) >> 4)))]
+    || mapCollisionBitmap[((((player.worldRow + player.height - 1 + 1) >> 4))*(1024)+(((player.worldCol + player.width - 1) >> 4)))];
 }
 # 184 "player.c"
 int resolveCollisions() {

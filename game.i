@@ -13,9 +13,9 @@
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
-# 64 "myLib.h"
+# 66 "myLib.h"
 extern unsigned short *videoBuffer;
-# 88 "myLib.h"
+# 90 "myLib.h"
 typedef struct {
  u16 tileimg[8192];
 } charblock;
@@ -58,7 +58,7 @@ typedef struct {
 
 
 extern OBJ_ATTR shadowOAM[];
-# 160 "myLib.h"
+# 162 "myLib.h"
 void hideSprites();
 
 
@@ -82,7 +82,7 @@ typedef struct {
     int numFrames;
     int hide;
 } ANISPRITE;
-# 203 "myLib.h"
+# 205 "myLib.h"
 extern unsigned short oldButtons;
 extern unsigned short buttons;
 
@@ -91,7 +91,7 @@ extern unsigned short buttons;
 
 
 void updateInput();
-# 222 "myLib.h"
+# 224 "myLib.h"
 typedef volatile struct {
     volatile const void *src;
     volatile void *dst;
@@ -100,9 +100,9 @@ typedef volatile struct {
 
 
 extern DMA *dma;
-# 262 "myLib.h"
+# 264 "myLib.h"
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt);
-# 356 "myLib.h"
+# 358 "myLib.h"
 typedef struct{
     const unsigned char* data;
     int length;
@@ -136,7 +136,7 @@ int lerp(int a, int b, int curr, int max);
 extern const unsigned short mapTiles[1696];
 
 
-extern const unsigned short mapMap[8192];
+extern const unsigned short mapMap[16384];
 
 
 extern const unsigned short mapPal[256];
@@ -228,7 +228,7 @@ void updateWin();
 
 # 1 "mapCollision.h" 1
 # 20 "mapCollision.h"
-extern const unsigned short mapCollisionBitmap[524288];
+extern const unsigned short mapCollisionBitmap[1048576];
 # 5 "player.h" 2
 
 
@@ -296,22 +296,28 @@ int resolveCollisionY();
 # 7 "game.h" 2
 # 1 "camera.h" 1
        
-
-
-
-
-
-
+# 10 "camera.h"
 typedef struct {
+
     int row;
     int col;
+
+
+
+    int sbbrow;
+    int sbbcol;
 } Camera;
 
 extern Camera camera;
 
-void cameraDebug();
+
 void initCamera();
-void updateCamer();
+void updateCamera();
+
+void cameraDebug();
+void centerCameraToPlayer();
+
+void updateSBB();
 # 8 "game.h" 2
 # 1 "item.h" 1
        
@@ -346,6 +352,7 @@ void showItem(Item* item);
 
 
 
+
 extern int debug;
 
 void init();
@@ -355,9 +362,12 @@ void initGame();
 void resumeGame();
 void updateGame();
 
+void drawGame();
+
+void setupMap();
 
 
-void handleVBlank();
+
 void setupDisplayInterrupt();
 void interruptHandler();
 # 2 "game.c" 2
@@ -378,15 +388,12 @@ void init() {
 void initGame() {
 
     gameState = GAME;
-    initCamera(0, ((512 - 160) << 4));
+    initCamera(0, ((1024 - 160) << 4));
 
 
     (*(unsigned short *)0x4000000) |= (1<<9);
     (*(unsigned short *)0x4000000) &= ~(1<<8);
-    (*(volatile unsigned short*)0x400000A) = (0<<7) | (3<<14) | ((1)<<2) | ((24)<<8);
-    DMANow(3, mapTiles, &((charblock *)0x6000000)[1], 3392 / 2);
-    DMANow(3, mapMap, &((screenblock *)0x6000000)[24], 16384 / 2);
-    DMANow(3, mapPal, ((unsigned short *)0x5000000), 512 / 2);
+    setupMap();
 
 
     (*(unsigned short *)0x4000000) |= (1<<12);
@@ -399,13 +406,13 @@ void initGame() {
 }
 
 void resumeGame() {
-    (*(unsigned short *)0x4000000) |= (1<<12);
+    (*(unsigned short *)0x4000000) |= (1<<12) | (1<<9);
+    (*(unsigned short *)0x4000000) &= ~(1<<8);
     gameState = GAME;
 
-    (*(volatile unsigned short*)0x4000008) = (0<<7) | (3<<14) | ((0)<<2) | ((28)<<8);
-    DMANow(3, mapTiles, &((charblock *)0x6000000)[0], 3392 / 2);
-    DMANow(3, mapMap, &((screenblock *)0x6000000)[28], 16384 / 2);
-    DMANow(3, mapPal, ((unsigned short *)0x5000000), 512 / 2);
+    (*(volatile unsigned short*)0x400000A) = (0<<7) | (3<<14) | ((1)<<2) | ((22 + ((camera.sbbrow)*(2)+(camera.sbbcol)))<<8);
+
+    DMANow(3, &mapPal[16], &((unsigned short *)0x5000000)[16], 16);
 }
 
 void update() {
@@ -448,25 +455,41 @@ void updateGame() {
         initPause();
     }
 
-    if (debug) {
-        cameraDebug();
-    } else {
+    if (!debug) {
         updatePlayer();
-        updateItem(&boots);
     }
+    updateItem(&boots);
     updateCamera();
 
     showPlayer();
     showItem(&boots);
 }
 
-void handleVBlank() {
-    if (gameState == GAME) {
-        (*(volatile unsigned short *)0x04000014) = ((camera.col) >> 4);
-        (*(volatile unsigned short *)0x04000016) = ((camera.row) >> 4);
+void drawGame() {
+    (*(volatile unsigned short*)0x400000A) = (0<<7) | (3<<14) | ((1)<<2) | ((22 + ((camera.sbbrow)*(2)+(camera.sbbcol)))<<8);
+    (*(volatile unsigned short *)0x04000014) = ((camera.col) >> 4) - camera.sbbcol * 256;
+    (*(volatile unsigned short *)0x04000016) = ((camera.row) >> 4) - camera.sbbrow * 256;
 
-        DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 128 * 4);
+    DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 128 * 4);
+}
+
+void setupMap() {
+# 125 "game.c"
+    (*(volatile unsigned short*)0x400000A) = (0<<7) | (3<<14) | ((1)<<2) | ((22 + ((camera.sbbrow)*(2)+(camera.sbbcol)))<<8);
+
+
+
+
+
+
+    for (int i = 0; i < 4; i++) {
+        DMANow(3, &mapMap[1024 * i * 4], &((screenblock *)0x6000000)[22 + 2*i], 1024 * 2);
     }
+    DMANow(3, &mapMap[1024 * 14], &((screenblock *)0x6000000)[22 + 8], 1024 * 2);
+
+
+    DMANow(3, mapTiles, &((charblock *)0x6000000)[1], 3392 / 2);
+    DMANow(3, &mapPal[16], &((unsigned short *)0x5000000)[16], 16);
 }
 
 void setupDisplayInterrupt() {
@@ -485,7 +508,9 @@ void interruptHandler() {
     *(unsigned short*)0x4000208 = 0;
 
     if (*(volatile unsigned short*)0x4000202 & 1 << 0) {
-        handleVBlank();
+        if (gameState == GAME) {
+            drawGame();
+        }
     }
 
     *(volatile unsigned short*)0x4000202 = *(volatile unsigned short*)0x4000202;

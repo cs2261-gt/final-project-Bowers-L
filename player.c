@@ -3,7 +3,7 @@
 Player player;
 
 void initPlayer() {
-    player.worldRow = ENCODE4(MAPWH - 28) - player.height;
+    player.worldRow = ENCODE4(MAPWH - 56) - player.height;
     player.worldCol = ENCODE4(30);
     player.screenRow = player.worldRow - camera.row;
     player.screenCol = player.worldCol - camera.col;
@@ -36,7 +36,7 @@ void initPlayer() {
     shadowOAM[0].attr2 = ATTR2_TILEID(0, 0) | ATTR2_PALROW(0);
 }
 
-void updatePlayer() {  
+void updatePlayer() {
     handlePlayerInput();
 
     //simulate gravity
