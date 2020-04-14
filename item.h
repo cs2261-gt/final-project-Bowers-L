@@ -4,12 +4,12 @@
 
 #include "Spritesheet.h"
 
-#include "game.h"
+#include "camera.h"
 
 //Items: OAM 1-10
 
 typedef enum {
-    BOOTS
+    NONE, BOOTS
 } ItemType;
 
 typedef struct {
@@ -22,14 +22,24 @@ typedef struct {
     int curFrame;
     int numFrames;
     int hide;
+    int acquired;
 
     u16 color1;
     u16 color2;
+
+    ItemType type;
+    int index;
 } Item;
 
 extern Item boots;
+extern int itemCount;
+extern ItemType acquiredItems[10];
 
-void initItem(Item* item, int col, int row);
+void initItem(Item* item, int col, int row, ItemType type);
 
 void updateItem(Item* item);
 void showItem(Item* item);
+
+int checkCollisionPlayer(Item* item);
+
+void equipItem(Item* item);

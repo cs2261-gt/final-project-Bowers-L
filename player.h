@@ -3,6 +3,7 @@
 #include "myLib.h"
 #include "mapCollision.h"
 #include "game.h"
+#include "item.h"
 
 typedef enum {
     LEFT, RIGHT
@@ -43,6 +44,8 @@ typedef struct {
     int gravity;
 
     int direction;
+
+    //items
 } Player;
 
 //Player: OAM 0
@@ -63,5 +66,6 @@ int collisionRight();
 int collisionAbove();
 int collisionBelow();
 
-int resolveCollisionX();
-int resolveCollisionY();
+int touchingGround();
+int resolveCollisions();
+

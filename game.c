@@ -30,7 +30,7 @@ void initGame() {
     DMANow(3, SpritesheetPal, SPRITEPALETTE, SpritesheetPalLen / 2);
 
     initPlayer();
-    initItem(&boots, 496, 496);
+    initItem(&boots, MAPWH - 24, MAPWH - 24, BOOTS);
 }
 
 void resumeGame() {
@@ -86,11 +86,17 @@ void updateGame() {
     if (!debug) {
         updatePlayer();
     }
-    updateItem(&boots);
+    if (!boots.acquired) {
+        updateItem(&boots);
+    }
+    
     updateCamera();
 
     showPlayer();
-    showItem(&boots);
+    if (!boots.acquired) {
+        showItem(&boots);
+    }
+
 }
 
 void drawGame() {

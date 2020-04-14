@@ -138,7 +138,7 @@ int lerp(int a, int b, int curr, int max);
 
 # 1 "map.h" 1
 # 22 "map.h"
-extern const unsigned short mapTiles[1696];
+extern const unsigned short mapTiles[176];
 
 
 extern const unsigned short mapMap[16384];
@@ -236,6 +236,45 @@ void updateWin();
 extern const unsigned short mapCollisionBitmap[1048576];
 # 5 "player.h" 2
 
+# 1 "item.h" 1
+       
+# 11 "item.h"
+typedef enum {
+    NONE, BOOTS
+} ItemType;
+
+typedef struct {
+    int screenRow;
+    int screenCol;
+    int worldRow;
+    int worldCol;
+    int width;
+    int height;
+    int curFrame;
+    int numFrames;
+    int hide;
+    int acquired;
+
+    u16 color1;
+    u16 color2;
+
+    ItemType type;
+    int index;
+} Item;
+
+extern Item boots;
+extern int itemCount;
+extern ItemType acquiredItems[10];
+
+void initItem(Item* item, int col, int row, ItemType type);
+
+void updateItem(Item* item);
+void showItem(Item* item);
+
+int checkCollisionPlayer(Item* item);
+
+void equipItem(Item* item);
+# 7 "player.h" 2
 
 typedef enum {
     LEFT, RIGHT
@@ -276,6 +315,8 @@ typedef struct {
     int gravity;
 
     int direction;
+
+
 } Player;
 
 
@@ -296,39 +337,11 @@ int collisionRight();
 int collisionAbove();
 int collisionBelow();
 
-int resolveCollisionX();
-int resolveCollisionY();
+int touchingGround();
+int resolveCollisions();
 # 7 "game.h" 2
 
-# 1 "item.h" 1
-       
-# 11 "item.h"
-typedef enum {
-    BOOTS
-} ItemType;
 
-typedef struct {
-    int screenRow;
-    int screenCol;
-    int worldRow;
-    int worldCol;
-    int width;
-    int height;
-    int curFrame;
-    int numFrames;
-    int hide;
-
-    u16 color1;
-    u16 color2;
-} Item;
-
-extern Item boots;
-
-void initItem(Item* item, int col, int row);
-
-void updateItem(Item* item);
-void showItem(Item* item);
-# 9 "game.h" 2
 
 
 

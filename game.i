@@ -133,7 +133,7 @@ int lerp(int a, int b, int curr, int max);
 
 # 1 "map.h" 1
 # 22 "map.h"
-extern const unsigned short mapTiles[1696];
+extern const unsigned short mapTiles[176];
 
 
 extern const unsigned short mapMap[16384];
@@ -231,6 +231,77 @@ void updateWin();
 extern const unsigned short mapCollisionBitmap[1048576];
 # 5 "player.h" 2
 
+# 1 "item.h" 1
+       
+
+
+
+
+
+# 1 "camera.h" 1
+       
+# 10 "camera.h"
+typedef struct {
+
+    int row;
+    int col;
+
+
+
+    int sbbrow;
+    int sbbcol;
+} Camera;
+
+extern Camera camera;
+
+
+void initCamera();
+void updateCamera();
+
+void cameraDebug();
+void centerCameraToPlayer();
+
+void updateSBB();
+# 8 "item.h" 2
+
+
+
+typedef enum {
+    NONE, BOOTS
+} ItemType;
+
+typedef struct {
+    int screenRow;
+    int screenCol;
+    int worldRow;
+    int worldCol;
+    int width;
+    int height;
+    int curFrame;
+    int numFrames;
+    int hide;
+    int acquired;
+
+    u16 color1;
+    u16 color2;
+
+    ItemType type;
+    int index;
+} Item;
+
+extern Item boots;
+extern int itemCount;
+extern ItemType acquiredItems[10];
+
+void initItem(Item* item, int col, int row, ItemType type);
+
+void updateItem(Item* item);
+void showItem(Item* item);
+
+int checkCollisionPlayer(Item* item);
+
+void equipItem(Item* item);
+# 7 "player.h" 2
 
 typedef enum {
     LEFT, RIGHT
@@ -271,6 +342,8 @@ typedef struct {
     int gravity;
 
     int direction;
+
+
 } Player;
 
 
@@ -291,63 +364,11 @@ int collisionRight();
 int collisionAbove();
 int collisionBelow();
 
-int resolveCollisionX();
-int resolveCollisionY();
+int touchingGround();
+int resolveCollisions();
 # 7 "game.h" 2
-# 1 "camera.h" 1
-       
-# 10 "camera.h"
-typedef struct {
-
-    int row;
-    int col;
 
 
-
-    int sbbrow;
-    int sbbcol;
-} Camera;
-
-extern Camera camera;
-
-
-void initCamera();
-void updateCamera();
-
-void cameraDebug();
-void centerCameraToPlayer();
-
-void updateSBB();
-# 8 "game.h" 2
-# 1 "item.h" 1
-       
-# 11 "item.h"
-typedef enum {
-    BOOTS
-} ItemType;
-
-typedef struct {
-    int screenRow;
-    int screenCol;
-    int worldRow;
-    int worldCol;
-    int width;
-    int height;
-    int curFrame;
-    int numFrames;
-    int hide;
-
-    u16 color1;
-    u16 color2;
-} Item;
-
-extern Item boots;
-
-void initItem(Item* item, int col, int row);
-
-void updateItem(Item* item);
-void showItem(Item* item);
-# 9 "game.h" 2
 
 
 
@@ -402,7 +423,7 @@ void initGame() {
     DMANow(3, SpritesheetPal, ((unsigned short *)0x5000200), 512 / 2);
 
     initPlayer();
-    initItem(&boots, 496, 496);
+    initItem(&boots, 1024 - 24, 1024 - 24, BOOTS);
 }
 
 void resumeGame() {
@@ -458,11 +479,17 @@ void updateGame() {
     if (!debug) {
         updatePlayer();
     }
-    updateItem(&boots);
+    if (!boots.acquired) {
+        updateItem(&boots);
+    }
+
     updateCamera();
 
     showPlayer();
-    showItem(&boots);
+    if (!boots.acquired) {
+        showItem(&boots);
+    }
+
 }
 
 void drawGame() {
@@ -474,7 +501,7 @@ void drawGame() {
 }
 
 void setupMap() {
-# 125 "game.c"
+# 131 "game.c"
     (*(volatile unsigned short*)0x400000A) = (0<<7) | (3<<14) | ((1)<<2) | ((22 + ((camera.sbbrow)*(2)+(camera.sbbcol)))<<8);
 
 
@@ -488,7 +515,7 @@ void setupMap() {
     DMANow(3, &mapMap[1024 * 14], &((screenblock *)0x6000000)[22 + 8], 1024 * 2);
 
 
-    DMANow(3, mapTiles, &((charblock *)0x6000000)[1], 3392 / 2);
+    DMANow(3, mapTiles, &((charblock *)0x6000000)[1], 352 / 2);
     DMANow(3, &mapPal[16], &((unsigned short *)0x5000000)[16], 16);
 }
 

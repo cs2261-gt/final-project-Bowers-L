@@ -133,6 +133,11 @@ extern const unsigned short SpritesheetTiles[16384];
 extern const unsigned short SpritesheetPal[256];
 # 6 "item.h" 2
 
+# 1 "camera.h" 1
+       
+
+
+
 # 1 "game.h" 1
        
 
@@ -146,7 +151,7 @@ extern const unsigned short SpritesheetPal[256];
 
 # 1 "map.h" 1
 # 22 "map.h"
-extern const unsigned short mapTiles[1696];
+extern const unsigned short mapTiles[176];
 
 
 extern const unsigned short mapMap[16384];
@@ -239,6 +244,7 @@ extern const unsigned short mapCollisionBitmap[1048576];
 # 5 "player.h" 2
 
 
+
 typedef enum {
     LEFT, RIGHT
 } PlayerState;
@@ -278,6 +284,8 @@ typedef struct {
     int gravity;
 
     int direction;
+
+
 } Player;
 
 
@@ -298,34 +306,10 @@ int collisionRight();
 int collisionAbove();
 int collisionBelow();
 
-int resolveCollisionX();
-int resolveCollisionY();
+int touchingGround();
+int resolveCollisions();
 # 7 "game.h" 2
-# 1 "camera.h" 1
-       
-# 10 "camera.h"
-typedef struct {
 
-    int row;
-    int col;
-
-
-
-    int sbbrow;
-    int sbbcol;
-} Camera;
-
-extern Camera camera;
-
-
-void initCamera();
-void updateCamera();
-
-void cameraDebug();
-void centerCameraToPlayer();
-
-void updateSBB();
-# 8 "game.h" 2
 
 
 
@@ -349,12 +333,38 @@ void setupMap();
 
 void setupDisplayInterrupt();
 void interruptHandler();
+# 6 "camera.h" 2
+
+
+
+
+typedef struct {
+
+    int row;
+    int col;
+
+
+
+    int sbbrow;
+    int sbbcol;
+} Camera;
+
+extern Camera camera;
+
+
+void initCamera();
+void updateCamera();
+
+void cameraDebug();
+void centerCameraToPlayer();
+
+void updateSBB();
 # 8 "item.h" 2
 
 
 
 typedef enum {
-    BOOTS
+    NONE, BOOTS
 } ItemType;
 
 typedef struct {
@@ -367,22 +377,37 @@ typedef struct {
     int curFrame;
     int numFrames;
     int hide;
+    int acquired;
 
     u16 color1;
     u16 color2;
+
+    ItemType type;
+    int index;
 } Item;
 
 extern Item boots;
+extern int itemCount;
+extern ItemType acquiredItems[10];
 
-void initItem(Item* item, int col, int row);
+void initItem(Item* item, int col, int row, ItemType type);
 
 void updateItem(Item* item);
 void showItem(Item* item);
+
+int checkCollisionPlayer(Item* item);
+
+void equipItem(Item* item);
 # 2 "item.c" 2
 
 Item boots;
+int itemCount = 0;
 
-void initItem(Item* item, int col, int row) {
+ItemType acquiredItems[10];
+
+void initItem(Item* item, int col, int row, ItemType type) {
+    itemCount++;
+
     item->worldRow = ((row) << 4);
     item->worldCol = ((col) << 4);
     item->screenRow = item->worldRow - camera.row;
@@ -392,13 +417,21 @@ void initItem(Item* item, int col, int row) {
     item->curFrame = 0;
     item->numFrames = 60;
     item->hide = 1;
+    item->acquired = 0;
 
     item->color1 = ((16) | (16)<<5 | (16)<<10);
     item->color2 = ((27) | (27)<<5 | (0)<<10);
 
-    shadowOAM[1].attr0 = (((item->screenRow) >> 4) & 0xFF) | (0<<8) | (0<<13) | (0<<14);
-    shadowOAM[1].attr1 = (((item->screenCol) >> 4) & 0x1FF) | (0<<14);
-    shadowOAM[1].attr2 = ((0)*32+(9)) | ((0)<<12);
+    item->type = type;
+    item->index = itemCount;
+
+    for (int i = 0; i < 10; i++) {
+        acquiredItems[i] = NONE;
+    }
+
+    shadowOAM[item->index].attr0 = (((item->screenRow) >> 4) & 0xFF) | (0<<8) | (0<<13) | (0<<14);
+    shadowOAM[item->index].attr1 = (((item->screenCol) >> 4) & 0x1FF) | (0<<14);
+    shadowOAM[item->index].attr2 = ((0)*32+(9)) | ((0)<<12);
 }
 
 void updateItem(Item* item) {
@@ -420,7 +453,17 @@ void updateItem(Item* item) {
     if (item->curFrame > item->numFrames) {
         item->curFrame = 0;
     }
+
+    if (item->hide == 0 && checkCollisionPlayer(item)) {
+        equipItem(item);
+    }
 }
+
+int checkCollisionPlayer(Item* item) {
+    return collision(player.worldCol, player.worldRow, player.width, player.height, item->worldCol, item->worldRow, item->width, item->height);
+}
+
+
 
 void showItem(Item* item) {
     item->screenRow = item->worldRow - camera.row;
@@ -441,5 +484,25 @@ void showItem(Item* item) {
 
     if (item->hide) {
         shadowOAM[1].attr0 |= (2<<8);
+    }
+}
+
+void equipItem(Item* item) {
+    item->acquired = 1;
+    item->hide = 1;
+    shadowOAM[1].attr0 |= (2<<8);
+
+    int i = 0;
+    while (acquiredItems[i] == NONE) {
+        i++;
+    }
+    acquiredItems[i] = item->type;
+
+    switch (item->type) {
+        case BOOTS:
+            player.jumpHeight = 1024;
+            player.gravity = (2 * player.jumpHeight) / (player.jumpTime * player.jumpTime);
+            player.jumpSpeed = player.gravity * player.jumpTime;
+            break;
     }
 }
