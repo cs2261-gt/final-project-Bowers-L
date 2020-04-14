@@ -12,7 +12,7 @@ typedef unsigned short u16;
 typedef unsigned int u32;
 # 64 "myLib.h"
 extern unsigned short *videoBuffer;
-# 85 "myLib.h"
+# 88 "myLib.h"
 typedef struct {
  u16 tileimg[8192];
 } charblock;
@@ -55,7 +55,7 @@ typedef struct {
 
 
 extern OBJ_ATTR shadowOAM[];
-# 157 "myLib.h"
+# 160 "myLib.h"
 void hideSprites();
 
 
@@ -79,7 +79,7 @@ typedef struct {
     int numFrames;
     int hide;
 } ANISPRITE;
-# 200 "myLib.h"
+# 203 "myLib.h"
 extern unsigned short oldButtons;
 extern unsigned short buttons;
 
@@ -88,7 +88,7 @@ extern unsigned short buttons;
 
 
 void updateInput();
-# 219 "myLib.h"
+# 222 "myLib.h"
 typedef volatile struct {
     volatile const void *src;
     volatile void *dst;
@@ -97,9 +97,9 @@ typedef volatile struct {
 
 
 extern DMA *dma;
-# 259 "myLib.h"
+# 262 "myLib.h"
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt);
-# 353 "myLib.h"
+# 356 "myLib.h"
 typedef struct{
     const unsigned char* data;
     int length;
@@ -119,6 +119,7 @@ int max(int a, int b);
 int min(int a, int b);
 int clamp(int value, int min, int max);
 int signOf(int value);
+int lerp(int a, int b, int curr, int max);
 # 2 "myLib.c" 2
 
 
@@ -313,4 +314,13 @@ int signOf(int value) {
     } else {
         return 0;
     }
+}
+
+int lerp(int a, int b, int curr, int max) {
+    if (b < a) {
+        return (b - a) * curr / max + a + 1;
+    } else {
+        return (b - a) * curr / max + a;
+    }
+
 }

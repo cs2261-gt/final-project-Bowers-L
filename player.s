@@ -21,41 +21,39 @@ initPlayer:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	mov	r1, #240
-	mov	r0, #128
-	mov	ip, #256
+	mov	r0, #480
+	mov	r1, #128
 	push	{r4, r5, r6, r7, lr}
-	mov	r5, #4
-	mov	r7, #8
+	mov	r7, #256
+	mov	r4, #4
 	mov	r2, #0
-	mov	r4, #16
-	mov	lr, #64
-	mov	r6, #512
+	mov	lr, #16
+	mov	r6, #8
+	mov	r5, #512
+	mov	ip, #64
 	ldr	r3, .L4
-	str	r1, [r3, #12]
-	str	r0, [r3, #24]
-	ldr	r1, [r3, #28]
+	str	r0, [r3, #12]
 	ldr	r0, .L4+4
-	rsb	r1, r1, #7936
-	ldr	r0, [r0]
-	add	r1, r1, #32
+	str	r1, [r3, #24]
+	ldr	r1, [r3, #28]
+	str	r7, [r3, #28]
+	ldr	r7, [r0]
+	rsb	r1, r1, #7744
 	str	r1, [r3, #8]
-	sub	r0, r1, r0
-	ldr	r1, .L4+8
-	str	ip, [r3, #28]
-	ldr	r1, [r1]
-	sub	ip, ip, #33024
-	str	r0, [r3]
-	orr	ip, ip, r0, asr r5
-	ldr	r0, .L4+12
-	rsb	r1, r1, #240
-	str	r7, [r3, #68]
-	strh	ip, [r0]	@ movhi
-	str	r1, [r3, #4]
-	asr	r1, r1, r5
-	str	r6, [r3, #84]
-	strh	r1, [r0, #2]	@ movhi
-	strh	r2, [r0, #4]	@ movhi
+	ldr	r0, [r0, #4]
+	sub	r1, r1, r7
+	ldr	r7, .L4+8
+	str	r1, [r3]
+	orr	r7, r7, r1, asr r4
+	rsb	r0, r0, #480
+	ldr	r1, .L4+12
+	str	r0, [r3, #4]
+	asr	r0, r0, r4
+	strh	r7, [r1]	@ movhi
+	strh	r0, [r1, #2]	@ movhi
+	str	r6, [r3, #68]
+	str	r5, [r3, #84]
+	strh	r2, [r1, #4]	@ movhi
 	str	r2, [r3, #16]
 	str	r2, [r3, #20]
 	str	r2, [r3, #52]
@@ -63,20 +61,20 @@ initPlayer:
 	str	r2, [r3, #60]
 	str	r2, [r3, #80]
 	str	r2, [r3, #100]
-	str	r5, [r3, #64]
-	str	r5, [r3, #96]
-	str	r4, [r3, #72]
-	str	r4, [r3, #88]
-	str	lr, [r3, #76]
-	str	lr, [r3, #92]
+	str	r4, [r3, #64]
+	str	r4, [r3, #96]
+	str	lr, [r3, #72]
+	str	lr, [r3, #88]
+	str	ip, [r3, #76]
+	str	ip, [r3, #92]
 	pop	{r4, r5, r6, r7, lr}
 	bx	lr
 .L5:
 	.align	2
 .L4:
 	.word	player
-	.word	vOff
-	.word	hOff
+	.word	camera
+	.word	-32768
 	.word	shadowOAM
 	.size	initPlayer, .-initPlayer
 	.align	2
@@ -90,9 +88,9 @@ showPlayer:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	ldr	r3, .L16
-	ldr	r2, .L16+4
+	ldr	r0, .L16+4
 	ldr	r1, [r3, #8]
-	ldr	r2, [r2]
+	ldr	r2, [r0]
 	sub	r1, r1, r2
 	cmp	r1, #2544
 	movle	ip, #0
@@ -101,9 +99,8 @@ showPlayer:
 	rsb	r2, r2, #0
 	cmp	r1, r2
 	orrlt	ip, ip, #1
-	ldr	r2, .L16+8
+	ldr	r2, [r0, #4]
 	ldr	r0, [r3, #12]
-	ldr	r2, [r2]
 	sub	r0, r0, r2
 	asr	r2, r1, #4
 	push	{r4, lr}
@@ -117,7 +114,7 @@ showPlayer:
 	beq	.L15
 	mov	ip, #1
 	mov	r0, #0
-	ldr	r1, .L16+12
+	ldr	r1, .L16+8
 	str	ip, [r3, #52]
 	strh	r0, [r1, #4]	@ movhi
 	strh	lr, [r1, #2]	@ movhi
@@ -135,7 +132,7 @@ showPlayer:
 	cmp	r0, r4
 	movge	r0, r1
 	orrlt	r0, r1, #1
-	ldr	r1, .L16+12
+	ldr	r1, .L16+8
 	cmp	r0, #0
 	str	r0, [r3, #52]
 	strh	r2, [r1]	@ movhi
@@ -148,8 +145,7 @@ showPlayer:
 	.align	2
 .L16:
 	.word	player
-	.word	vOff
-	.word	hOff
+	.word	camera
 	.word	shadowOAM
 	.size	showPlayer, .-showPlayer
 	.align	2
@@ -603,149 +599,6 @@ resolveCollisions:
 	.word	player
 	.size	resolveCollisions, .-resolveCollisions
 	.align	2
-	.global	resolveCollisionY
-	.syntax unified
-	.arm
-	.fpu softvfp
-	.type	resolveCollisionY, %function
-resolveCollisionY:
-	@ Function supports interworking.
-	@ args = 0, pretend = 0, frame = 0
-	@ frame_needed = 0, uses_anonymous_args = 0
-	@ link register save eliminated.
-	bx	lr
-	.size	resolveCollisionY, .-resolveCollisionY
-	.align	2
-	.global	adjusthOff
-	.syntax unified
-	.arm
-	.fpu softvfp
-	.type	adjusthOff, %function
-adjusthOff:
-	@ Function supports interworking.
-	@ args = 0, pretend = 0, frame = 0
-	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	r3, .L120
-	ldr	r2, [r3, #20]
-	cmp	r2, #0
-	push	{r4, lr}
-	blt	.L118
-	beq	.L114
-	ldr	r4, .L120+4
-	ldr	r1, .L120+8
-	ldr	r0, [r4]
-	cmp	r0, r1
-	bgt	.L114
-	ldr	r1, [r3, #24]
-	ldr	r3, [r3, #4]
-	add	r1, r1, r1, lsr #31
-	add	r1, r3, r1, asr #1
-	cmp	r1, #1920
-	bgt	.L119
-.L114:
-	pop	{r4, lr}
-	bx	lr
-.L118:
-	ldr	r4, .L120+4
-	ldr	r0, [r4]
-	cmp	r0, #0
-	ble	.L114
-	ldr	r1, [r3, #24]
-	ldr	r3, [r3, #4]
-	add	r1, r1, r1, lsr #31
-	add	r1, r3, r1, asr #1
-	cmp	r1, #1920
-	bge	.L114
-	mov	r1, #0
-	ldr	r3, .L120+12
-	add	r0, r2, r0
-	mov	lr, pc
-	bx	r3
-	str	r0, [r4]
-	b	.L114
-.L119:
-	mov	r1, #4352
-	ldr	r3, .L120+16
-	add	r0, r2, r0
-	mov	lr, pc
-	bx	r3
-	str	r0, [r4]
-	b	.L114
-.L121:
-	.align	2
-.L120:
-	.word	player
-	.word	hOff
-	.word	4367
-	.word	max
-	.word	min
-	.size	adjusthOff, .-adjusthOff
-	.align	2
-	.global	adjustvOff
-	.syntax unified
-	.arm
-	.fpu softvfp
-	.type	adjustvOff, %function
-adjustvOff:
-	@ Function supports interworking.
-	@ args = 0, pretend = 0, frame = 0
-	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	r3, .L128
-	ldr	r2, [r3, #16]
-	cmp	r2, #0
-	push	{r4, lr}
-	blt	.L126
-	beq	.L122
-	ldr	r4, .L128+4
-	ldr	r1, .L128+8
-	ldr	r0, [r4]
-	cmp	r0, r1
-	bgt	.L122
-	ldr	r1, [r3, #28]
-	ldr	r3, [r3]
-	add	r1, r1, r1, lsr #31
-	add	r1, r3, r1, asr #1
-	cmp	r1, #1280
-	bgt	.L127
-.L122:
-	pop	{r4, lr}
-	bx	lr
-.L126:
-	ldr	r4, .L128+4
-	ldr	r0, [r4]
-	cmp	r0, #0
-	ble	.L122
-	ldr	r1, [r3, #28]
-	ldr	r3, [r3]
-	add	r1, r1, r1, lsr #31
-	add	r1, r3, r1, asr #1
-	cmp	r1, #1280
-	bge	.L122
-	mov	r1, #0
-	ldr	r3, .L128+12
-	add	r0, r2, r0
-	mov	lr, pc
-	bx	r3
-	str	r0, [r4]
-	b	.L122
-.L127:
-	mov	r1, #5632
-	ldr	r3, .L128+16
-	add	r0, r2, r0
-	mov	lr, pc
-	bx	r3
-	str	r0, [r4]
-	b	.L122
-.L129:
-	.align	2
-.L128:
-	.word	player
-	.word	vOff
-	.word	5647
-	.word	max
-	.word	min
-	.size	adjustvOff, .-adjustvOff
-	.align	2
 	.global	updatePlayer
 	.syntax unified
 	.arm
@@ -760,12 +613,12 @@ updatePlayer:
 	bl	touchingGround
 	cmp	r0, #0
 	movne	r3, #0
-	ldreq	r4, .L134
-	ldrne	r4, .L134
+	ldreq	r4, .L117
+	ldrne	r4, .L117
 	ldreq	r3, [r4, #96]
 	ldr	r1, [r4, #92]
 	ldr	r0, [r4, #16]
-	ldr	r5, .L134+4
+	ldr	r5, .L117+4
 	ldr	r2, [r4, #76]
 	rsb	r1, r1, #0
 	add	r0, r3, r0
@@ -801,14 +654,11 @@ updatePlayer:
 	mov	lr, pc
 	bx	r5
 	str	r0, [r4, #8]
-	bl	resolveCollisions
-	bl	adjusthOff
-	bl	adjustvOff
 	pop	{r4, r5, r6, lr}
-	b	showPlayer
-.L135:
+	b	resolveCollisions
+.L118:
 	.align	2
-.L134:
+.L117:
 	.word	player
 	.word	clamp
 	.size	updatePlayer, .-updatePlayer

@@ -15,7 +15,7 @@ typedef unsigned short u16;
 typedef unsigned int u32;
 # 64 "myLib.h"
 extern unsigned short *videoBuffer;
-# 85 "myLib.h"
+# 88 "myLib.h"
 typedef struct {
  u16 tileimg[8192];
 } charblock;
@@ -58,7 +58,7 @@ typedef struct {
 
 
 extern OBJ_ATTR shadowOAM[];
-# 157 "myLib.h"
+# 160 "myLib.h"
 void hideSprites();
 
 
@@ -82,7 +82,7 @@ typedef struct {
     int numFrames;
     int hide;
 } ANISPRITE;
-# 200 "myLib.h"
+# 203 "myLib.h"
 extern unsigned short oldButtons;
 extern unsigned short buttons;
 
@@ -91,7 +91,7 @@ extern unsigned short buttons;
 
 
 void updateInput();
-# 219 "myLib.h"
+# 222 "myLib.h"
 typedef volatile struct {
     volatile const void *src;
     volatile void *dst;
@@ -100,9 +100,9 @@ typedef volatile struct {
 
 
 extern DMA *dma;
-# 259 "myLib.h"
+# 262 "myLib.h"
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt);
-# 353 "myLib.h"
+# 356 "myLib.h"
 typedef struct{
     const unsigned char* data;
     int length;
@@ -122,19 +122,25 @@ int max(int a, int b);
 int min(int a, int b);
 int clamp(int value, int min, int max);
 int signOf(int value);
+int lerp(int a, int b, int curr, int max);
 # 4 "game.h" 2
+
+# 1 "stateMachine.h" 1
+       
+
+
 
 
 # 1 "map.h" 1
 # 22 "map.h"
-extern const unsigned short mapTiles[160];
+extern const unsigned short mapTiles[1696];
 
 
-extern const unsigned short mapMap[4096];
+extern const unsigned short mapMap[8192];
 
 
 extern const unsigned short mapPal[256];
-# 7 "game.h" 2
+# 7 "stateMachine.h" 2
 # 1 "SplashScreen.h" 1
 # 22 "SplashScreen.h"
 extern const unsigned short SplashScreen_StartTiles[1696];
@@ -150,14 +156,14 @@ extern const unsigned short SplashScreen_InstructionsMap[1024];
 
 
 extern const unsigned short SplashScreenPal[256];
-# 8 "game.h" 2
+# 8 "stateMachine.h" 2
 # 1 "InstructionsScreen.h" 1
 # 21 "InstructionsScreen.h"
 extern const unsigned short InstructionsScreenTiles[1776];
 
 
 extern const unsigned short InstructionsScreenMap[1024];
-# 9 "game.h" 2
+# 9 "stateMachine.h" 2
 # 1 "PauseScreen_Resume.h" 1
 # 22 "PauseScreen_Resume.h"
 extern const unsigned short PauseScreen_ResumeTiles[848];
@@ -167,14 +173,14 @@ extern const unsigned short PauseScreen_ResumeMap[1024];
 
 
 extern const unsigned short PauseScreen_ResumePal[256];
-# 10 "game.h" 2
+# 10 "stateMachine.h" 2
 # 1 "PauseScreen_Quit.h" 1
 # 21 "PauseScreen_Quit.h"
 extern const unsigned short PauseScreen_QuitTiles[848];
 
 
 extern const unsigned short PauseScreen_QuitMap[1024];
-# 11 "game.h" 2
+# 11 "stateMachine.h" 2
 # 1 "WinScreen.h" 1
 # 22 "WinScreen.h"
 extern const unsigned short WinScreenTiles[1232];
@@ -184,22 +190,45 @@ extern const unsigned short WinScreenMap[1024];
 
 
 extern const unsigned short WinScreenPal[256];
-# 12 "game.h" 2
+# 12 "stateMachine.h" 2
 # 1 "Spritesheet.h" 1
 # 21 "Spritesheet.h"
 extern const unsigned short SpritesheetTiles[16384];
 
 
 extern const unsigned short SpritesheetPal[256];
-# 13 "game.h" 2
+# 13 "stateMachine.h" 2
 
+
+
+typedef enum {
+    SPLASH, INSTRUCTIONS, GAME, PAUSED, WIN
+} GameState;
+
+typedef enum {
+    OPTSTART, OPTINST, OPTRESUME, OPTQUIT
+} MenuState;
+
+extern GameState gameState;
+extern MenuState menuState;
+
+void initSplash();
+void initInstructions();
+void initPause();
+void initWin();
+
+void updateSplash();
+void updateInstructions();
+void updatePause();
+void updateWin();
+# 6 "game.h" 2
 # 1 "player.h" 1
        
 
 
 # 1 "mapCollision.h" 1
 # 20 "mapCollision.h"
-extern const unsigned short mapCollisionBitmap[262144];
+extern const unsigned short mapCollisionBitmap[524288];
 # 5 "player.h" 2
 
 
@@ -244,6 +273,7 @@ typedef struct {
     int direction;
 } Player;
 
+
 extern Player player;
 extern const int playerMaxSpeed;
 
@@ -263,42 +293,67 @@ int collisionBelow();
 
 int resolveCollisionX();
 int resolveCollisionY();
-# 15 "game.h" 2
+# 7 "game.h" 2
+# 1 "camera.h" 1
+       
 
 
 
+
+
+
+typedef struct {
+    int row;
+    int col;
+} Camera;
+
+extern Camera camera;
+
+void cameraDebug();
+void initCamera();
+void updateCamer();
+# 8 "game.h" 2
+# 1 "item.h" 1
+       
+# 11 "item.h"
 typedef enum {
-    SPLASH, INSTRUCTIONS, GAME, PAUSED, WIN
-} GameState;
+    BOOTS
+} ItemType;
 
-typedef enum {
-    OPTSTART, OPTINST, OPTRESUME, OPTQUIT
-} MenuState;
+typedef struct {
+    int screenRow;
+    int screenCol;
+    int worldRow;
+    int worldCol;
+    int width;
+    int height;
+    int curFrame;
+    int numFrames;
+    int hide;
 
-extern GameState gameState;
-extern MenuState menuState;
-extern int hOff;
-extern int vOff;
+    u16 color1;
+    u16 color2;
+} Item;
+
+extern Item boots;
+
+void initItem(Item* item, int col, int row);
+
+void updateItem(Item* item);
+void showItem(Item* item);
+# 9 "game.h" 2
+
+
 
 
 extern int debug;
 
 void init();
-
-void initSplash();
-void initInstructions();
-void initGame();
-void initPause();
-void initWin();
-void setupBackground();
-
 void update();
 
-void updateSplash();
-void updateInstructions();
+void initGame();
+void resumeGame();
 void updateGame();
-void updatePause();
-void updateWin();
 
 
 
@@ -306,7 +361,7 @@ void handleVBlank();
 void setupDisplayInterrupt();
 void interruptHandler();
 # 2 "main.c" 2
-
+# 11 "main.c"
 int main() {
     init();
 

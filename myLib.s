@@ -699,6 +699,36 @@ signOf:
 	mvn	r0, #0
 	bx	lr
 	.size	signOf, .-signOf
+	.global	__aeabi_idiv
+	.align	2
+	.global	lerp
+	.syntax unified
+	.arm
+	.fpu softvfp
+	.type	lerp, %function
+lerp:
+	@ Function supports interworking.
+	@ args = 0, pretend = 0, frame = 0
+	@ frame_needed = 0, uses_anonymous_args = 0
+	push	{r4, r5, r6, lr}
+	mov	r4, r0
+	sub	r0, r1, r0
+	mov	r5, r1
+	mul	r0, r2, r0
+	mov	r1, r3
+	ldr	r3, .L115
+	mov	lr, pc
+	bx	r3
+	cmp	r5, r4
+	add	r0, r0, r4
+	addlt	r0, r0, #1
+	pop	{r4, r5, r6, lr}
+	bx	lr
+.L116:
+	.align	2
+.L115:
+	.word	__aeabi_idiv
+	.size	lerp, .-lerp
 	.comm	buttons,2,2
 	.comm	oldButtons,2,2
 	.comm	shadowOAM,1024,4

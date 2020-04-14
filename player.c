@@ -2,25 +2,11 @@
 
 Player player;
 
-/*
-Note about collisions: 
-I've tried several ways of handling collisions, which each come with some associated problems.
-The current method of handling collisions waits until the player's position conflicts with an occupied
-pixel in the collision map and resolves it by pushing the player in the direction that results in the shortest
-distance traveled for there not to be a collision. 
-
-The main arguable downside is a rounding effect on corners of overhead platforms where the 
-player clips to the left or right edge rather than being stopped by the corner.
-
-There is also a known bug where the player sometimes stops one pixel below the ground rather than completely on the ground.
-My belief is that this has to do with the positions not lining up with the subpixel speeds (each pixel is split into 16 subpixels)
-associated with the gravity calculations. If I can't fix this by M3, then I'll change the precision to single pixels.
-*/
 void initPlayer() {
-    player.worldRow = ENCODE4(MAPWH - 14) - player.height;
-    player.worldCol = ENCODE4(15);
-    player.screenRow = player.worldRow - vOff;
-    player.screenCol = player.worldCol - hOff;
+    player.worldRow = ENCODE4(MAPWH - 28) - player.height;
+    player.worldCol = ENCODE4(30);
+    player.screenRow = player.worldRow - camera.row;
+    player.screenCol = player.worldCol - camera.col;
     player.rdel = 0;
     player.cdel = 0;
     player.width = ENCODE4(8);
@@ -68,16 +54,13 @@ void updatePlayer() {
     player.worldCol = clamp(player.worldCol + player.cdel, 0, ENCODE4(MAPWH) - player.width);
     player.worldRow = clamp(player.worldRow + player.rdel, 0, ENCODE4(MAPWH) - player.height);
     resolveCollisions();
-    adjusthOff();
-    adjustvOff();
 
-    showPlayer();
 }
 
 void showPlayer() {
     //adjust screen coordinates to match world coordinates
-    player.screenRow = player.worldRow - vOff;
-    player.screenCol = player.worldCol - hOff;
+    player.screenRow = player.worldRow - camera.row;
+    player.screenCol = player.worldCol - camera.col;
 
     if ((player.screenRow < -player.height) || (player.screenRow > ENCODE4(SCREENHEIGHT - 1))
         || (player.screenCol < -player.width) || (player.screenCol > ENCODE4(SCREENWIDTH - 1))) {
@@ -184,6 +167,20 @@ int touchingGround() {
     || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width - 1), DECODE4(player.worldRow + player.height - 1 + 1), MAPWH)];
 }
 
+/*
+Note about collisions: 
+I've tried several ways of handling collisions, which each come with some associated problems.
+The current method of handling collisions waits until the player's position conflicts with an occupied
+pixel in the collision map and resolves it by pushing the player in the direction that results in the shortest
+distance traveled for there not to be a collision. 
+
+The main arguable downside is a rounding effect on corners of overhead platforms where the 
+player clips to the left or right edge rather than being stopped by the corner.
+
+There is also a known bug where the player sometimes stops one pixel below the ground rather than completely on the ground.
+My belief is that this has to do with the positions not lining up with the subpixel speeds (each pixel is split into 16 subpixels)
+associated with the gravity calculations. If I can't fix this by M3, then I'll change the precision to single pixels.
+*/
 int resolveCollisions() {
     int xDepth = 0;
     int yDepth = 0;
@@ -241,37 +238,6 @@ int resolveCollisions() {
             player.worldRow += yDepth * step;
         } else {
             player.worldRow -= yDepth * step;
-        }
-    }
-}
-
-int resolveCollisionY() {
-
-}
-
-void adjusthOff() {
-    if (player.cdel < 0) {
-        //left
-        if ((hOff > 0) && (player.screenCol + player.width / 2 < ENCODE4(SCREENWIDTH / 2))) {
-            hOff = max(hOff + player.cdel, 0);
-        }
-    } else if (player.cdel > 0) {
-        //right
-        if ((hOff + ENCODE4(SCREENWIDTH - 1) < ENCODE4(MAPWH)) && (player.screenCol + player.width / 2 > ENCODE4(SCREENWIDTH / 2))) {
-            hOff = min(hOff + player.cdel, ENCODE4(MAPWH - SCREENWIDTH));
-        }
-    }
-}
-
-void adjustvOff() {
-    if (player.rdel < 0) {
-        //up
-        if ((vOff > 0) && (player.screenRow + player.height / 2 < ENCODE4(SCREENHEIGHT / 2))) {
-            vOff = max(vOff + player.rdel, 0);
-        }
-    } else if (player.rdel > 0) {
-        if ((vOff + ENCODE4(SCREENHEIGHT - 1) < ENCODE4(MAPWH)) && (player.screenRow + player.height / 2 > ENCODE4(SCREENHEIGHT / 2))) {
-            vOff = min(vOff + player.rdel, ENCODE4(MAPWH - SCREENHEIGHT));
         }
     }
 }

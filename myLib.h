@@ -59,6 +59,7 @@ typedef unsigned int u32;
 // Display Constants
 #define SCREENHEIGHT 160
 #define SCREENWIDTH  240
+#define SBBSIZE 1024
 
 // Video Buffer
 extern unsigned short *videoBuffer;
@@ -71,6 +72,9 @@ extern unsigned short *videoBuffer;
 
 // Color
 #define COLOR(r,g,b) ((r) | (g)<<5 | (b)<<10)
+#define R(c) ((c) & 0x001F)
+#define G(c) ((c) & 0x03E0)
+#define B(c) ((c) & 0x7C00)
 #define BLACK   COLOR(0,0,0)
 #define WHITE   COLOR(31,31,31)
 #define GRAY    COLOR(15,15,15)
@@ -369,6 +373,7 @@ int max(int a, int b);
 int min(int a, int b);
 int clamp(int value, int min, int max);
 int signOf(int value);
+int lerp(int a, int b, int curr, int max);
 
 
 

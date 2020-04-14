@@ -2,8 +2,6 @@
 
 GameState gameState;
 MenuState menuState;
-int hOff;
-int vOff;
 
 int debug;
 
@@ -15,38 +13,15 @@ void init() {
     debug = 0;
 }
 
-void initSplash() {
-    gameState = SPLASH;
-    menuState = OPTSTART;
-    hOff = 0;
-    vOff = 0;
-
-    REG_DISPCTL |= BG0_ENABLE;
-    REG_BG0CNT = BG_4BPP | BG_SIZE_SMALL | BG_CHARBLOCK(0) | BG_SCREENBLOCK(28);
-    DMANow(3, SplashScreen_StartTiles, &CHARBLOCK[0], SplashScreen_StartTilesLen/2);
-    DMANow(3, SplashScreen_StartMap, &SCREENBLOCK[28], SplashScreen_StartMapLen/2);
-    DMANow(3, SplashScreenPal, PALETTE, SplashScreenPalLen/2);
-}
-
-void initInstructions() {
-    gameState = INSTRUCTIONS;
-    DMANow(3, InstructionsScreenTiles, &CHARBLOCK[0], InstructionsScreenTilesLen/2);
-    DMANow(3, InstructionsScreenMap, &SCREENBLOCK[28], InstructionsScreenMapLen/2);
-}
-
 void initGame() {
     //initialize variables
     gameState = GAME;
-    hOff = 0;
-    vOff = ENCODE4(MAPWH - SCREENHEIGHT);
+    initCamera(0, ENCODE4(MAPWH - SCREENHEIGHT));
     
     //setup background(s)
-
-    //As convention I am using charblock 0 for background 0 tiles and screenblocks 28-31 for displaying the large background
-    REG_BG0CNT = BG_4BPP | BG_SIZE_LARGE | BG_CHARBLOCK(0) | BG_SCREENBLOCK(28);
-    DMANow(3, mapTiles, &CHARBLOCK[0], mapTilesLen / 2);
-    DMANow(3, mapMap, &SCREENBLOCK[28], mapMapLen / 2);
-    DMANow(3, mapPal, PALETTE, mapPalLen / 2);
+    REG_DISPCTL |= BG1_ENABLE;
+    REG_DISPCTL &= ~BG0_ENABLE;
+    setupMap();
 
     //setup spritesheet
     REG_DISPCTL |= SPRITE_ENABLE;
@@ -55,40 +30,17 @@ void initGame() {
     DMANow(3, SpritesheetPal, SPRITEPALETTE, SpritesheetPalLen / 2);
 
     initPlayer();
+    initItem(&boots, 496, 496);
 }
 
 void resumeGame() {
     REG_DISPCTL |= SPRITE_ENABLE;
     gameState = GAME;
 
-    REG_BG0CNT = BG_4BPP | BG_SIZE_LARGE | BG_CHARBLOCK(0) | BG_SCREENBLOCK(28);
+    REG_BG0CNT = BG_4BPP | BG_SIZE_LARGE | BG_CHARBLOCK(0) | BG_SCREENBLOCK(27);
     DMANow(3, mapTiles, &CHARBLOCK[0], mapTilesLen / 2);
     DMANow(3, mapMap, &SCREENBLOCK[28], mapMapLen / 2);
     DMANow(3, mapPal, PALETTE, mapPalLen / 2);
-
-}
-
-void initPause() {
-    gameState = PAUSED;
-    menuState = OPTRESUME;
-    REG_DISPCTL &= ~SPRITE_ENABLE;
-    REG_BG0CNT = BG_4BPP | BG_SIZE_SMALL | BG_CHARBLOCK(0) | BG_SCREENBLOCK(28);
-    //waitForVBlank();    //need to do or else the offset update will lag
-
-    DMANow(3, PauseScreen_ResumeTiles, &CHARBLOCK[0], PauseScreen_ResumeTilesLen/2);
-    DMANow(3, PauseScreen_ResumeMap, &SCREENBLOCK[28], PauseScreen_ResumeMapLen/2);
-    DMANow(3, PauseScreen_ResumePal, PALETTE, PauseScreen_ResumePalLen/2);
-    
-}
-
-void initWin() {
-    gameState = WIN;
-    REG_DISPCTL &= ~SPRITE_ENABLE;
-    REG_BG0CNT = BG_4BPP | BG_SIZE_SMALL | BG_CHARBLOCK(0) | BG_SCREENBLOCK(28);
-
-    DMANow(3, WinScreenTiles, &CHARBLOCK[0], WinScreenTilesLen/2);
-    DMANow(3, WinScreenMap, &SCREENBLOCK[28], WinScreenMapLen/2);
-    DMANow(3, WinScreenPal, PALETTE, WinScreenPalLen/2);
 }
 
 void update() {
@@ -113,37 +65,6 @@ void update() {
     waitForVBlank();
 }
 
-void updateSplash() {
-    if (BUTTON_PRESSED(BUTTON_DOWN) && (menuState == OPTSTART)) {
-        menuState = OPTINST;
-        DMANow(3, SplashScreen_InstructionsTiles, &CHARBLOCK[0], SplashScreen_InstructionsTilesLen/2);
-        DMANow(3, SplashScreen_InstructionsMap, &SCREENBLOCK[28], SplashScreen_InstructionsMapLen/2);
-    }
-
-    if (BUTTON_PRESSED(BUTTON_UP) && (menuState == OPTINST)) {
-        menuState = OPTSTART;
-        DMANow(3, SplashScreen_StartTiles, &CHARBLOCK[0], SplashScreen_StartTilesLen/2);
-        DMANow(3, SplashScreen_StartMap, &SCREENBLOCK[28], SplashScreen_StartMapLen/2);
-    }
-
-    if (BUTTON_PRESSED(BUTTON_A)) {
-        switch (menuState) {
-            case OPTSTART:
-                initGame();
-                break;
-            case OPTINST:
-                initInstructions();
-                break;
-        }
-    }
-}
-
-void updateInstructions() {
-    if (BUTTON_PRESSED(BUTTON_SELECT)) {
-        initSplash();
-    }
-}
-
 void updateGame() {
     if (BUTTON_PRESSED(BUTTON_L)) {
         if (debug > 0) {
@@ -164,80 +85,36 @@ void updateGame() {
 
     if (debug) {
         cameraDebug();
-        showPlayer();
     } else {
         updatePlayer();
+        updateItem(&boots);
     }
+    updateCamera();
+
+    showPlayer();
+    showItem(&boots);
 }
 
+void drawGame() {
+    REG_BG1CNT = BG_4BPP | BG_SIZE_LARGE | BG_CHARBLOCK(1) | BG_SCREENBLOCK(23 + OFFSET(camera.sbbcol, camera.sbbrow, 2));
+    REG_BG1HOFF = DECODE4(camera.col) - camera.sbbcol * 256;
+    REG_BG1VOFF = DECODE4(camera.row) - camera.sbbrow * 256;
 
-
-void updatePause() {
-    if (BUTTON_PRESSED(BUTTON_DOWN) && (menuState == OPTRESUME)) {
-        menuState = OPTQUIT;
-        DMANow(3, PauseScreen_QuitTiles, &CHARBLOCK[0], PauseScreen_QuitTilesLen/2);
-        DMANow(3, PauseScreen_QuitMap, &SCREENBLOCK[28], PauseScreen_QuitMapLen/2);
-    }
-
-    if (BUTTON_PRESSED(BUTTON_UP) && (menuState == OPTQUIT)) {
-        menuState = OPTRESUME;
-        DMANow(3, PauseScreen_ResumeTiles, &CHARBLOCK[0], PauseScreen_ResumeTilesLen/2);
-        DMANow(3, PauseScreen_ResumeMap, &SCREENBLOCK[28], PauseScreen_ResumeMapLen/2);
-    }
-
-    if (BUTTON_PRESSED(BUTTON_A)) {
-        switch (menuState) {
-            case OPTRESUME:
-                resumeGame();
-                break;
-            case OPTQUIT:
-                initSplash();
-                break;
-        }
-    }
-}
-
-void updateWin() {
-    if (BUTTON_PRESSED(BUTTON_SELECT)) {
-        initSplash();
-    }
-}
-
-void cameraDebug() {
-    static int cameraSpeed = 32;
-
-    if (BUTTON_HELD(BUTTON_UP)) {
-        if (vOff > 0) {
-            vOff = max(vOff - cameraSpeed, 0);
-        }
-    }
-    if (BUTTON_HELD(BUTTON_DOWN)) {
-        if (vOff < ENCODE4(MAPWH - SCREENHEIGHT)) {
-            vOff = min(vOff + cameraSpeed, ENCODE4(MAPWH - SCREENHEIGHT));
-        }
-    }
-    if (BUTTON_HELD(BUTTON_LEFT)) {
-        if (hOff > 0) {
-            hOff = max(hOff - cameraSpeed, 0);
-        }
-    }
-    if (BUTTON_HELD(BUTTON_RIGHT)) {
-        if (hOff < ENCODE4(MAPWH - SCREENWIDTH)) {
-            hOff = min(hOff + cameraSpeed, ENCODE4(MAPWH - SCREENWIDTH));
-        }
-    }
-}
-
-void handleVBlank() {
-    if (gameState == GAME) {
-        REG_BG0HOFF = DECODE4(hOff);
-        REG_BG0VOFF = DECODE4(vOff);
     DMANow(3, shadowOAM, OAM, 128 * 4);
-    } else {
-        REG_BG0HOFF = 0;
-        REG_BG0VOFF = 0;
-    }
+}
 
+void setupMap() {
+    /*
+    1024x1024 map using 9 screenblocks. Game starts at screeenblock 4
+    |-------------------|
+    |   0   1   2   3   |
+    |   2   3   4   5   |
+    |   4   5   6   7   |
+    |   6   7   8   9   |
+    |-------------------|
+    */
+    REG_BG1CNT = BG_4BPP | BG_SIZE_LARGE | BG_CHARBLOCK(1) | BG_SCREENBLOCK(23 + OFFSET(camera.sbbcol, camera.sbbrow, 2));
+    
 }
 
 void setupDisplayInterrupt() {
@@ -256,7 +133,9 @@ void interruptHandler() {
     REG_IME = 0;
 
     if (REG_IF & INT_VBLANK) {
-        handleVBlank();
+        if (gameState == GAME) {
+            drawGame();
+        }
     }
 
     REG_IF = REG_IF;

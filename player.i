@@ -15,7 +15,7 @@ typedef unsigned short u16;
 typedef unsigned int u32;
 # 64 "myLib.h"
 extern unsigned short *videoBuffer;
-# 85 "myLib.h"
+# 88 "myLib.h"
 typedef struct {
  u16 tileimg[8192];
 } charblock;
@@ -58,7 +58,7 @@ typedef struct {
 
 
 extern OBJ_ATTR shadowOAM[];
-# 157 "myLib.h"
+# 160 "myLib.h"
 void hideSprites();
 
 
@@ -82,7 +82,7 @@ typedef struct {
     int numFrames;
     int hide;
 } ANISPRITE;
-# 200 "myLib.h"
+# 203 "myLib.h"
 extern unsigned short oldButtons;
 extern unsigned short buttons;
 
@@ -91,7 +91,7 @@ extern unsigned short buttons;
 
 
 void updateInput();
-# 219 "myLib.h"
+# 222 "myLib.h"
 typedef volatile struct {
     volatile const void *src;
     volatile void *dst;
@@ -100,9 +100,9 @@ typedef volatile struct {
 
 
 extern DMA *dma;
-# 259 "myLib.h"
+# 262 "myLib.h"
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt);
-# 353 "myLib.h"
+# 356 "myLib.h"
 typedef struct{
     const unsigned char* data;
     int length;
@@ -122,12 +122,18 @@ int max(int a, int b);
 int min(int a, int b);
 int clamp(int value, int min, int max);
 int signOf(int value);
+int lerp(int a, int b, int curr, int max);
 # 4 "player.h" 2
 # 1 "mapCollision.h" 1
 # 20 "mapCollision.h"
-extern const unsigned short mapCollisionBitmap[262144];
+extern const unsigned short mapCollisionBitmap[524288];
 # 5 "player.h" 2
 # 1 "game.h" 1
+       
+
+
+
+# 1 "stateMachine.h" 1
        
 
 
@@ -135,14 +141,14 @@ extern const unsigned short mapCollisionBitmap[262144];
 
 # 1 "map.h" 1
 # 22 "map.h"
-extern const unsigned short mapTiles[160];
+extern const unsigned short mapTiles[1696];
 
 
-extern const unsigned short mapMap[4096];
+extern const unsigned short mapMap[8192];
 
 
 extern const unsigned short mapPal[256];
-# 7 "game.h" 2
+# 7 "stateMachine.h" 2
 # 1 "SplashScreen.h" 1
 # 22 "SplashScreen.h"
 extern const unsigned short SplashScreen_StartTiles[1696];
@@ -158,14 +164,14 @@ extern const unsigned short SplashScreen_InstructionsMap[1024];
 
 
 extern const unsigned short SplashScreenPal[256];
-# 8 "game.h" 2
+# 8 "stateMachine.h" 2
 # 1 "InstructionsScreen.h" 1
 # 21 "InstructionsScreen.h"
 extern const unsigned short InstructionsScreenTiles[1776];
 
 
 extern const unsigned short InstructionsScreenMap[1024];
-# 9 "game.h" 2
+# 9 "stateMachine.h" 2
 # 1 "PauseScreen_Resume.h" 1
 # 22 "PauseScreen_Resume.h"
 extern const unsigned short PauseScreen_ResumeTiles[848];
@@ -175,14 +181,14 @@ extern const unsigned short PauseScreen_ResumeMap[1024];
 
 
 extern const unsigned short PauseScreen_ResumePal[256];
-# 10 "game.h" 2
+# 10 "stateMachine.h" 2
 # 1 "PauseScreen_Quit.h" 1
 # 21 "PauseScreen_Quit.h"
 extern const unsigned short PauseScreen_QuitTiles[848];
 
 
 extern const unsigned short PauseScreen_QuitMap[1024];
-# 11 "game.h" 2
+# 11 "stateMachine.h" 2
 # 1 "WinScreen.h" 1
 # 22 "WinScreen.h"
 extern const unsigned short WinScreenTiles[1232];
@@ -192,16 +198,14 @@ extern const unsigned short WinScreenMap[1024];
 
 
 extern const unsigned short WinScreenPal[256];
-# 12 "game.h" 2
+# 12 "stateMachine.h" 2
 # 1 "Spritesheet.h" 1
 # 21 "Spritesheet.h"
 extern const unsigned short SpritesheetTiles[16384];
 
 
 extern const unsigned short SpritesheetPal[256];
-# 13 "game.h" 2
-
-
+# 13 "stateMachine.h" 2
 
 
 
@@ -215,28 +219,78 @@ typedef enum {
 
 extern GameState gameState;
 extern MenuState menuState;
-extern int hOff;
-extern int vOff;
+
+void initSplash();
+void initInstructions();
+void initPause();
+void initWin();
+
+void updateSplash();
+void updateInstructions();
+void updatePause();
+void updateWin();
+# 6 "game.h" 2
+
+# 1 "camera.h" 1
+       
+
+
+
+
+
+
+typedef struct {
+    int row;
+    int col;
+} Camera;
+
+extern Camera camera;
+
+void cameraDebug();
+void initCamera();
+void updateCamer();
+# 8 "game.h" 2
+# 1 "item.h" 1
+       
+# 11 "item.h"
+typedef enum {
+    BOOTS
+} ItemType;
+
+typedef struct {
+    int screenRow;
+    int screenCol;
+    int worldRow;
+    int worldCol;
+    int width;
+    int height;
+    int curFrame;
+    int numFrames;
+    int hide;
+
+    u16 color1;
+    u16 color2;
+} Item;
+
+extern Item boots;
+
+void initItem(Item* item, int col, int row);
+
+void updateItem(Item* item);
+void showItem(Item* item);
+# 9 "game.h" 2
+
+
 
 
 extern int debug;
 
 void init();
-
-void initSplash();
-void initInstructions();
-void initGame();
-void initPause();
-void initWin();
-void setupBackground();
-
 void update();
 
-void updateSplash();
-void updateInstructions();
+void initGame();
+void resumeGame();
 void updateGame();
-void updatePause();
-void updateWin();
 
 
 
@@ -286,6 +340,7 @@ typedef struct {
     int direction;
 } Player;
 
+
 extern Player player;
 extern const int playerMaxSpeed;
 
@@ -309,12 +364,11 @@ int resolveCollisionY();
 
 Player player;
 
-
 void initPlayer() {
-    player.worldRow = ((512 - 14) << 4) - player.height;
-    player.worldCol = ((15) << 4);
-    player.screenRow = player.worldRow - vOff;
-    player.screenCol = player.worldCol - hOff;
+    player.worldRow = ((512 - 28) << 4) - player.height;
+    player.worldCol = ((30) << 4);
+    player.screenRow = player.worldRow - camera.row;
+    player.screenCol = player.worldCol - camera.col;
     player.rdel = 0;
     player.cdel = 0;
     player.width = ((8) << 4);
@@ -362,16 +416,13 @@ void updatePlayer() {
     player.worldCol = clamp(player.worldCol + player.cdel, 0, ((512) << 4) - player.width);
     player.worldRow = clamp(player.worldRow + player.rdel, 0, ((512) << 4) - player.height);
     resolveCollisions();
-    adjusthOff();
-    adjustvOff();
 
-    showPlayer();
 }
 
 void showPlayer() {
 
-    player.screenRow = player.worldRow - vOff;
-    player.screenCol = player.worldCol - hOff;
+    player.screenRow = player.worldRow - camera.row;
+    player.screenCol = player.worldCol - camera.col;
 
     if ((player.screenRow < -player.height) || (player.screenRow > ((160 - 1) << 4))
         || (player.screenCol < -player.width) || (player.screenCol > ((240 - 1) << 4))) {
@@ -429,7 +480,7 @@ void handlePlayerInput() {
         }
     }
 }
-# 145 "player.c"
+# 141 "player.c"
 int collisionLeft() {
     return player.worldCol < 0
         || mapCollisionBitmap[((((player.worldRow) >> 4))*(512)+(((player.worldCol) >> 4)))]
@@ -458,7 +509,7 @@ int touchingGround() {
     return mapCollisionBitmap[((((player.worldRow + player.height - 1 + 1) >> 4))*(512)+(((player.worldCol) >> 4)))]
     || mapCollisionBitmap[((((player.worldRow + player.height - 1 + 1) >> 4))*(512)+(((player.worldCol + player.width - 1) >> 4)))];
 }
-
+# 184 "player.c"
 int resolveCollisions() {
     int xDepth = 0;
     int yDepth = 0;
@@ -516,37 +567,6 @@ int resolveCollisions() {
             player.worldRow += yDepth * step;
         } else {
             player.worldRow -= yDepth * step;
-        }
-    }
-}
-
-int resolveCollisionY() {
-
-}
-
-void adjusthOff() {
-    if (player.cdel < 0) {
-
-        if ((hOff > 0) && (player.screenCol + player.width / 2 < ((240 / 2) << 4))) {
-            hOff = max(hOff + player.cdel, 0);
-        }
-    } else if (player.cdel > 0) {
-
-        if ((hOff + ((240 - 1) << 4) < ((512) << 4)) && (player.screenCol + player.width / 2 > ((240 / 2) << 4))) {
-            hOff = min(hOff + player.cdel, ((512 - 240) << 4));
-        }
-    }
-}
-
-void adjustvOff() {
-    if (player.rdel < 0) {
-
-        if ((vOff > 0) && (player.screenRow + player.height / 2 < ((160 / 2) << 4))) {
-            vOff = max(vOff + player.rdel, 0);
-        }
-    } else if (player.rdel > 0) {
-        if ((vOff + ((160 - 1) << 4) < ((512) << 4)) && (player.screenRow + player.height / 2 > ((160 / 2) << 4))) {
-            vOff = min(vOff + player.rdel, ((512 - 160) << 4));
         }
     }
 }

@@ -21,8 +21,8 @@ SpritesheetPal:
 	.short	28539
 	.short	0
 	.short	16912
+	.short	16912
 	.short	32767
-	.short	0
 	.short	0
 	.short	0
 	.short	0
@@ -278,14 +278,14 @@ SpritesheetPal:
 SpritesheetTiles:
 	.short	8738
 	.short	8738
-	.short	16706
-	.short	9236
-	.short	17218
-	.short	9268
-	.short	17474
-	.short	9284
-	.short	17474
-	.short	9284
+	.short	20818
+	.short	9493
+	.short	21330
+	.short	9525
+	.short	21842
+	.short	9557
+	.short	21842
+	.short	9557
 	.short	8738
 	.short	8738
 	.short	8704
@@ -4374,11 +4374,29 @@ SpritesheetTiles:
 	.short	0
 	.short	0
 	.short	0
+	.short	21845
+	.short	21845
+	.short	16933
+	.short	21028
+	.short	16933
+	.short	21028
+	.short	16933
+	.short	21028
+	.short	16933
+	.short	21028
+	.short	16933
+	.short	21028
+	.short	16933
+	.short	21028
+	.short	5
 	.short	0
+	.short	5
 	.short	0
+	.short	5
 	.short	0
 	.short	0
 	.short	0
+	.short	5
 	.short	0
 	.short	0
 	.short	0
@@ -4866,26 +4884,8 @@ SpritesheetTiles:
 	.short	0
 	.short	0
 	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
+	.short	21845
+	.short	21845
 	.short	0
 	.short	0
 	.short	0

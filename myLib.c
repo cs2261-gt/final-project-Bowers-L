@@ -193,3 +193,12 @@ int signOf(int value) {
         return 0;
     }
 }
+
+int lerp(int a, int b, int curr, int max) {
+    if (b < a) {
+        return (b - a) * curr / max + a + 1;
+    } else {    
+        return (b - a) * curr / max + a;
+    }
+
+}

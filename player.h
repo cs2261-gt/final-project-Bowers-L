@@ -45,6 +45,7 @@ typedef struct {
     int direction;
 } Player;
 
+//Player: OAM 0
 extern Player player;
 extern const int playerMaxSpeed;
 
