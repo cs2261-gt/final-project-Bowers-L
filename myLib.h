@@ -183,6 +183,33 @@ typedef struct {
     int hide;
 } ANISPRITE;
 
+//Blending
+
+#define REG_BLDCNT  (*(volatile u16*) 0x04000050)
+#define BLD_BG0a    (1<<0)  
+#define BLD_BG1a    (1<<1)
+#define BLD_BG2a    (1<<2)
+#define BLD_BG3a    (1<<3)
+#define BLD_OBJa    (1<<4)
+#define BLD_BDa     (1<<5)
+#define BLD_BG0b    (1<<8)
+#define BLD_BG1b    (1<<9)
+#define BLD_BG2b    (1<<10)
+#define BLD_BG3b    (1<<11)
+#define BLD_OBJb    (1<<12)
+#define BLD_BDb     (1<<13)
+
+#define BLD_STD     (1<<6)
+#define BLD_OFF     (0<<6)
+#define BLD_WHITE   (1<<7)
+#define BLD_BLACK   (3<<6)
+
+#define REG_BLDALPHA    (*(volatile u16*) 0x04000052)
+#define BLD_EVA(num)    ((num) << 0)
+#define BLD_EVB(num)    ((num) << 8)
+
+#define REG_BLDY        (*(volatile u16*) 0x04000054)
+#define BLD_EY(num)     ((num) <<0)
 
 // ================================== INPUT ===================================
 
@@ -375,6 +402,8 @@ int min(int a, int b);
 int clamp(int value, int min, int max);
 int signOf(int value);
 int lerp(int a, int b, int curr, int max);
+
+int round(int value, int base);
 
 
 

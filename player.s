@@ -179,8 +179,8 @@ collisionLeft:
 .L22:
 	ldr	r2, [r0, #28]
 	add	r1, r1, r2
-	sub	r1, r1, #1
 	asr	r1, r1, #4
+	sub	r1, r1, #1
 	add	r3, r3, r1, lsl #10
 	lsl	r3, r3, #1
 	ldrh	r0, [ip, r3]
@@ -227,8 +227,8 @@ collisionRight:
 .L29:
 	ldr	r2, [r1, #28]
 	add	r0, r0, r2
-	sub	r0, r0, #1
 	asr	r0, r0, #4
+	sub	r0, r0, #1
 	add	r3, r3, r0, lsl #10
 	lsl	r3, r3, #1
 	ldrh	r0, [ip, r3]
@@ -302,14 +302,14 @@ collisionBelow:
 	add	r3, r3, r1
 	cmp	r3, #16384
 	bge	.L42
-	ldr	r0, [r2, #12]
-	sub	r3, r3, #1
+	ldr	ip, [r2, #12]
 	asr	r3, r3, #4
-	asr	r1, r0, #4
+	sub	r3, r3, #1
+	asr	r1, ip, #4
 	add	r1, r1, r3, lsl #10
-	ldr	ip, .L44+4
+	ldr	r0, .L44+4
 	lsl	r1, r1, #1
-	ldrh	r1, [ip, r1]
+	ldrh	r1, [r0, r1]
 	cmp	r1, #0
 	lsl	r3, r3, #10
 	beq	.L43
@@ -318,11 +318,10 @@ collisionBelow:
 	bx	lr
 .L43:
 	ldr	r2, [r2, #24]
-	add	r0, r0, r2
-	sub	r0, r0, #1
-	add	r3, r3, r0, asr #4
-	lsl	r3, r3, #1
-	ldrh	r0, [ip, r3]
+	add	ip, ip, r2
+	add	r3, r3, ip, asr #4
+	add	r3, r0, r3, lsl #1
+	ldrh	r0, [r3, #-2]
 	subs	r0, r0, #0
 	movne	r0, #1
 	bx	lr
@@ -343,26 +342,25 @@ touchingGround:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	@ link register save eliminated.
-	ldr	r0, .L49
-	ldr	r2, [r0, #28]
-	ldr	r3, [r0, #8]
-	ldr	r1, [r0, #12]
+	ldr	r1, .L49
+	ldr	r2, [r1, #28]
+	ldr	r3, [r1, #8]
+	ldr	ip, [r1, #12]
 	add	r3, r3, r2
 	asr	r3, r3, #4
-	asr	r2, r1, #4
+	asr	r2, ip, #4
 	add	r2, r2, r3, lsl #10
-	ldr	ip, .L49+4
+	ldr	r0, .L49+4
 	lsl	r2, r2, #1
-	ldrh	r2, [ip, r2]
+	ldrh	r2, [r0, r2]
 	cmp	r2, #0
 	lsl	r3, r3, #10
 	bne	.L48
-	ldr	r2, [r0, #24]
-	add	r1, r1, r2
-	sub	r1, r1, #1
-	add	r3, r3, r1, asr #4
-	lsl	r3, r3, #1
-	ldrh	r0, [ip, r3]
+	ldr	r2, [r1, #24]
+	add	ip, ip, r2
+	add	r3, r3, ip, asr #4
+	add	r3, r0, r3, lsl #1
+	ldrh	r0, [r3, #-2]
 	subs	r0, r0, #0
 	movne	r0, #1
 	bx	lr
@@ -506,7 +504,7 @@ resolveCollisions:
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, r7, r8, r9, r10, lr}
 	bl	collisionLeft
-	ldr	r5, .L111
+	ldr	r5, .L112
 	subs	r6, r0, #0
 	ldr	r4, [r5, #12]
 	beq	.L85
@@ -577,12 +575,17 @@ resolveCollisions:
 .L91:
 	cmp	r6, #0
 	movne	r3, #0
+	ldr	r0, [r5, #12]
 	strne	r3, [r5, #20]
-	ldr	r3, [r5, #12]
 	cmp	r7, #0
-	addne	r8, r3, r8
-	subeq	r8, r3, r8
-	str	r8, [r5, #12]
+	addne	r0, r0, r8
+	subeq	r0, r0, r8
+	mov	r1, #16
+	ldr	r3, .L112+4
+	str	r0, [r5, #12]
+	mov	lr, pc
+	bx	r3
+	str	r0, [r5, #12]
 	pop	{r4, r5, r6, r7, r8, r9, r10, lr}
 	bx	lr
 .L94:
@@ -593,10 +596,11 @@ resolveCollisions:
 	str	r4, [r5, #8]
 	pop	{r4, r5, r6, r7, r8, r9, r10, lr}
 	bx	lr
-.L112:
+.L113:
 	.align	2
-.L111:
+.L112:
 	.word	player
+	.word	round
 	.size	resolveCollisions, .-resolveCollisions
 	.align	2
 	.global	updatePlayer
@@ -613,12 +617,12 @@ updatePlayer:
 	bl	touchingGround
 	cmp	r0, #0
 	movne	r3, #0
-	ldreq	r4, .L117
-	ldrne	r4, .L117
+	ldreq	r4, .L118
+	ldrne	r4, .L118
 	ldreq	r3, [r4, #96]
 	ldr	r1, [r4, #92]
 	ldr	r0, [r4, #16]
-	ldr	r5, .L117+4
+	ldr	r5, .L118+4
 	ldr	r2, [r4, #76]
 	rsb	r1, r1, #0
 	add	r0, r3, r0
@@ -656,9 +660,9 @@ updatePlayer:
 	str	r0, [r4, #8]
 	pop	{r4, r5, r6, lr}
 	b	resolveCollisions
-.L118:
+.L119:
 	.align	2
-.L117:
+.L118:
 	.word	player
 	.word	clamp
 	.size	updatePlayer, .-updatePlayer

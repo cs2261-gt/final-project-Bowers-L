@@ -150,12 +150,14 @@ int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, i
         && colA < colB + widthB - 1 && colA + widthA - 1 > colB;
 }
 
+//Hides all sprites in the shadowOAM
 void hideSprites() {
     for (int i = 0; i < 128; i++) {
         shadowOAM[i].attr0 = ATTR0_HIDE;
     }
 }
 
+//returns the max of a and b
 int max(int a, int b) {
     if (a > b) {
         return a;
@@ -164,6 +166,7 @@ int max(int a, int b) {
     }
 }
 
+//returns the min of a and b
 int min(int a, int b) {
     if (a < b) {
         return a;
@@ -172,6 +175,7 @@ int min(int a, int b) {
     }
 }
 
+//Clamps a value so that it is always between min and max (both inclusive)
 int clamp(int value, int min, int max) {
     if (value < min) {
         return min;
@@ -184,6 +188,7 @@ int clamp(int value, int min, int max) {
     return value;
 }
 
+//Returns -1, 0, or 1 based on the sign of value
 int signOf(int value) {
     if (value < 0) {
         return -1;
@@ -194,6 +199,8 @@ int signOf(int value) {
     }
 }
 
+//interpolates between the values a and b by amount curr
+//since there's no floats the ratio curr/max is used as the in between value for a and b
 int lerp(int a, int b, int curr, int max) {
     if (b < a) {
         return (b - a) * curr / max + a + 1;
@@ -201,4 +208,15 @@ int lerp(int a, int b, int curr, int max) {
         return (b - a) * curr / max + a;
     }
 
+}
+
+//returns a multiple of base that is closest to value
+int round(int value, int base) {
+    int remainder = value % base;
+    if (remainder >= base / 2) {
+        //round up
+        return (value / base + 1) * base;
+    } else {
+        return (value / base) * base;
+    }
 }

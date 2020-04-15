@@ -412,16 +412,16 @@ setupMap:
 	ldr	r2, .L64+28
 	mov	lr, pc
 	bx	r4
-	mov	r3, #176
+	mov	r3, #400
 	mov	r0, #3
 	ldr	r2, .L64+32
 	ldr	r1, .L64+36
 	mov	lr, pc
 	bx	r4
 	mov	r3, #16
+	mov	r2, #83886080
 	mov	r0, #3
-	ldr	r2, .L64+40
-	ldr	r1, .L64+44
+	ldr	r1, .L64+40
 	mov	lr, pc
 	bx	r4
 	pop	{r4, r5, r6, lr}
@@ -439,8 +439,7 @@ setupMap:
 	.word	100724736
 	.word	100679680
 	.word	mapTiles
-	.word	83886112
-	.word	mapPal+32
+	.word	mapPal
 	.size	setupMap, .-setupMap
 	.align	2
 	.global	initGame

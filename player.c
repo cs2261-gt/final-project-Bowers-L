@@ -141,13 +141,13 @@ void handlePlayerInput() {
 int collisionLeft() {
     return player.worldCol < 0
         || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol), DECODE4(player.worldRow), MAPWH)]
-        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol), DECODE4(player.worldRow + player.height - 1), MAPWH)];
+        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol), DECODE4(player.worldRow + player.height) - 1, MAPWH)];
 }
 
 int collisionRight() {
     return player.worldCol + player.width >= ENCODE4(MAPWH)
         || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width - 1), DECODE4(player.worldRow), MAPWH)]
-        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width - 1), DECODE4(player.worldRow + player.height - 1), MAPWH)];
+        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width - 1), DECODE4(player.worldRow + player.height) - 1, MAPWH)];
 }
 
 int collisionAbove() {
@@ -158,13 +158,13 @@ int collisionAbove() {
 
 int collisionBelow() {
     return player.worldRow + player.height >= ENCODE4(MAPWH)
-        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol), DECODE4(player.worldRow + player.height - 1), MAPWH)]
-        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width - 1), DECODE4(player.worldRow + player.height - 1), MAPWH)];
+        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol), DECODE4(player.worldRow + player.height) - 1, MAPWH)]
+        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width) - 1, DECODE4(player.worldRow + player.height) - 1, MAPWH)];
 }
 
 int touchingGround() {
-    return mapCollisionBitmap[OFFSET(DECODE4(player.worldCol), DECODE4(player.worldRow + player.height - 1 + 1), MAPWH)]
-    || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width - 1), DECODE4(player.worldRow + player.height - 1 + 1), MAPWH)];
+    return mapCollisionBitmap[OFFSET(DECODE4(player.worldCol), DECODE4(player.worldRow + player.height), MAPWH)]
+    || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width) - 1, DECODE4(player.worldRow + player.height), MAPWH)];
 }
 
 /*
@@ -177,9 +177,10 @@ distance traveled for there not to be a collision.
 The main arguable downside is a rounding effect on corners of overhead platforms where the 
 player clips to the left or right edge rather than being stopped by the corner.
 
-There is also a known bug where the player sometimes stops one pixel below the ground rather than completely on the ground.
-My belief is that this has to do with the positions not lining up with the subpixel speeds (each pixel is split into 16 subpixels)
-associated with the gravity calculations. If I can't fix this by M3, then I'll change the precision to single pixels.
+Update:
+-less off by one errors
+-bug with corners when moving down (player teleporting to other side of platform)
+-rounded off corners to make these less frequent
 */
 int resolveCollisions() {
     int xDepth = 0;
@@ -230,6 +231,8 @@ int resolveCollisions() {
         } else {
             player.worldCol -= xDepth * step;
         }
+        //round the position to a multiple of 16 (need to this or else off by one errors occur on right side collisions)
+        player.worldCol = round(player.worldCol, 16);
     } else {
         if (yDepth != 0) {
             player.rdel = 0;
@@ -239,5 +242,6 @@ int resolveCollisions() {
         } else {
             player.worldRow -= yDepth * step;
         }
+        //round the position to a multiple of 16 (need to this or else off by one errors occur when collision is below)
     }
 }

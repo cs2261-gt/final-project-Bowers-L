@@ -82,7 +82,7 @@ typedef struct {
     int numFrames;
     int hide;
 } ANISPRITE;
-# 205 "myLib.h"
+# 232 "myLib.h"
 extern unsigned short oldButtons;
 extern unsigned short buttons;
 
@@ -91,7 +91,7 @@ extern unsigned short buttons;
 
 
 void updateInput();
-# 224 "myLib.h"
+# 251 "myLib.h"
 typedef volatile struct {
     volatile const void *src;
     volatile void *dst;
@@ -100,9 +100,9 @@ typedef volatile struct {
 
 
 extern DMA *dma;
-# 264 "myLib.h"
+# 291 "myLib.h"
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt);
-# 358 "myLib.h"
+# 385 "myLib.h"
 typedef struct{
     const unsigned char* data;
     int length;
@@ -123,12 +123,14 @@ int min(int a, int b);
 int clamp(int value, int min, int max);
 int signOf(int value);
 int lerp(int a, int b, int curr, int max);
+
+int round(int value, int base);
 # 4 "stateMachine.h" 2
 
 
 # 1 "map.h" 1
 # 22 "map.h"
-extern const unsigned short mapTiles[176];
+extern const unsigned short mapTiles[400];
 
 
 extern const unsigned short mapMap[16384];

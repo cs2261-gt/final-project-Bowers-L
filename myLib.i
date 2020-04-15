@@ -79,7 +79,7 @@ typedef struct {
     int numFrames;
     int hide;
 } ANISPRITE;
-# 205 "myLib.h"
+# 232 "myLib.h"
 extern unsigned short oldButtons;
 extern unsigned short buttons;
 
@@ -88,7 +88,7 @@ extern unsigned short buttons;
 
 
 void updateInput();
-# 224 "myLib.h"
+# 251 "myLib.h"
 typedef volatile struct {
     volatile const void *src;
     volatile void *dst;
@@ -97,9 +97,9 @@ typedef volatile struct {
 
 
 extern DMA *dma;
-# 264 "myLib.h"
+# 291 "myLib.h"
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt);
-# 358 "myLib.h"
+# 385 "myLib.h"
 typedef struct{
     const unsigned char* data;
     int length;
@@ -120,6 +120,8 @@ int min(int a, int b);
 int clamp(int value, int min, int max);
 int signOf(int value);
 int lerp(int a, int b, int curr, int max);
+
+int round(int value, int base);
 # 2 "myLib.c" 2
 
 
@@ -272,11 +274,13 @@ int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, i
         && colA < colB + widthB - 1 && colA + widthA - 1 > colB;
 }
 
+
 void hideSprites() {
     for (int i = 0; i < 128; i++) {
         shadowOAM[i].attr0 = (2<<8);
     }
 }
+
 
 int max(int a, int b) {
     if (a > b) {
@@ -286,6 +290,7 @@ int max(int a, int b) {
     }
 }
 
+
 int min(int a, int b) {
     if (a < b) {
         return a;
@@ -293,6 +298,7 @@ int min(int a, int b) {
         return b;
     }
 }
+
 
 int clamp(int value, int min, int max) {
     if (value < min) {
@@ -306,6 +312,7 @@ int clamp(int value, int min, int max) {
     return value;
 }
 
+
 int signOf(int value) {
     if (value < 0) {
         return -1;
@@ -316,6 +323,8 @@ int signOf(int value) {
     }
 }
 
+
+
 int lerp(int a, int b, int curr, int max) {
     if (b < a) {
         return (b - a) * curr / max + a + 1;
@@ -323,4 +332,15 @@ int lerp(int a, int b, int curr, int max) {
         return (b - a) * curr / max + a;
     }
 
+}
+
+
+int round(int value, int base) {
+    int remainder = value % base;
+    if (remainder >= base / 2) {
+
+        return (value / base + 1) * base;
+    } else {
+        return (value / base) * base;
+    }
 }

@@ -142,7 +142,7 @@ void setupMap() {
 
     //dma the charblock and palette as well
     DMANow(3, mapTiles, &CHARBLOCK[1], mapTilesLen / 2);
-    DMANow(3, &mapPal[16], &PALETTE[16], 16);
+    DMANow(3, mapPal, PALETTE, 16);
 }
 
 void setupDisplayInterrupt() {

@@ -729,6 +729,33 @@ lerp:
 .L115:
 	.word	__aeabi_idiv
 	.size	lerp, .-lerp
+	.global	__aeabi_idivmod
+	.align	2
+	.global	round
+	.syntax unified
+	.arm
+	.fpu softvfp
+	.type	round, %function
+round:
+	@ Function supports interworking.
+	@ args = 0, pretend = 0, frame = 0
+	@ frame_needed = 0, uses_anonymous_args = 0
+	push	{r4, lr}
+	ldr	r3, .L121
+	mov	r4, r1
+	mov	lr, pc
+	bx	r3
+	add	r3, r4, r4, lsr #31
+	cmp	r1, r3, asr #1
+	addge	r0, r0, #1
+	mul	r0, r4, r0
+	pop	{r4, lr}
+	bx	lr
+.L122:
+	.align	2
+.L121:
+	.word	__aeabi_idivmod
+	.size	round, .-round
 	.comm	buttons,2,2
 	.comm	oldButtons,2,2
 	.comm	shadowOAM,1024,4

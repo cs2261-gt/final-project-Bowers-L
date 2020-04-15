@@ -93,7 +93,7 @@ void equipItem(Item* item) {
     shadowOAM[1].attr0 |= ATTR0_HIDE;
     
     int i = 0;
-    while (acquiredItems[i] == NONE) {
+    while (acquiredItems[i] != NONE) {
         i++;
     }
     acquiredItems[i] = item->type;
