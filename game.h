@@ -6,6 +6,7 @@
 #include "player.h"
 #include "camera.h"
 #include "item.h"
+#include "laser.h"
 
 #define MAPWH 1024
 #define MAPSB 22

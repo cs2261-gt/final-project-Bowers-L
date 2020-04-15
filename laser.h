@@ -1,6 +1,13 @@
 #pragma once
 
+#include "myLib.h"
+#include "Spritesheet.h"
+#include "camera.h"
+
 #define LASERINDEX 11
+#define NUMLASERS 30
+
+#define KNOCKBACK (ENCODE4(8))
 
 typedef struct {
     int screenRow;
@@ -14,14 +21,17 @@ typedef struct {
     int hide;
     int active;
 
+    int type;   //0: normalVert, 1: tallVert, 2: normalHoriz, 3: tallHoriz
+
     int index;
 } Laser;
 
-extern Laser lasers[10];
+extern Laser lasers[NUMLASERS];
 
 void initAllLasers();
 void updateAllLasers();
+void showAllLasers();
 
-void initLaser();
-void updateLaser();
-void showLaser();
+void initLaser(Laser* laser, int col, int row, int tall);
+void updateLaser(Laser* laser);
+void showLaser(Laser* laser);

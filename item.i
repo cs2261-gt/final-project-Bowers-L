@@ -153,7 +153,7 @@ extern const unsigned short SpritesheetPal[256];
 
 # 1 "map.h" 1
 # 22 "map.h"
-extern const unsigned short mapTiles[256];
+extern const unsigned short mapTiles[272];
 
 
 extern const unsigned short mapMap[16384];
@@ -316,6 +316,36 @@ void shrinkPlayer();
 # 7 "game.h" 2
 
 
+# 1 "laser.h" 1
+       
+# 12 "laser.h"
+typedef struct {
+    int screenRow;
+    int screenCol;
+    int worldRow;
+    int worldCol;
+    int width;
+    int height;
+    int curFrame;
+    int numFrames;
+    int hide;
+    int active;
+
+    int tall;
+
+    int index;
+} Laser;
+
+extern Laser lasers[30];
+
+void initAllLasers();
+void updateAllLasers();
+void showAllLasers();
+
+void initLaser(Laser* laser, int col, int row, int tall);
+void updateLaser(Laser* laser);
+void showLaser(Laser* laser);
+# 10 "game.h" 2
 
 
 
@@ -417,7 +447,7 @@ void initAllItems() {
         playerInventory[i] = NONE;
     }
 
-    initItem(&items[0], 1024 - 24, 1024 - 24, BOOTS);
+    initItem(&items[0], 1024 - 24, 1024 - 24, GLOVES);
     initItem(&items[1], 624, 904, SHRINK);
     initItem(&items[2], 24, 808, SPEED);
     initItem(&items[3], 1008, 800, GLOVES);
@@ -447,7 +477,7 @@ void initItem(Item* item, int col, int row, ItemType type) {
 
     shadowOAM[item->index].attr0 = (((item->screenRow) >> 4) & 0xFF) | (0<<8) | (0<<13) | (0<<14);
     shadowOAM[item->index].attr1 = (((item->screenCol) >> 4) & 0x1FF) | (0<<14);
-    shadowOAM[item->index].attr2 = ((0)*32+(9)) | ((0)<<12);
+    shadowOAM[item->index].attr2 = ((8)*32+(0)) | ((0)<<12);
 }
 
 void updateAllItems() {

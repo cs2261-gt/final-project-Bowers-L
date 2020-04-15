@@ -130,7 +130,7 @@ int round(int value, int base);
 
 # 1 "map.h" 1
 # 22 "map.h"
-extern const unsigned short mapTiles[256];
+extern const unsigned short mapTiles[272];
 
 
 extern const unsigned short mapMap[16384];
@@ -354,6 +354,36 @@ void shrinkPlayer();
 # 7 "game.h" 2
 
 
+# 1 "laser.h" 1
+       
+# 12 "laser.h"
+typedef struct {
+    int screenRow;
+    int screenCol;
+    int worldRow;
+    int worldCol;
+    int width;
+    int height;
+    int curFrame;
+    int numFrames;
+    int hide;
+    int active;
+
+    int tall;
+
+    int index;
+} Laser;
+
+extern Laser lasers[30];
+
+void initAllLasers();
+void updateAllLasers();
+void showAllLasers();
+
+void initLaser(Laser* laser, int col, int row, int tall);
+void updateLaser(Laser* laser);
+void showLaser(Laser* laser);
+# 10 "game.h" 2
 
 
 

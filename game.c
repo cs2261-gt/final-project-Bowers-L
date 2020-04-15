@@ -30,6 +30,7 @@ void initGame() {
 
     initPlayer();
     initAllItems();
+    initAllLasers();
 }
 
 void resumeGame() {
@@ -88,11 +89,13 @@ void updateGame() {
         updatePlayer();
     }
     updateAllItems();
+    updateAllLasers();
     
     updateCamera();
 
     showPlayer();
     showAllItems();
+    showAllLasers();
 }
 
 void drawGame() {

@@ -26,7 +26,7 @@ initItem:
 	mov	lr, #128
 	mov	ip, #1
 	mov	r7, #0
-	mov	r4, #9
+	mov	r4, #256
 	ldr	r8, .L4
 	strb	r3, [r0, #44]
 	ldr	r6, .L4+4
@@ -90,7 +90,7 @@ initAllItems:
 	ldr	lr, .L8+4
 	mov	r1, r2
 	mov	r0, r4
-	mov	r3, #1
+	mov	r3, #4
 	str	ip, [r4, #36]
 	str	ip, [r4, #88]
 	str	ip, [r4, #140]
@@ -521,8 +521,8 @@ useItem:
 	.bss
 	.align	2
 	.set	.LANCHOR0,. + 0
-	.type	itemCount.4266, %object
-	.size	itemCount.4266, 4
-itemCount.4266:
+	.type	itemCount.4293, %object
+	.size	itemCount.4293, 4
+itemCount.4293:
 	.space	4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

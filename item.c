@@ -10,7 +10,7 @@ void initAllItems() {
         playerInventory[i] = NONE;
     }
 
-    initItem(&items[0], MAPWH - 24, MAPWH - 24, BOOTS);
+    initItem(&items[0], MAPWH - 24, MAPWH - 24, GLOVES);
     initItem(&items[1], 624, 904, SHRINK);
     initItem(&items[2], 24, 808, SPEED);
     initItem(&items[3], 1008, 800, GLOVES);
@@ -40,7 +40,7 @@ void initItem(Item* item, int col, int row, ItemType type) {
 
     shadowOAM[item->index].attr0 = (DECODE4(item->screenRow) & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_SQUARE;
     shadowOAM[item->index].attr1 = (DECODE4(item->screenCol) & COLMASK) | ATTR1_TINY;
-    shadowOAM[item->index].attr2 = ATTR2_TILEID(9, 0) | ATTR2_PALROW(0);
+    shadowOAM[item->index].attr2 = ATTR2_TILEID(0, 8) | ATTR2_PALROW(0);
 }
 
 void updateAllItems() {

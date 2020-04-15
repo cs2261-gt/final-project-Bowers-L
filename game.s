@@ -136,15 +136,21 @@ updateGame:
 	ldr	r3, .L19+24
 	mov	lr, pc
 	bx	r3
+	ldr	r3, .L19+28
+	mov	lr, pc
+	bx	r3
+	ldr	r3, .L19+32
+	mov	lr, pc
+	bx	r3
 	pop	{r4, lr}
 	bx	lr
 .L18:
-	ldr	r3, .L19+28
+	ldr	r3, .L19+36
 	mov	lr, pc
 	bx	r3
 	b	.L12
 .L17:
-	ldr	r3, .L19+32
+	ldr	r3, .L19+40
 	mov	lr, pc
 	bx	r3
 	b	.L11
@@ -155,9 +161,11 @@ updateGame:
 	.word	buttons
 	.word	debug
 	.word	updateAllItems
+	.word	updateAllLasers
 	.word	updateCamera
 	.word	showPlayer
 	.word	showAllItems
+	.word	showAllLasers
 	.word	updatePlayer
 	.word	initPause
 	.size	updateGame, .-updateGame
@@ -367,7 +375,7 @@ setupMap:
 	ldr	r2, .L47+28
 	mov	lr, pc
 	bx	r4
-	mov	r3, #256
+	mov	r3, #272
 	mov	r0, #3
 	ldr	r2, .L47+32
 	ldr	r1, .L47+36
@@ -432,9 +440,9 @@ initGame:
 	ldr	r1, .L51+20
 	mov	lr, pc
 	bx	r4
-	mov	r0, #3
 	ldr	r2, .L51+24
 	ldr	r1, .L51+28
+	mov	r0, #3
 	mov	r3, #256
 	mov	lr, pc
 	bx	r4
@@ -442,6 +450,9 @@ initGame:
 	mov	lr, pc
 	bx	r3
 	ldr	r3, .L51+36
+	mov	lr, pc
+	bx	r3
+	ldr	r3, .L51+40
 	mov	lr, pc
 	bx	r3
 	pop	{r4, lr}
@@ -459,6 +470,7 @@ initGame:
 	.word	SpritesheetPal
 	.word	initPlayer
 	.word	initAllItems
+	.word	initAllLasers
 	.size	initGame, .-initGame
 	.align	2
 	.global	setupDisplayInterrupt

@@ -5,11 +5,11 @@
 //
 //	map, 1024x1024@4, 
 //	+ palette 256 entries, not compressed
-//	+ 16 tiles (t|f|p reduced) not compressed
+//	+ 17 tiles (t|f|p reduced) not compressed
 //	+ regular map (in SBBs), not compressed, 128x128 
-//	Total size: 512 + 512 + 32768 = 33792
+//	Total size: 512 + 544 + 32768 = 33824
 //
-//	Time-stamp: 2020-04-15, 16:33:53
+//	Time-stamp: 2020-04-15, 18:19:50
 //	Exported by Cearn's GBA Image Transmogrifier, v0.8.3
 //	( http://www.coranac.com/projects/#grit )
 //
@@ -18,8 +18,8 @@
 #ifndef GRIT_MAP_H
 #define GRIT_MAP_H
 
-#define mapTilesLen 512
-extern const unsigned short mapTiles[256];
+#define mapTilesLen 544
+extern const unsigned short mapTiles[272];
 
 #define mapMapLen 32768
 extern const unsigned short mapMap[16384];

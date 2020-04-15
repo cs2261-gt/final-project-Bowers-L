@@ -1,105 +1,121 @@
 #include "laser.h"
 
-Laser lasers[10];
+//A lot of this is copy/paste from item.c for obvious reasons
+
+Laser lasers[NUMLASERS];
 
 void initAllLasers() {
-    for (int i = 0; i < NUMITEMS; i++) {
-        items[i].active = 0;
-        playerInventory[i] = NONE;
+    for (int i = 0; i < NUMLASERS; i++) {
+        lasers[i].active = 0;
     }
 
-    initLaser()
+    for (int i = 0; i < 4; i++) {
+        initLaser(&lasers[i], 376, 704 - i*16, 1);
+
+    }
+    for (int i = 4; i < 12; i++) {
+        initLaser(&lasers[i], 64, 704 - (i-4)*16, 1);
+        initLaser(&lasers[i+8], 80, 704 - (i-4)*16, 1);
+    }
+
+    for (int i = 20; i < 38; i++) {
+        initLaser(&lasers[i], 360 - i*16, 648, 3);
+    }
 }
 
-void initItem(Laser* laser, int col, int row) {
+void initLaser(Laser* laser, int col, int row, int type) {
     static int laserCount = 0;
-    itemCount++;
 
     laser->worldRow = ENCODE4(row);
     laser->worldCol = ENCODE4(col);
     laser->screenRow = laser->worldRow - camera.row;
     laser->screenCol = laser->worldCol - camera.col;
     laser->width = ENCODE4(8);
-    laser->height = ENCODE4(8);
+    laser->height = ENCODE4(8 + tall*8);
     laser->curFrame = 0;
     laser->numFrames = 60;
     laser->hide = 1;
     laser->active = 1;
 
-    laser->color1 = COLOR(16, 16, 16);
-    laser->color2 = COLOR(27, 27, 0);
-
     laser->type = type;
-    laser->index = itemCount;
 
-    shadowOAM[item->index].attr0 = (DECODE4(item->screenRow) & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_SQUARE;
-    shadowOAM[item->index].attr1 = (DECODE4(item->screenCol) & COLMASK) | ATTR1_TINY;
-    shadowOAM[item->index].attr2 = ATTR2_TILEID(9, 0) | ATTR2_PALROW(0);
-}
+    laser->index = laserCount + LASERINDEX;
+    laserCount++;
 
-void updateAllItems() {
-    for (int i = 0; i < NUMITEMS; i++) {
-        if (items[i].active) {
-            updateItem(&items[i]);
-        }
-    }
-}
-
-void updateItem(Item* item) {
-    //item animates so that it swaps between two colors
-    if (item->curFrame > item->numFrames / 2) {
-        SPRITEPALETTE[2] = COLOR(lerp(27, 16, item->curFrame, item->numFrames / 2),
-                                lerp(27, 16, item->curFrame, item->numFrames / 2),
-                                0
-                                );
+    if (laser->type % 2 == 0) {
+        //normal
+        shadowOAM[laser->index].attr0 = (DECODE4(laser->screenRow) & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_SQUARE;   
     } else {
-        SPRITEPALETTE[2] = COLOR(lerp(16, 27, item->curFrame, item->numFrames / 2),
-                                lerp(16, 27, item->curFrame, item->numFrames / 2),
-                                lerp(16, 0, item->curFrame, item->numFrames / 2)
-                                );
+        if (laser->type == 1) {
+            shadowOAM[laser->index].attr0 = (DECODE4(laser->screenRow) & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_TALL;
+        } else {
+            shadowOAM[laser->index].attr0 = (DECODE4(laser->screenRow) & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_WIDE;
+        }
+        
     }
-
     
-    item->curFrame++;
-    if (item->curFrame > item->numFrames) {
-        item->curFrame = 0;
-    }
-
-    if (item->hide == 0 && checkCollisionPlayer(item)) {
-        equipItem(item);
-    }
+    shadowOAM[laser->index].attr1 = (DECODE4(laser->screenCol) & COLMASK) | ATTR1_TINY;
+    shadowOAM[laser->index].attr2 = ATTR2_TILEID(2, (laser->curFrame / (laser->numFrames / 4)) * 2) | ATTR2_PALROW(0);
 }
 
-int checkCollisionPlayer(Item* item) {
-    return collision(player.worldCol, player.worldRow, player.width, player.height, item->worldCol, item->worldRow, item->width, item->height);
-}
-
-void showAllItems() {
-    for (int i = 0; i < NUMITEMS; i++) {
-        if (items[i].active) {
-            showItem(&items[i]);
+void updateAllLasers() {
+    for (int i = 0; i < NUMLASERS; i++) {
+        if (lasers[i].active) {
+            updateLaser(&lasers[i]);
         }
     }
 }
 
-void showItem(Item* item) {
-    item->screenRow = item->worldRow - camera.row;
-    item->screenCol = item->worldCol - camera.col;
+void updateLaser(Laser* laser) {
+    //laser animation
+    
+    laser->curFrame++;
+    if (laser->curFrame >= laser->numFrames) {
+        laser->curFrame = 0;
+    }
+
+    if (laser->hide == 0 && checkCollisionPlayerLaser(laser)) {
+        int direction = player.worldCol - laser->worldCol;
+        player.worldCol += signOf(direction) * KNOCKBACK;
+        player.cdel = 0;
+    }
+}
+
+int checkCollisionPlayerLaser(Laser* laser) {
+    return collision(player.worldCol, player.worldRow, player.width, player.height, laser->worldCol, laser->worldRow, laser->width, laser->height);
+}
+
+void showAllLasers() {
+    for (int i = 0; i < NUMLASERS; i++) {
+        if (lasers[i].active) {
+            showLaser(&lasers[i]);
+        }
+    }
+}
+
+void showLaser(Laser* laser) {
+    laser->screenRow = laser->worldRow - camera.row;
+    laser->screenCol = laser->worldCol - camera.col;
 
     //determine whether to hide sprite
-    if ((item->screenRow < -item->height) || (item->screenRow > ENCODE4(SCREENHEIGHT - 1))
-        || (item->screenCol < -item->width) || (item->screenCol > ENCODE4(SCREENWIDTH - 1))) {
-        item->hide = 1;
+    if ((laser->screenRow < -laser->height) || (laser->screenRow > ENCODE4(SCREENHEIGHT - 1))
+        || (laser->screenCol < -laser->width) || (laser->screenCol > ENCODE4(SCREENWIDTH - 1))) {
+        laser->hide = 1;
     } else {
-        item->hide = 0;
+        laser->hide = 0;
     }
 
     //set the OAM
-    shadowOAM[item->index].attr0 = (DECODE4(item->screenRow) & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_SQUARE;
-    shadowOAM[item->index].attr1 = (DECODE4(item->screenCol) & COLMASK) | ATTR1_TINY;
-    shadowOAM[item->index].attr2 = ATTR2_TILEID(0, 8) | ATTR2_PALROW(0);
+    if (laser->tall) {
+        shadowOAM[laser->index].attr0 = (DECODE4(laser->screenRow) & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_TALL;
+    } else {
+        shadowOAM[laser->index].attr0 = (DECODE4(laser->screenRow) & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_SQUARE;
+    }
     
-    if (item->hide) {
-        shadowOAM[item->index].attr0 |= ATTR0_HIDE;
+    shadowOAM[laser->index].attr1 = (DECODE4(laser->screenCol) & COLMASK) | ATTR1_TINY;
+    shadowOAM[laser->index].attr2 = ATTR2_TILEID(2, (laser->curFrame / (laser->numFrames / 4)) * 2) | ATTR2_PALROW(0);
+    
+    if (laser->hide) {
+        shadowOAM[laser->index].attr0 |= ATTR0_HIDE;
     }
 }
