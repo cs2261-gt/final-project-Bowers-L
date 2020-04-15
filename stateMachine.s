@@ -21,21 +21,20 @@ initSplash:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	mov	r2, #0
-	mov	r3, #67108864
-	mov	r1, #5632
-	ldr	ip, .L4
-	ldr	r0, .L4+4
+	mov	r3, #0
+	mov	r2, #67108864
+	mov	r0, #256
+	mov	r1, #5376
 	push	{r4, lr}
-	strb	r2, [ip]
-	strb	r2, [r0]
-	ldrh	r2, [r3]
-	orr	r2, r2, #256
+	ldr	ip, .L4
+	ldr	lr, .L4+4
+	strb	r3, [ip]
+	strb	r3, [lr]
 	ldr	r4, .L4+8
-	strh	r2, [r3]	@ movhi
-	strh	r1, [r3, #8]	@ movhi
-	mov	r2, #100663296
+	strh	r0, [r2]	@ movhi
+	strh	r1, [r2, #8]	@ movhi
 	mov	r3, #1696
+	mov	r2, #100663296
 	mov	r0, #3
 	ldr	r1, .L4+12
 	mov	lr, pc
@@ -46,7 +45,7 @@ initSplash:
 	ldr	r1, .L4+20
 	mov	lr, pc
 	bx	r4
-	mov	r3, #256
+	mov	r3, #16
 	mov	r2, #83886080
 	mov	r0, #3
 	ldr	r1, .L4+24
@@ -57,11 +56,11 @@ initSplash:
 .L5:
 	.align	2
 .L4:
-	.word	gameState
 	.word	menuState
+	.word	gameState
 	.word	DMANow
 	.word	SplashScreen_StartTiles
-	.word	100708352
+	.word	100706304
 	.word	SplashScreen_StartMap
 	.word	SplashScreenPal
 	.size	initSplash, .-initSplash
@@ -100,7 +99,7 @@ initInstructions:
 	.word	gameState
 	.word	DMANow
 	.word	InstructionsScreenTiles
-	.word	100708352
+	.word	100706304
 	.word	InstructionsScreenMap
 	.size	initInstructions, .-initInstructions
 	.align	2
@@ -114,24 +113,22 @@ initPause:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, lr}
-	mov	r0, #2
+	mov	ip, #2
 	mov	r4, #3
-	mov	r2, #67108864
-	mov	r1, #5632
-	ldr	ip, .L12
-	ldr	r3, .L12+4
-	strb	r4, [ip]
-	strb	r0, [r3]
-	ldrh	r3, [r2]
-	bic	r3, r3, #4096
-	orr	r3, r3, #256
+	mov	r3, #67108864
+	mov	r1, #256
+	mov	r2, #5376
+	ldr	lr, .L12
+	ldr	r0, .L12+4
+	strb	r4, [lr]
+	strb	ip, [r0]
 	ldr	r5, .L12+8
 	mov	r0, r4
-	strh	r3, [r2]	@ movhi
-	strh	r1, [r2, #8]	@ movhi
+	strh	r1, [r3]	@ movhi
+	strh	r2, [r3, #8]	@ movhi
+	ldr	r1, .L12+12
 	mov	r3, #848
 	mov	r2, #100663296
-	ldr	r1, .L12+12
 	mov	lr, pc
 	bx	r5
 	mov	r0, r4
@@ -141,7 +138,7 @@ initPause:
 	mov	lr, pc
 	bx	r5
 	mov	r0, r4
-	mov	r3, #256
+	mov	r3, #16
 	mov	r2, #83886080
 	ldr	r1, .L12+24
 	mov	lr, pc
@@ -155,7 +152,7 @@ initPause:
 	.word	menuState
 	.word	DMANow
 	.word	PauseScreen_ResumeTiles
-	.word	100708352
+	.word	100706304
 	.word	PauseScreen_ResumeMap
 	.word	PauseScreen_ResumePal
 	.size	initPause, .-initPause
@@ -169,17 +166,15 @@ initWin:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	mov	r0, #4
+	mov	ip, #4
 	mov	r2, #67108864
-	mov	r1, #5632
-	ldr	r3, .L16
+	mov	r0, #256
+	mov	r1, #5376
 	push	{r4, lr}
-	strb	r0, [r3]
-	ldrh	r3, [r2]
-	bic	r3, r3, #4096
-	orr	r3, r3, #256
+	ldr	r3, .L16
 	ldr	r4, .L16+4
-	strh	r3, [r2]	@ movhi
+	strb	ip, [r3]
+	strh	r0, [r2]	@ movhi
 	strh	r1, [r2, #8]	@ movhi
 	mov	r3, #1232
 	mov	r2, #100663296
@@ -193,7 +188,7 @@ initWin:
 	ldr	r1, .L16+16
 	mov	lr, pc
 	bx	r4
-	mov	r3, #256
+	mov	r3, #16
 	mov	r2, #83886080
 	mov	r0, #3
 	ldr	r1, .L16+20
@@ -207,7 +202,7 @@ initWin:
 	.word	gameState
 	.word	DMANow
 	.word	WinScreenTiles
-	.word	100708352
+	.word	100706304
 	.word	WinScreenMap
 	.word	WinScreenPal
 	.size	initWin, .-initWin
@@ -312,7 +307,7 @@ updateSplash:
 	.word	menuState
 	.word	SplashScreen_StartTiles
 	.word	DMANow
-	.word	100708352
+	.word	100706304
 	.word	SplashScreen_StartMap
 	.word	SplashScreen_InstructionsTiles
 	.word	SplashScreen_InstructionsMap
@@ -446,7 +441,7 @@ updatePause:
 	.word	menuState
 	.word	PauseScreen_ResumeTiles
 	.word	DMANow
-	.word	100708352
+	.word	100706304
 	.word	PauseScreen_ResumeMap
 	.word	PauseScreen_QuitTiles
 	.word	PauseScreen_QuitMap

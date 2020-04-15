@@ -46,6 +46,8 @@ typedef struct {
     int direction;
 
     //items
+    int currentItem;
+    int shrunk;
 } Player;
 
 //Player: OAM 0
@@ -58,14 +60,14 @@ void showPlayer();
 
 void handlePlayerInput();
 
-void adjusthOff();
-void adjustvOff();
-
+//collisions
 int collisionLeft();
 int collisionRight();
 int collisionAbove();
 int collisionBelow();
-
 int touchingGround();
 int resolveCollisions();
+
+//item stuff
+void shrinkPlayer();
 

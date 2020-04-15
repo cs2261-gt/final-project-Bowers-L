@@ -1,11 +1,22 @@
 #include "item.h"
 
-Item boots;
-int itemCount = 0;
+Item items[NUMITEMS];
 
-ItemType acquiredItems[10];
+ItemType playerInventory[NUMITEMS];
+
+void initAllItems() {
+    for (int i = 0; i < NUMITEMS; i++) {
+        items[i].active = 0;
+        playerInventory[i] = NONE;
+    }
+
+    initItem(&items[0], MAPWH - 24, MAPWH - 24, BOOTS);
+    initItem(&items[1], 625, 905, SHRINK);
+
+}
 
 void initItem(Item* item, int col, int row, ItemType type) {
+    static int itemCount = 0;
     itemCount++;
 
     item->worldRow = ENCODE4(row);
@@ -17,7 +28,7 @@ void initItem(Item* item, int col, int row, ItemType type) {
     item->curFrame = 0;
     item->numFrames = 60;
     item->hide = 1;
-    item->acquired = 0;
+    item->active = 1;
 
     item->color1 = COLOR(16, 16, 16);
     item->color2 = COLOR(27, 27, 0);
@@ -25,24 +36,28 @@ void initItem(Item* item, int col, int row, ItemType type) {
     item->type = type;
     item->index = itemCount;
 
-    for (int i = 0; i < 10; i++) {
-        acquiredItems[i] = NONE;
-    }
-
     shadowOAM[item->index].attr0 = (DECODE4(item->screenRow) & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_SQUARE;
     shadowOAM[item->index].attr1 = (DECODE4(item->screenCol) & COLMASK) | ATTR1_TINY;
     shadowOAM[item->index].attr2 = ATTR2_TILEID(9, 0) | ATTR2_PALROW(0);
 }
 
+void updateAllItems() {
+    for (int i = 0; i < NUMITEMS; i++) {
+        if (items[i].active) {
+            updateItem(&items[i]);
+        }
+    }
+}
+
 void updateItem(Item* item) {
     //item animates so that it swaps between two colors
     if (item->curFrame > item->numFrames / 2) {
-        SPRITEPALETTE[4] = COLOR(lerp(27, 16, item->curFrame, item->numFrames / 2),
+        SPRITEPALETTE[2] = COLOR(lerp(27, 16, item->curFrame, item->numFrames / 2),
                                 lerp(27, 16, item->curFrame, item->numFrames / 2),
                                 0
                                 );
     } else {
-        SPRITEPALETTE[4] = COLOR(lerp(16, 27, item->curFrame, item->numFrames / 2),
+        SPRITEPALETTE[2] = COLOR(lerp(16, 27, item->curFrame, item->numFrames / 2),
                                 lerp(16, 27, item->curFrame, item->numFrames / 2),
                                 lerp(16, 0, item->curFrame, item->numFrames / 2)
                                 );
@@ -63,7 +78,13 @@ int checkCollisionPlayer(Item* item) {
     return collision(player.worldCol, player.worldRow, player.width, player.height, item->worldCol, item->worldRow, item->width, item->height);
 }
 
-
+void showAllItems() {
+    for (int i = 0; i < NUMITEMS; i++) {
+        if (items[i].active) {
+            showItem(&items[i]);
+        }
+    }
+}
 
 void showItem(Item* item) {
     item->screenRow = item->worldRow - camera.row;
@@ -78,31 +99,36 @@ void showItem(Item* item) {
     }
 
     //set the OAM
-    shadowOAM[1].attr0 = (DECODE4(item->screenRow) & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_SQUARE;
-    shadowOAM[1].attr1 = (DECODE4(item->screenCol) & COLMASK) | ATTR1_TINY;
-    shadowOAM[1].attr2 = ATTR2_TILEID(0, 8) | ATTR2_PALROW(0);
+    shadowOAM[item->index].attr0 = (DECODE4(item->screenRow) & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_SQUARE;
+    shadowOAM[item->index].attr1 = (DECODE4(item->screenCol) & COLMASK) | ATTR1_TINY;
+    shadowOAM[item->index].attr2 = ATTR2_TILEID(0, 8) | ATTR2_PALROW(0);
     
     if (item->hide) {
-        shadowOAM[1].attr0 |= ATTR0_HIDE;
+        shadowOAM[item->index].attr0 |= ATTR0_HIDE;
     }
 }
 
 void equipItem(Item* item) {
-    item->acquired = 1;
+    item->active = 0;
     item->hide = 1;
-    shadowOAM[1].attr0 |= ATTR0_HIDE;
+    shadowOAM[item->index].attr0 |= ATTR0_HIDE;
     
     int i = 0;
-    while (acquiredItems[i] != NONE) {
+    while (playerInventory[i] != NONE) {
         i++;
     }
-    acquiredItems[i] = item->type;
+    playerInventory[i] = item->type;
+}
 
-    switch (item->type) {
+void useItem(ItemType item) {
+    switch (item) {
+        case NONE:
+            break;
         case BOOTS:
-            player.jumpHeight = 1024;
-            player.gravity = (2 * player.jumpHeight) / (player.jumpTime * player.jumpTime);
-            player.jumpSpeed = player.gravity * player.jumpTime;
+            equipBoots();
+            break;
+        case SHRINK:
+            shrinkPlayer();
             break;
     }
 }

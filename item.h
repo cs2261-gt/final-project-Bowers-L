@@ -6,10 +6,12 @@
 
 #include "camera.h"
 
+#define NUMITEMS 5
+
 //Items: OAM 1-10
 
 typedef enum {
-    NONE, BOOTS
+    NONE, BOOTS, SHRINK
 } ItemType;
 
 typedef struct {
@@ -22,7 +24,7 @@ typedef struct {
     int curFrame;
     int numFrames;
     int hide;
-    int acquired;
+    int active;
 
     u16 color1;
     u16 color2;
@@ -31,9 +33,8 @@ typedef struct {
     int index;
 } Item;
 
-extern Item boots;
-extern int itemCount;
-extern ItemType acquiredItems[10];
+extern Item items[NUMITEMS];
+extern ItemType playerInventory[NUMITEMS];
 
 void initItem(Item* item, int col, int row, ItemType type);
 
@@ -43,3 +44,4 @@ void showItem(Item* item);
 int checkCollisionPlayer(Item* item);
 
 void equipItem(Item* item);
+void useItem(ItemType item);

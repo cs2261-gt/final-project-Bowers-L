@@ -260,9 +260,9 @@ void updateSBB();
 # 8 "game.h" 2
 # 1 "item.h" 1
        
-# 11 "item.h"
+# 13 "item.h"
 typedef enum {
-    NONE, BOOTS
+    NONE, BOOTS, SHRINK
 } ItemType;
 
 typedef struct {
@@ -275,7 +275,7 @@ typedef struct {
     int curFrame;
     int numFrames;
     int hide;
-    int acquired;
+    int active;
 
     u16 color1;
     u16 color2;
@@ -284,9 +284,8 @@ typedef struct {
     int index;
 } Item;
 
-extern Item boots;
-extern int itemCount;
-extern ItemType acquiredItems[10];
+extern Item items[5];
+extern ItemType playerInventory[5];
 
 void initItem(Item* item, int col, int row, ItemType type);
 
@@ -296,6 +295,7 @@ void showItem(Item* item);
 int checkCollisionPlayer(Item* item);
 
 void equipItem(Item* item);
+void useItem(ItemType item);
 # 9 "game.h" 2
 
 
@@ -363,6 +363,8 @@ typedef struct {
     int direction;
 
 
+    int currentItem;
+    int shrunk;
 } Player;
 
 
@@ -375,16 +377,16 @@ void showPlayer();
 
 void handlePlayerInput();
 
-void adjusthOff();
-void adjustvOff();
 
 int collisionLeft();
 int collisionRight();
 int collisionAbove();
 int collisionBelow();
-
 int touchingGround();
 int resolveCollisions();
+
+
+void shrinkPlayer();
 # 2 "player.c" 2
 
 Player player;
@@ -417,6 +419,9 @@ void initPlayer() {
     player.jumpSpeed = player.gravity * player.jumpTime;
 
     player.direction = 0;
+
+    player.currentItem = 0;
+    player.shrunk = 0;
 
     shadowOAM[0].attr0 = ((player.screenRow) >> 4) | (0<<8) | (0<<13) | (2<<14);
     shadowOAM[0].attr1 = ((player.screenCol) >> 4) | (0<<14);
@@ -456,12 +461,17 @@ void showPlayer() {
         player.hide = 0;
     }
 
-    shadowOAM[0].attr0 = (((player.screenRow) >> 4) & 0xFF) | (0<<8) | (0<<13) | (2<<14);
-    shadowOAM[0].attr1 = (((player.screenCol) >> 4) & 0x1FF) | (0<<14);
-    shadowOAM[0].attr2 = ((0)*32+(0)) | ((0)<<12);
-
     if (player.hide) {
         shadowOAM[0].attr0 |= (2<<8);
+    }
+    if (player.shrunk) {
+        shadowOAM[0].attr0 = (((player.screenRow) >> 4) & 0xFF) | (0<<8) | (0<<13) | (0<<14);
+        shadowOAM[0].attr1 = (((player.screenCol) >> 4) & 0x1FF) | (0<<14);
+        shadowOAM[0].attr2 = ((0)*32+(1)) | ((0)<<12);
+    } else {
+        shadowOAM[0].attr0 = (((player.screenRow) >> 4) & 0xFF) | (0<<8) | (0<<13) | (2<<14);
+        shadowOAM[0].attr1 = (((player.screenCol) >> 4) & 0x1FF) | (0<<14);
+        shadowOAM[0].attr2 = ((0)*32+(0)) | ((0)<<12);
     }
 }
 
@@ -491,6 +501,8 @@ void handlePlayerInput() {
         }
     }
 
+
+
     if ((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0))))) {
         if (touchingGround()) {
             player.isJumping = 1;
@@ -504,8 +516,26 @@ void handlePlayerInput() {
             player.isJumping = 0;
         }
     }
+
+
+
+    if ((!(~(oldButtons)&((1<<1))) && (~buttons & ((1<<1))))) {
+        useItem(playerInventory[player.currentItem]);
+    }
+
+    if ((!(~(oldButtons)&((1<<9))) && (~buttons & ((1<<9))))) {
+        if (player.currentItem > 0 && playerInventory[player.currentItem-1] != NONE) {
+            player.currentItem--;
+        }
+    }
+
+    if ((!(~(oldButtons)&((1<<8))) && (~buttons & ((1<<8))))) {
+        if (player.currentItem < 5 - 1 && playerInventory[player.currentItem+1] != NONE) {
+            player.currentItem++;
+        }
+    }
 }
-# 141 "player.c"
+# 169 "player.c"
 int collisionLeft() {
     return player.worldCol < 0
         || mapCollisionBitmap[((((player.worldRow) >> 4))*(1024)+(((player.worldCol) >> 4)))]
@@ -534,7 +564,7 @@ int touchingGround() {
     return mapCollisionBitmap[((((player.worldRow + player.height) >> 4))*(1024)+(((player.worldCol) >> 4)))]
     || mapCollisionBitmap[((((player.worldRow + player.height) >> 4))*(1024)+(((player.worldCol + player.width) >> 4) - 1))];
 }
-# 185 "player.c"
+# 212 "player.c"
 int resolveCollisions() {
     int xDepth = 0;
     int yDepth = 0;
@@ -596,5 +626,28 @@ int resolveCollisions() {
             player.worldRow -= yDepth * step;
         }
 
+    }
+}
+
+void equipBoots() {
+    if (player.jumpHeight == 1024) {
+        player.jumpHeight = 512;
+    } else {
+        player.jumpHeight = 1024;
+    }
+
+
+    player.gravity = (2 * player.jumpHeight) / (player.jumpTime * player.jumpTime);
+    player.jumpSpeed = player.gravity * player.jumpTime;
+}
+
+void shrinkPlayer() {
+    if (player.shrunk) {
+        player.shrunk = 0;
+        player.height = ((16) << 4);
+        player.worldRow -= ((8) << 4);
+    } else {
+        player.shrunk = 1;
+        player.height = ((8) << 4);
     }
 }

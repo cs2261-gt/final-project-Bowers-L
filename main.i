@@ -268,8 +268,10 @@ void updateSBB();
 
 
 
+
+
 typedef enum {
-    NONE, BOOTS
+    NONE, BOOTS, SHRINK
 } ItemType;
 
 typedef struct {
@@ -282,7 +284,7 @@ typedef struct {
     int curFrame;
     int numFrames;
     int hide;
-    int acquired;
+    int active;
 
     u16 color1;
     u16 color2;
@@ -291,9 +293,8 @@ typedef struct {
     int index;
 } Item;
 
-extern Item boots;
-extern int itemCount;
-extern ItemType acquiredItems[10];
+extern Item items[5];
+extern ItemType playerInventory[5];
 
 void initItem(Item* item, int col, int row, ItemType type);
 
@@ -303,6 +304,7 @@ void showItem(Item* item);
 int checkCollisionPlayer(Item* item);
 
 void equipItem(Item* item);
+void useItem(ItemType item);
 # 7 "player.h" 2
 
 typedef enum {
@@ -346,6 +348,8 @@ typedef struct {
     int direction;
 
 
+    int currentItem;
+    int shrunk;
 } Player;
 
 
@@ -358,16 +362,16 @@ void showPlayer();
 
 void handlePlayerInput();
 
-void adjusthOff();
-void adjustvOff();
 
 int collisionLeft();
 int collisionRight();
 int collisionAbove();
 int collisionBelow();
-
 int touchingGround();
 int resolveCollisions();
+
+
+void shrinkPlayer();
 # 7 "game.h" 2
 
 

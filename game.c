@@ -19,8 +19,7 @@ void initGame() {
     initCamera(0, ENCODE4(MAPWH - SCREENHEIGHT));
     
     //setup background(s)
-    REG_DISPCTL |= BG1_ENABLE;
-    REG_DISPCTL &= ~BG0_ENABLE;
+    REG_DISPCTL = MODE0 | BG1_ENABLE;
     setupMap();
 
     //setup spritesheet
@@ -30,7 +29,7 @@ void initGame() {
     DMANow(3, SpritesheetPal, SPRITEPALETTE, SpritesheetPalLen / 2);
 
     initPlayer();
-    initItem(&boots, MAPWH - 24, MAPWH - 24, BOOTS);
+    initAllItems();
 }
 
 void resumeGame() {
@@ -40,7 +39,7 @@ void resumeGame() {
 
     REG_BG1CNT = BG_4BPP | BG_SIZE_LARGE | BG_CHARBLOCK(1) | BG_SCREENBLOCK(MAPSB + OFFSET(camera.sbbcol, camera.sbbrow, 2));
 
-    DMANow(3, &mapPal[16], &PALETTE[16], 16);
+    DMANow(3, mapPal, PALETTE, 16);
 }
 
 void update() {
@@ -66,6 +65,7 @@ void update() {
 }
 
 void updateGame() {
+    /*
     if (BUTTON_PRESSED(BUTTON_L)) {
         if (debug > 0) {
             debug = 0;
@@ -78,6 +78,7 @@ void updateGame() {
     if (BUTTON_PRESSED(BUTTON_R)) {
         initWin();
     }
+    */
 
     if (BUTTON_PRESSED(BUTTON_SELECT)) {
         initPause();
@@ -86,17 +87,12 @@ void updateGame() {
     if (!debug) {
         updatePlayer();
     }
-    if (!boots.acquired) {
-        updateItem(&boots);
-    }
+    updateAllItems();
     
     updateCamera();
 
     showPlayer();
-    if (!boots.acquired) {
-        showItem(&boots);
-    }
-
+    showAllItems();
 }
 
 void drawGame() {

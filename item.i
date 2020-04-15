@@ -288,6 +288,8 @@ typedef struct {
     int direction;
 
 
+    int currentItem;
+    int shrunk;
 } Player;
 
 
@@ -300,16 +302,16 @@ void showPlayer();
 
 void handlePlayerInput();
 
-void adjusthOff();
-void adjustvOff();
 
 int collisionLeft();
 int collisionRight();
 int collisionAbove();
 int collisionBelow();
-
 int touchingGround();
 int resolveCollisions();
+
+
+void shrinkPlayer();
 # 7 "game.h" 2
 
 
@@ -365,8 +367,10 @@ void updateSBB();
 
 
 
+
+
 typedef enum {
-    NONE, BOOTS
+    NONE, BOOTS, SHRINK
 } ItemType;
 
 typedef struct {
@@ -379,7 +383,7 @@ typedef struct {
     int curFrame;
     int numFrames;
     int hide;
-    int acquired;
+    int active;
 
     u16 color1;
     u16 color2;
@@ -388,9 +392,8 @@ typedef struct {
     int index;
 } Item;
 
-extern Item boots;
-extern int itemCount;
-extern ItemType acquiredItems[10];
+extern Item items[5];
+extern ItemType playerInventory[5];
 
 void initItem(Item* item, int col, int row, ItemType type);
 
@@ -400,14 +403,26 @@ void showItem(Item* item);
 int checkCollisionPlayer(Item* item);
 
 void equipItem(Item* item);
+void useItem(ItemType item);
 # 2 "item.c" 2
 
-Item boots;
-int itemCount = 0;
+Item items[5];
 
-ItemType acquiredItems[10];
+ItemType playerInventory[5];
+
+void initAllItems() {
+    for (int i = 0; i < 5; i++) {
+        items[i].active = 0;
+        playerInventory[i] = NONE;
+    }
+
+    initItem(&items[0], 1024 - 24, 1024 - 24, BOOTS);
+    initItem(&items[1], 625, 905, SHRINK);
+
+}
 
 void initItem(Item* item, int col, int row, ItemType type) {
+    static int itemCount = 0;
     itemCount++;
 
     item->worldRow = ((row) << 4);
@@ -419,7 +434,7 @@ void initItem(Item* item, int col, int row, ItemType type) {
     item->curFrame = 0;
     item->numFrames = 60;
     item->hide = 1;
-    item->acquired = 0;
+    item->active = 1;
 
     item->color1 = ((16) | (16)<<5 | (16)<<10);
     item->color2 = ((27) | (27)<<5 | (0)<<10);
@@ -427,24 +442,28 @@ void initItem(Item* item, int col, int row, ItemType type) {
     item->type = type;
     item->index = itemCount;
 
-    for (int i = 0; i < 10; i++) {
-        acquiredItems[i] = NONE;
-    }
-
     shadowOAM[item->index].attr0 = (((item->screenRow) >> 4) & 0xFF) | (0<<8) | (0<<13) | (0<<14);
     shadowOAM[item->index].attr1 = (((item->screenCol) >> 4) & 0x1FF) | (0<<14);
     shadowOAM[item->index].attr2 = ((0)*32+(9)) | ((0)<<12);
 }
 
+void updateAllItems() {
+    for (int i = 0; i < 5; i++) {
+        if (items[i].active) {
+            updateItem(&items[i]);
+        }
+    }
+}
+
 void updateItem(Item* item) {
 
     if (item->curFrame > item->numFrames / 2) {
-        ((unsigned short *)0x5000200)[4] = ((lerp(27, 16, item->curFrame, item->numFrames / 2)) | (lerp(27, 16, item->curFrame, item->numFrames / 2))<<5 | (0)<<10)
+        ((unsigned short *)0x5000200)[2] = ((lerp(27, 16, item->curFrame, item->numFrames / 2)) | (lerp(27, 16, item->curFrame, item->numFrames / 2))<<5 | (0)<<10)
 
 
                                  ;
     } else {
-        ((unsigned short *)0x5000200)[4] = ((lerp(16, 27, item->curFrame, item->numFrames / 2)) | (lerp(16, 27, item->curFrame, item->numFrames / 2))<<5 | (lerp(16, 0, item->curFrame, item->numFrames / 2))<<10)
+        ((unsigned short *)0x5000200)[2] = ((lerp(16, 27, item->curFrame, item->numFrames / 2)) | (lerp(16, 27, item->curFrame, item->numFrames / 2))<<5 | (lerp(16, 0, item->curFrame, item->numFrames / 2))<<10)
 
 
                                  ;
@@ -465,7 +484,13 @@ int checkCollisionPlayer(Item* item) {
     return collision(player.worldCol, player.worldRow, player.width, player.height, item->worldCol, item->worldRow, item->width, item->height);
 }
 
-
+void showAllItems() {
+    for (int i = 0; i < 5; i++) {
+        if (items[i].active) {
+            showItem(&items[i]);
+        }
+    }
+}
 
 void showItem(Item* item) {
     item->screenRow = item->worldRow - camera.row;
@@ -480,31 +505,36 @@ void showItem(Item* item) {
     }
 
 
-    shadowOAM[1].attr0 = (((item->screenRow) >> 4) & 0xFF) | (0<<8) | (0<<13) | (0<<14);
-    shadowOAM[1].attr1 = (((item->screenCol) >> 4) & 0x1FF) | (0<<14);
-    shadowOAM[1].attr2 = ((8)*32+(0)) | ((0)<<12);
+    shadowOAM[item->index].attr0 = (((item->screenRow) >> 4) & 0xFF) | (0<<8) | (0<<13) | (0<<14);
+    shadowOAM[item->index].attr1 = (((item->screenCol) >> 4) & 0x1FF) | (0<<14);
+    shadowOAM[item->index].attr2 = ((8)*32+(0)) | ((0)<<12);
 
     if (item->hide) {
-        shadowOAM[1].attr0 |= (2<<8);
+        shadowOAM[item->index].attr0 |= (2<<8);
     }
 }
 
 void equipItem(Item* item) {
-    item->acquired = 1;
+    item->active = 0;
     item->hide = 1;
-    shadowOAM[1].attr0 |= (2<<8);
+    shadowOAM[item->index].attr0 |= (2<<8);
 
     int i = 0;
-    while (acquiredItems[i] == NONE) {
+    while (playerInventory[i] != NONE) {
         i++;
     }
-    acquiredItems[i] = item->type;
+    playerInventory[i] = item->type;
+}
 
-    switch (item->type) {
+void useItem(ItemType item) {
+    switch (item) {
+        case NONE:
+            break;
         case BOOTS:
-            player.jumpHeight = 1024;
-            player.gravity = (2 * player.jumpHeight) / (player.jumpTime * player.jumpTime);
-            player.jumpSpeed = player.gravity * player.jumpTime;
+            equipBoots();
+            break;
+        case SHRINK:
+            shrinkPlayer();
             break;
     }
 }

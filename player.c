@@ -30,6 +30,9 @@ void initPlayer() {
     player.jumpSpeed = player.gravity * player.jumpTime;
 
     player.direction = 0;
+
+    player.currentItem = 0;
+    player.shrunk = 0;
     
     shadowOAM[0].attr0 = DECODE4(player.screenRow) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_TALL;
     shadowOAM[0].attr1 = DECODE4(player.screenCol) | ATTR1_TINY;
@@ -68,13 +71,18 @@ void showPlayer() {
     } else {
         player.hide = 0;
     }
-
-    shadowOAM[0].attr0 = (DECODE4(player.screenRow) & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_TALL;
-    shadowOAM[0].attr1 = (DECODE4(player.screenCol) & COLMASK) | ATTR1_TINY;
-    shadowOAM[0].attr2 = ATTR2_TILEID(0, 0) | ATTR2_PALROW(0);
     
     if (player.hide) {
         shadowOAM[0].attr0 |= ATTR0_HIDE;
+    }
+    if (player.shrunk) {
+        shadowOAM[0].attr0 = (DECODE4(player.screenRow) & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_SQUARE;
+        shadowOAM[0].attr1 = (DECODE4(player.screenCol) & COLMASK) | ATTR1_TINY;
+        shadowOAM[0].attr2 = ATTR2_TILEID(1, 0) | ATTR2_PALROW(0);
+    } else {
+        shadowOAM[0].attr0 = (DECODE4(player.screenRow) & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_TALL;
+        shadowOAM[0].attr1 = (DECODE4(player.screenCol) & COLMASK) | ATTR1_TINY;
+        shadowOAM[0].attr2 = ATTR2_TILEID(0, 0) | ATTR2_PALROW(0);
     }
 }
 
@@ -104,6 +112,8 @@ void handlePlayerInput() {
         }
     }
 
+    //Jumping
+
     if (BUTTON_PRESSED(BUTTON_A)) {
         if (touchingGround()) {
             player.isJumping = 1;
@@ -115,6 +125,24 @@ void handlePlayerInput() {
         if (player.isJumping) {
             player.rdel = 0;
             player.isJumping = 0;
+        }
+    }
+
+    //Items
+
+    if (BUTTON_PRESSED(BUTTON_B)) {
+        useItem(playerInventory[player.currentItem]);
+    }
+
+    if (BUTTON_PRESSED(BUTTON_L)) {
+        if (player.currentItem > 0 && playerInventory[player.currentItem-1] != NONE) {
+            player.currentItem--;
+        }
+    }
+
+    if (BUTTON_PRESSED(BUTTON_R)) {
+        if (player.currentItem < NUMITEMS - 1 && playerInventory[player.currentItem+1] != NONE) {
+            player.currentItem++;
         }
     }
 }
@@ -168,8 +196,7 @@ int touchingGround() {
 }
 
 /*
-Note about collisions: 
-I've tried several ways of handling collisions, which each come with some associated problems.
+Collisions: 
 The current method of handling collisions waits until the player's position conflicts with an occupied
 pixel in the collision map and resolves it by pushing the player in the direction that results in the shortest
 distance traveled for there not to be a collision. 
@@ -243,5 +270,28 @@ int resolveCollisions() {
             player.worldRow -= yDepth * step;
         }
         //round the position to a multiple of 16 (need to this or else off by one errors occur when collision is below)
+    }
+}
+
+void equipBoots() {
+    if (player.jumpHeight == 1024) {
+        player.jumpHeight = 512;
+    } else {
+        player.jumpHeight = 1024;
+    }
+
+
+    player.gravity = (2 * player.jumpHeight) / (player.jumpTime * player.jumpTime);
+    player.jumpSpeed = player.gravity * player.jumpTime;
+}
+
+void shrinkPlayer() {
+    if (player.shrunk) {
+        player.shrunk = 0;
+        player.height = ENCODE4(16);
+        player.worldRow -= ENCODE4(8);
+    } else {
+        player.shrunk = 1;
+        player.height = ENCODE4(8);
     }
 }
