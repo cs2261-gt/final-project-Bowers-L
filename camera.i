@@ -140,7 +140,7 @@ int round(int value, int base);
 
 # 1 "map.h" 1
 # 22 "map.h"
-extern const unsigned short mapTiles[400];
+extern const unsigned short mapTiles[256];
 
 
 extern const unsigned short mapMap[16384];
@@ -242,7 +242,7 @@ extern const unsigned short mapCollisionBitmap[1048576];
        
 # 13 "item.h"
 typedef enum {
-    NONE, BOOTS, SHRINK
+    NONE, BOOTS, SHRINK, SPEED, GLOVES, Z
 } ItemType;
 
 typedef struct {
@@ -321,6 +321,7 @@ typedef struct {
 
     int currentItem;
     int shrunk;
+    int canWallJump;
 } Player;
 
 

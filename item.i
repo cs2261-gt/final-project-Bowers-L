@@ -153,7 +153,7 @@ extern const unsigned short SpritesheetPal[256];
 
 # 1 "map.h" 1
 # 22 "map.h"
-extern const unsigned short mapTiles[400];
+extern const unsigned short mapTiles[256];
 
 
 extern const unsigned short mapMap[16384];
@@ -290,6 +290,7 @@ typedef struct {
 
     int currentItem;
     int shrunk;
+    int canWallJump;
 } Player;
 
 
@@ -370,7 +371,7 @@ void updateSBB();
 
 
 typedef enum {
-    NONE, BOOTS, SHRINK
+    NONE, BOOTS, SHRINK, SPEED, GLOVES, Z
 } ItemType;
 
 typedef struct {
@@ -417,8 +418,10 @@ void initAllItems() {
     }
 
     initItem(&items[0], 1024 - 24, 1024 - 24, BOOTS);
-    initItem(&items[1], 625, 905, SHRINK);
-
+    initItem(&items[1], 624, 904, SHRINK);
+    initItem(&items[2], 24, 808, SPEED);
+    initItem(&items[3], 1008, 800, GLOVES);
+    initItem(&items[4], 224, 712, Z);
 }
 
 void initItem(Item* item, int col, int row, ItemType type) {
@@ -535,6 +538,12 @@ void useItem(ItemType item) {
             break;
         case SHRINK:
             shrinkPlayer();
+            break;
+        case SPEED:
+            equipLegs();
+            break;
+        case GLOVES:
+            equipGloves();
             break;
     }
 }

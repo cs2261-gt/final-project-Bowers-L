@@ -135,7 +135,7 @@ int round(int value, int base);
 
 # 1 "map.h" 1
 # 22 "map.h"
-extern const unsigned short mapTiles[400];
+extern const unsigned short mapTiles[256];
 
 
 extern const unsigned short mapMap[16384];
@@ -271,7 +271,7 @@ void updateSBB();
 
 
 typedef enum {
-    NONE, BOOTS, SHRINK
+    NONE, BOOTS, SHRINK, SPEED, GLOVES, Z
 } ItemType;
 
 typedef struct {
@@ -350,6 +350,7 @@ typedef struct {
 
     int currentItem;
     int shrunk;
+    int canWallJump;
 } Player;
 
 
@@ -503,7 +504,7 @@ void setupMap() {
     DMANow(3, &mapMap[1024 * 14], &((screenblock *)0x6000000)[22 + 8], 1024 * 2);
 
 
-    DMANow(3, mapTiles, &((charblock *)0x6000000)[1], 800 / 2);
+    DMANow(3, mapTiles, &((charblock *)0x6000000)[1], 512 / 2);
     DMANow(3, mapPal, ((unsigned short *)0x5000000), 16);
 }
 

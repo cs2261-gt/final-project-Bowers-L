@@ -11,7 +11,7 @@
 //Items: OAM 1-10
 
 typedef enum {
-    NONE, BOOTS, SHRINK
+    NONE, BOOTS, SHRINK, SPEED, GLOVES, Z
 } ItemType;
 
 typedef struct {

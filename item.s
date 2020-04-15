@@ -83,37 +83,51 @@ initAllItems:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	mov	ip, #0
 	mov	r2, #1000
-	ldr	r0, .L8
+	mov	ip, #0
 	push	{r4, lr}
+	ldr	r4, .L8
 	ldr	lr, .L8+4
 	mov	r1, r2
+	mov	r0, r4
 	mov	r3, #1
-	str	ip, [r0, #36]
-	str	ip, [r0, #88]
-	str	ip, [r0, #140]
-	str	ip, [r0, #192]
-	str	ip, [r0, #244]
+	str	ip, [r4, #36]
+	str	ip, [r4, #88]
+	str	ip, [r4, #140]
+	str	ip, [r4, #192]
+	str	ip, [r4, #244]
 	strb	ip, [lr]
 	strb	ip, [lr, #1]
 	strb	ip, [lr, #2]
 	strb	ip, [lr, #3]
 	strb	ip, [lr, #4]
 	bl	initItem
+	add	r0, r4, #52
 	mov	r3, #2
-	ldr	r2, .L8+8
-	ldr	r1, .L8+12
+	mov	r2, #904
+	mov	r1, #624
+	bl	initItem
+	add	r0, r4, #104
+	mov	r3, #3
+	mov	r2, #808
+	mov	r1, #24
+	bl	initItem
+	add	r0, r4, #156
+	mov	r3, #4
+	mov	r2, #800
+	mov	r1, #1008
+	bl	initItem
+	add	r0, r4, #208
+	mov	r3, #5
+	mov	r2, #712
+	mov	r1, #224
 	pop	{r4, lr}
-	add	r0, r0, #52
 	b	initItem
 .L9:
 	.align	2
 .L8:
 	.word	items
 	.word	playerInventory
-	.word	905
-	.word	625
 	.size	initAllItems, .-initAllItems
 	.align	2
 	.global	checkCollisionPlayer
@@ -459,35 +473,56 @@ useItem:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	cmp	r0, #1
+	sub	r0, r0, #1
 	push	{r4, lr}
-	beq	.L77
-	cmp	r0, #2
-	ldreq	r3, .L81
-	moveq	lr, pc
-	bxeq	r3
+	cmp	r0, #3
+	ldrls	pc, [pc, r0, asl #2]
+	b	.L76
+.L79:
+	.word	.L82
+	.word	.L81
+	.word	.L80
+	.word	.L78
+.L78:
+	ldr	r3, .L84
+	mov	lr, pc
+	bx	r3
 .L76:
 	pop	{r4, lr}
 	bx	lr
-.L77:
-	ldr	r3, .L81+4
+.L82:
+	ldr	r3, .L84+4
 	mov	lr, pc
 	bx	r3
 	pop	{r4, lr}
 	bx	lr
-.L82:
-	.align	2
 .L81:
-	.word	shrinkPlayer
+	ldr	r3, .L84+8
+	mov	lr, pc
+	bx	r3
+	pop	{r4, lr}
+	bx	lr
+.L80:
+	ldr	r3, .L84+12
+	mov	lr, pc
+	bx	r3
+	pop	{r4, lr}
+	bx	lr
+.L85:
+	.align	2
+.L84:
+	.word	equipGloves
 	.word	equipBoots
+	.word	shrinkPlayer
+	.word	equipLegs
 	.size	useItem, .-useItem
 	.comm	playerInventory,5,4
 	.comm	items,260,4
 	.bss
 	.align	2
 	.set	.LANCHOR0,. + 0
-	.type	itemCount.4262, %object
-	.size	itemCount.4262, 4
-itemCount.4262:
+	.type	itemCount.4266, %object
+	.size	itemCount.4266, 4
+itemCount.4266:
 	.space	4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

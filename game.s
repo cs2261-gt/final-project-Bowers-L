@@ -367,7 +367,7 @@ setupMap:
 	ldr	r2, .L47+28
 	mov	lr, pc
 	bx	r4
-	mov	r3, #400
+	mov	r3, #256
 	mov	r0, #3
 	ldr	r2, .L47+32
 	ldr	r1, .L47+36

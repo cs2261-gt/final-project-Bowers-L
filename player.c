@@ -33,6 +33,7 @@ void initPlayer() {
 
     player.currentItem = 0;
     player.shrunk = 0;
+    player.canWallJump = 0;
     
     shadowOAM[0].attr0 = DECODE4(player.screenRow) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_TALL;
     shadowOAM[0].attr1 = DECODE4(player.screenCol) | ATTR1_TINY;
@@ -115,7 +116,9 @@ void handlePlayerInput() {
     //Jumping
 
     if (BUTTON_PRESSED(BUTTON_A)) {
-        if (touchingGround()) {
+        if (touchingGround()
+        || (player.canWallJump && (collisionLeft(2) || collisionRight(2)))
+         ) {
             player.isJumping = 1;
             player.rdel = -player.jumpSpeed;
         }
@@ -166,28 +169,28 @@ void handlePlayerInput() {
 * * * * * * * *
 */
 
-int collisionLeft() {
+int collisionLeft(int offset) {
     return player.worldCol < 0
-        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol), DECODE4(player.worldRow), MAPWH)]
-        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol), DECODE4(player.worldRow + player.height) - 1, MAPWH)];
+        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol) - offset, DECODE4(player.worldRow) , MAPWH)]
+        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol) - offset, DECODE4(player.worldRow + player.height) - 1, MAPWH)];
 }
 
-int collisionRight() {
+int collisionRight(int offset) {
     return player.worldCol + player.width >= ENCODE4(MAPWH)
-        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width - 1), DECODE4(player.worldRow), MAPWH)]
-        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width - 1), DECODE4(player.worldRow + player.height) - 1, MAPWH)];
+        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width) + offset, DECODE4(player.worldRow), MAPWH)]
+        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width) + offset, DECODE4(player.worldRow + player.height) - 1, MAPWH)];
 }
 
-int collisionAbove() {
+int collisionAbove(int offset) {
     return player.worldRow < 0
-        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol), DECODE4(player.worldRow), MAPWH)]
-        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width - 1), DECODE4(player.worldRow), MAPWH)];
+        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol), DECODE4(player.worldRow) - offset, MAPWH)]
+        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width) - 1, DECODE4(player.worldRow) - offset, MAPWH)];
 }
 
-int collisionBelow() {
+int collisionBelow(int offset) {
     return player.worldRow + player.height >= ENCODE4(MAPWH)
-        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol), DECODE4(player.worldRow + player.height) - 1, MAPWH)]
-        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width) - 1, DECODE4(player.worldRow + player.height) - 1, MAPWH)];
+        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol), DECODE4(player.worldRow + player.height) - 1 + offset, MAPWH)]
+        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width) - 1, DECODE4(player.worldRow + player.height) - 1 + offset, MAPWH)];
 }
 
 int touchingGround() {
@@ -219,30 +222,30 @@ int resolveCollisions() {
 
     int step = 2;
 
-    if (collisionLeft()) {
+    if (collisionLeft(0)) {
         collisionOnLeft = 1;
-        while (collisionLeft()) {
+        while (collisionLeft(0)) {
             player.worldCol += step;
             xDepth++;
         }
         player.worldCol -= xDepth * step;
     } else {
-        while (collisionRight()) {
+        while (collisionRight(0)) {
             player.worldCol-= step;
             xDepth++;
         }
         player.worldCol += xDepth * step;
     }
 
-    if (collisionAbove()) {
+    if (collisionAbove(0)) {
         collisionOnAbove = 1;
-        while (collisionAbove()) {
+        while (collisionAbove(0)) {
             player.worldRow += step;
             yDepth++;
         }
         player.worldRow -= yDepth * step;
     } else {
-        while (collisionBelow()) {
+        while (collisionBelow(0)) {
             player.worldRow-= step;
             yDepth++;
         }
@@ -287,11 +290,29 @@ void equipBoots() {
 
 void shrinkPlayer() {
     if (player.shrunk) {
-        player.shrunk = 0;
-        player.height = ENCODE4(16);
-        player.worldRow -= ENCODE4(8);
+        if (!collisionAbove(8)) {
+            player.shrunk = 0;
+            player.height = ENCODE4(16);
+            player.worldRow -= ENCODE4(8);
+        } 
     } else {
         player.shrunk = 1;
         player.height = ENCODE4(8);
+    }
+}
+
+void equipLegs() {
+    if (player.maxSpeed == 16) {
+        player.maxSpeed = 64;
+    } else {
+        player.maxSpeed = 16;
+    }
+}
+
+void equipGloves() {
+    if (player.canWallJump) {
+        player.canWallJump = 0;
+    } else {
+        player.canWallJump = 1;
     }
 }

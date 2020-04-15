@@ -48,6 +48,7 @@ typedef struct {
     //items
     int currentItem;
     int shrunk;
+    int canWallJump;
 } Player;
 
 //Player: OAM 0

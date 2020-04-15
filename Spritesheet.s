@@ -17,7 +17,7 @@
 	.type	SpritesheetPal, %object
 	.size	SpritesheetPal, 512
 SpritesheetPal:
-	.short	32767
+	.short	32736
 	.short	16912
 	.short	16912
 	.short	22197
@@ -288,26 +288,26 @@ SpritesheetTiles:
 	.short	25941
 	.short	26214
 	.short	26214
-	.short	26197
-	.short	21862
-	.short	26213
-	.short	22118
+	.short	26112
+	.short	102
+	.short	26208
+	.short	1638
 	.short	26214
 	.short	26214
 	.short	21334
 	.short	25909
 	.short	26214
 	.short	26214
-	.short	26213
-	.short	22118
-	.short	26213
-	.short	22118
-	.short	26213
-	.short	22118
-	.short	26197
-	.short	21862
-	.short	22101
-	.short	21861
+	.short	26208
+	.short	1638
+	.short	26208
+	.short	1638
+	.short	26208
+	.short	1638
+	.short	26112
+	.short	102
+	.short	1536
+	.short	96
 	.short	21845
 	.short	21845
 	.short	21845
@@ -788,22 +788,22 @@ SpritesheetTiles:
 	.short	21845
 	.short	21845
 	.short	21845
-	.short	26213
-	.short	22118
-	.short	26213
-	.short	22118
-	.short	26213
-	.short	22118
-	.short	26197
-	.short	21862
-	.short	26197
-	.short	21862
-	.short	22101
-	.short	21861
-	.short	22101
-	.short	21861
-	.short	22101
-	.short	21861
+	.short	26208
+	.short	1638
+	.short	26208
+	.short	1638
+	.short	26208
+	.short	1638
+	.short	26112
+	.short	102
+	.short	26112
+	.short	102
+	.short	1536
+	.short	96
+	.short	1536
+	.short	96
+	.short	1536
+	.short	96
 	.short	21845
 	.short	21845
 	.short	21845
@@ -4372,22 +4372,22 @@ SpritesheetTiles:
 	.short	21845
 	.short	21845
 	.short	21845
-	.short	21845
-	.short	21845
-	.short	21845
-	.short	21845
-	.short	9829
-	.short	22114
-	.short	9829
-	.short	22114
-	.short	9829
-	.short	22114
-	.short	9829
-	.short	22114
-	.short	9829
-	.short	22114
-	.short	9829
-	.short	22114
+	.short	0
+	.short	0
+	.short	0
+	.short	0
+	.short	9824
+	.short	1634
+	.short	9824
+	.short	1634
+	.short	9824
+	.short	1634
+	.short	9824
+	.short	1634
+	.short	9824
+	.short	1634
+	.short	9824
+	.short	1634
 	.short	21845
 	.short	21845
 	.short	21845
