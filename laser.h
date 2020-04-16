@@ -9,7 +9,7 @@
 #define NULL ((void*) 0)
 
 #define LASERINDEX 11
-#define NUMLASERS 50
+#define NUMLASERS 65
 
 #define KNOCKBACK (ENCODE4(8))
 

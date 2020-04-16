@@ -119,11 +119,11 @@ initAllLasers:
 	mov	r1, #0
 	push	{r4, r5, r6, lr}
 	ldr	r3, .L24
-	add	r2, r3, #2400
+	add	r2, r3, #3120
 .L16:
 	str	r1, [r3, #36]
 	add	r3, r3, #48
-	cmp	r3, r2
+	cmp	r2, r3
 	bne	.L16
 	mov	r3, #1
 	mov	r2, #704
@@ -209,6 +209,76 @@ initAllLasers:
 	mov	r2, #416
 	mov	r1, #632
 	ldr	r0, .L24+44
+	bl	initLaser
+	mov	r3, #1
+	mov	r2, #304
+	mov	r1, #472
+	ldr	r0, .L24+48
+	bl	initLaser
+	mov	r3, #1
+	mov	r2, #288
+	mov	r1, #472
+	ldr	r0, .L24+52
+	bl	initLaser
+	mov	r3, #0
+	mov	r2, #280
+	mov	r1, #472
+	ldr	r0, .L24+56
+	bl	initLaser
+	mov	r3, #1
+	mov	r2, #232
+	mov	r1, #472
+	ldr	r0, .L24+60
+	bl	initLaser
+	mov	r3, #1
+	mov	r2, #216
+	mov	r1, #472
+	ldr	r0, .L24+64
+	bl	initLaser
+	mov	r3, #1
+	mov	r2, #200
+	mov	r1, #504
+	ldr	r0, .L24+68
+	bl	initLaser
+	mov	r3, #1
+	mov	r2, #184
+	mov	r1, #504
+	ldr	r0, .L24+72
+	bl	initLaser
+	mov	r3, #1
+	mov	r2, #120
+	mov	r1, #504
+	ldr	r0, .L24+76
+	bl	initLaser
+	mov	r3, #0
+	mov	r2, #112
+	mov	r1, #504
+	ldr	r0, .L24+80
+	bl	initLaser
+	mov	r3, #3
+	mov	r2, #112
+	mov	r1, #288
+	ldr	r0, .L24+84
+	bl	initLaser
+	mov	r3, #2
+	mov	r2, #112
+	mov	r1, #304
+	ldr	r0, .L24+88
+	bl	initLaser
+	mov	r3, #3
+	mov	r2, #32
+	mov	r1, #464
+	ldr	r0, .L24+92
+	bl	initLaser
+	mov	r3, #3
+	mov	r2, #16
+	mov	r1, #464
+	ldr	r0, .L24+96
+	bl	initLaser
+	mov	r3, #3
+	mov	r2, #0
+	mov	r1, #464
+	ldr	r0, .L24+100
 	pop	{r4, r5, r6, lr}
 	b	initLaser
 .L25:
@@ -226,6 +296,20 @@ initAllLasers:
 	.word	lasers+2016
 	.word	lasers+2064
 	.word	lasers+2112
+	.word	lasers+2160
+	.word	lasers+2208
+	.word	lasers+2256
+	.word	lasers+2304
+	.word	lasers+2352
+	.word	lasers+2400
+	.word	lasers+2448
+	.word	lasers+2784
+	.word	lasers+2832
+	.word	lasers+2880
+	.word	lasers+2928
+	.word	lasers+2976
+	.word	lasers+3024
+	.word	lasers+3072
 	.size	initAllLasers, .-initAllLasers
 	.align	2
 	.global	checkCollisionPlayerLaser
@@ -339,7 +423,7 @@ updateAllLasers:
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, lr}
 	ldr	r4, .L52
-	add	r5, r4, #2400
+	add	r5, r4, #3120
 	b	.L45
 .L44:
 	add	r4, r4, #48
@@ -492,7 +576,7 @@ showAllLasers:
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, lr}
 	ldr	r4, .L81
-	add	r5, r4, #2400
+	add	r5, r4, #3120
 	b	.L74
 .L73:
 	add	r4, r4, #48
@@ -531,7 +615,7 @@ laserSling:
 	add	ip, r5, #8
 	ldm	ip, {ip, lr}
 	ldr	r4, .L95+8
-	add	r1, r3, #2400
+	add	r1, r3, #3120
 	b	.L87
 .L94:
 	ldr	r2, [r3]
@@ -575,12 +659,12 @@ laserSling:
 	.word	lasers+8
 	.word	510
 	.size	laserSling, .-laserSling
-	.comm	lasers,2400,4
+	.comm	lasers,3120,4
 	.bss
 	.align	2
 	.set	.LANCHOR0,. + 0
-	.type	laserCount.4317, %object
-	.size	laserCount.4317, 4
-laserCount.4317:
+	.type	laserCount.4321, %object
+	.size	laserCount.4321, 4
+laserCount.4321:
 	.space	4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

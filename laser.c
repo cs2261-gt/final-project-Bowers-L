@@ -32,7 +32,38 @@ void initAllLasers() {
         initLaser(&lasers[i], 664, 448 - (i - 42)*16, 1);
     }
     initLaser(&lasers[44], 632, 416, 1);
+
+    initLaser(&lasers[45], 472, 304, 1);
+    initLaser(&lasers[46], 472, 288, 1);
+    initLaser(&lasers[47], 472, 280, 0);
+
+    initLaser(&lasers[48], 472, 232, 1);
+    initLaser(&lasers[49], 472, 216, 1);
+
+    initLaser(&lasers[50], 504, 200, 1);
+    initLaser(&lasers[51], 504, 184, 1);
+
+    /*
+    initLaser(&lasers[52], 472, 168, 1);
+    initLaser(&lasers[53], 472, 160, 0);
     
+    initLaser(&lasers[54], 504, 152, 1);
+    initLaser(&lasers[55], 504, 144, 0);
+
+    initLaser(&lasers[56], 472, 136, 1);
+    initLaser(&lasers[57], 472, 128, 0);
+    */
+
+    initLaser(&lasers[58], 504, 120, 1);
+    initLaser(&lasers[59], 504, 112, 0);
+
+    initLaser(&lasers[60], 288, 112, 3);
+    initLaser(&lasers[61], 304, 112, 2);
+
+    for (int i = 62; i < 65; i++) {
+        initLaser(&lasers[i], 464, 32 - (i - 62) * 16, 3);
+    }
+
     //test lasers
     //initLaser(&lasers[38], 192, 984, 1);
 }

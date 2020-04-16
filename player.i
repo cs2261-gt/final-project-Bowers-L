@@ -143,7 +143,7 @@ extern const unsigned short mapCollisionBitmap[1048576];
 
 # 1 "map.h" 1
 # 22 "map.h"
-extern const unsigned short mapTiles[272];
+extern const unsigned short mapTiles[288];
 
 
 extern const unsigned short mapMap[16384];
@@ -320,7 +320,7 @@ typedef struct {
     int index;
 } Laser;
 
-extern Laser lasers[50];
+extern Laser lasers[65];
 
 void initAllLasers();
 void updateAllLasers();

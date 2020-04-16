@@ -135,7 +135,7 @@ int roundbase(int value, int base);
 
 # 1 "map.h" 1
 # 22 "map.h"
-extern const unsigned short mapTiles[272];
+extern const unsigned short mapTiles[288];
 
 
 extern const unsigned short mapMap[16384];
@@ -402,7 +402,7 @@ typedef struct {
     int index;
 } Laser;
 
-extern Laser lasers[50];
+extern Laser lasers[65];
 
 void initAllLasers();
 void updateAllLasers();
@@ -505,6 +505,10 @@ void update() {
 
 void updateGame() {
 # 84 "game.c"
+    if (player.worldRow < 0) {
+        initWin();
+    }
+
     if ((!(~(oldButtons)&((1<<2))) && (~buttons & ((1<<2))))) {
         initPause();
     }
@@ -531,7 +535,7 @@ void drawGame() {
 }
 
 void setupMap() {
-# 130 "game.c"
+# 134 "game.c"
     (*(volatile unsigned short*)0x400000A) = (0<<7) | (3<<14) | ((1)<<2) | ((22 + ((camera.sbbrow)*(2)+(camera.sbbcol)))<<8);
 
 
@@ -545,7 +549,7 @@ void setupMap() {
     DMANow(3, &mapMap[1024 * 14], &((screenblock *)0x6000000)[22 + 8], 1024 * 2);
 
 
-    DMANow(3, mapTiles, &((charblock *)0x6000000)[1], 544 / 2);
+    DMANow(3, mapTiles, &((charblock *)0x6000000)[1], 576 / 2);
     DMANow(3, mapPal, ((unsigned short *)0x5000000), 16);
 }
 

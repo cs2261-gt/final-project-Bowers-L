@@ -151,7 +151,7 @@ extern const unsigned short SpritesheetPal[256];
 
 # 1 "map.h" 1
 # 22 "map.h"
-extern const unsigned short mapTiles[272];
+extern const unsigned short mapTiles[288];
 
 
 extern const unsigned short mapMap[16384];
@@ -419,7 +419,7 @@ typedef struct {
     int index;
 } Laser;
 
-extern Laser lasers[50];
+extern Laser lasers[65];
 
 void initAllLasers();
 void updateAllLasers();
@@ -434,10 +434,10 @@ void laserSling();
 
 
 
-Laser lasers[50];
+Laser lasers[65];
 
 void initAllLasers() {
-    for (int i = 0; i < 50; i++) {
+    for (int i = 0; i < 65; i++) {
         lasers[i].active = 0;
     }
 
@@ -464,6 +464,26 @@ void initAllLasers() {
         initLaser(&lasers[i], 664, 448 - (i - 42)*16, 1);
     }
     initLaser(&lasers[44], 632, 416, 1);
+
+    initLaser(&lasers[45], 472, 304, 1);
+    initLaser(&lasers[46], 472, 288, 1);
+    initLaser(&lasers[47], 472, 280, 0);
+
+    initLaser(&lasers[48], 472, 232, 1);
+    initLaser(&lasers[49], 472, 216, 1);
+
+    initLaser(&lasers[50], 504, 200, 1);
+    initLaser(&lasers[51], 504, 184, 1);
+# 57 "laser.c"
+    initLaser(&lasers[58], 504, 120, 1);
+    initLaser(&lasers[59], 504, 112, 0);
+
+    initLaser(&lasers[60], 288, 112, 3);
+    initLaser(&lasers[61], 304, 112, 2);
+
+    for (int i = 62; i < 65; i++) {
+        initLaser(&lasers[i], 464, 32 - (i - 62) * 16, 3);
+    }
 
 
 
@@ -520,7 +540,7 @@ void initLaser(Laser* laser, int col, int row, int type) {
 }
 
 void updateAllLasers() {
-    for (int i = 0; i < 50; i++) {
+    for (int i = 0; i < 65; i++) {
         if (lasers[i].active) {
             updateLaser(&lasers[i]);
         }
@@ -553,7 +573,7 @@ int checkCollisionPlayerLaser(Laser* laser) {
 }
 
 void showAllLasers() {
-    for (int i = 0; i < 50; i++) {
+    for (int i = 0; i < 65; i++) {
         if (lasers[i].active) {
             showLaser(&lasers[i]);
         }
@@ -603,7 +623,7 @@ void showLaser(Laser* laser) {
 void laserSling() {
     Laser* nearest = ((void*) 0);
     int minDistance = 2 * 1024;
-    for (int i = 0; i < 50; i++) {
+    for (int i = 0; i < 65; i++) {
         if (lasers[i].active && !lasers[i].hide) {
 
             int distance;

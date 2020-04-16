@@ -81,6 +81,10 @@ void updateGame() {
     }
     */
 
+    if (player.worldRow < 0) {
+        initWin();
+    }
+
     if (BUTTON_PRESSED(BUTTON_SELECT)) {
         initPause();
     }
