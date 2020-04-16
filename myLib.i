@@ -121,7 +121,7 @@ int clamp(int value, int min, int max);
 int signOf(int value);
 int lerp(int a, int b, int curr, int max);
 
-int round(int value, int base);
+int roundbase(int value, int base);
 # 2 "myLib.c" 2
 
 
@@ -335,7 +335,7 @@ int lerp(int a, int b, int curr, int max) {
 }
 
 
-int round(int value, int base) {
+int roundbase(int value, int base) {
     int remainder = value % base;
     if (remainder >= base / 2) {
 

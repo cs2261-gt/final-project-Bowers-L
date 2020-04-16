@@ -71,4 +71,7 @@ int resolveCollisions();
 
 //item stuff
 void shrinkPlayer();
+void equipBoots();
+void equipLegs();
+void equipGloves();
 

@@ -262,7 +262,7 @@ int resolveCollisions() {
             player.worldCol -= xDepth * step;
         }
         //round the position to a multiple of 16 (need to this or else off by one errors occur on right side collisions)
-        player.worldCol = round(player.worldCol, 16);
+        player.worldCol = roundbase(player.worldCol, 16);
     } else {
         if (yDepth != 0) {
             player.rdel = 0;

@@ -78,7 +78,7 @@ initInstructions:
 	mov	lr, #1
 	ldr	ip, .L8
 	ldr	r4, .L8+4
-	mov	r3, #1776
+	mov	r3, #2176
 	mov	r2, #100663296
 	mov	r0, #3
 	ldr	r1, .L8+8

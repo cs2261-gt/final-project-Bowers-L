@@ -124,7 +124,7 @@ int clamp(int value, int min, int max);
 int signOf(int value);
 int lerp(int a, int b, int curr, int max);
 
-int round(int value, int base);
+int roundbase(int value, int base);
 # 4 "laser.h" 2
 # 1 "Spritesheet.h" 1
 # 21 "Spritesheet.h"
@@ -176,11 +176,14 @@ extern const unsigned short SplashScreen_InstructionsMap[1024];
 extern const unsigned short SplashScreenPal[256];
 # 8 "stateMachine.h" 2
 # 1 "InstructionsScreen.h" 1
-# 21 "InstructionsScreen.h"
-extern const unsigned short InstructionsScreenTiles[1776];
+# 22 "InstructionsScreen.h"
+extern const unsigned short InstructionsScreenTiles[2176];
 
 
 extern const unsigned short InstructionsScreenMap[1024];
+
+
+extern const unsigned short InstructionsScreenPal[256];
 # 9 "stateMachine.h" 2
 # 1 "PauseScreen_Resume.h" 1
 # 22 "PauseScreen_Resume.h"
@@ -269,8 +272,8 @@ typedef struct {
     int index;
 } Item;
 
-extern Item items[5];
-extern ItemType playerInventory[5];
+extern Item items[10];
+extern ItemType playerInventory[10];
 
 void initItem(Item* item, int col, int row, ItemType type);
 
@@ -349,6 +352,9 @@ int resolveCollisions();
 
 
 void shrinkPlayer();
+void equipBoots();
+void equipLegs();
+void equipGloves();
 # 7 "game.h" 2
 # 15 "game.h"
 extern int debug;
@@ -395,12 +401,7 @@ void centerCameraToPlayer();
 
 void updateSBB();
 # 6 "laser.h" 2
-
-
-
-
-
-
+# 16 "laser.h"
 typedef struct {
     int screenRow;
     int screenCol;
@@ -413,12 +414,12 @@ typedef struct {
     int hide;
     int active;
 
-    int tall;
+    int type;
 
     int index;
 } Laser;
 
-extern Laser lasers[30];
+extern Laser lasers[50];
 
 void initAllLasers();
 void updateAllLasers();
@@ -427,14 +428,16 @@ void showAllLasers();
 void initLaser(Laser* laser, int col, int row, int tall);
 void updateLaser(Laser* laser);
 void showLaser(Laser* laser);
+
+void laserSling();
 # 2 "laser.c" 2
 
 
 
-Laser lasers[30];
+Laser lasers[50];
 
 void initAllLasers() {
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 50; i++) {
         lasers[i].active = 0;
     }
 
@@ -444,41 +447,80 @@ void initAllLasers() {
     }
     for (int i = 4; i < 12; i++) {
         initLaser(&lasers[i], 64, 704 - (i-4)*16, 1);
-        initLaser(&lasers[i+8], 80, 704 - (i-4)*16, 1);
+        if (i != 4) {
+            initLaser(&lasers[i+8], 80, 704 - (i-4)*16, 1);
+        }
     }
+
+    for (int i = 20; i < 39; i++) {
+        initLaser(&lasers[i], 376 - (i-20)*16, 656, 3);
+    }
+
+    for (int i = 39; i < 42; i++) {
+        initLaser(&lasers[i], 632 , 488 - (i-39)*16, 1);
+    }
+
+    for (int i = 42; i < 44; i++) {
+        initLaser(&lasers[i], 664, 448 - (i - 42)*16, 1);
+    }
+    initLaser(&lasers[44], 632, 416, 1);
+
+
+
 }
 
-void initLaser(Laser* laser, int col, int row, int tall) {
+void initLaser(Laser* laser, int col, int row, int type) {
     static int laserCount = 0;
 
     laser->worldRow = ((row) << 4);
     laser->worldCol = ((col) << 4);
     laser->screenRow = laser->worldRow - camera.row;
     laser->screenCol = laser->worldCol - camera.col;
-    laser->width = ((8) << 4);
-    laser->height = ((8 + tall*8) << 4);
+    if (laser->type == 3) {
+        laser->width = ((16) << 4);
+    } else {
+        laser->width = ((8) << 4);
+    }
+    if (laser->type == 1) {
+        laser->height = ((16) << 4);
+    } else {
+        laser->height = ((8) << 4);
+    }
     laser->curFrame = 0;
     laser->numFrames = 60;
     laser->hide = 1;
     laser->active = 1;
 
-    laser->tall = tall;
+    laser->type = type;
 
     laser->index = laserCount + 11;
     laserCount++;
 
-    if (laser->tall) {
-        shadowOAM[laser->index].attr0 = (((laser->screenRow) >> 4) & 0xFF) | (0<<8) | (0<<13) | (2<<14);
-    } else {
+    if (laser->type % 2 == 0) {
+
         shadowOAM[laser->index].attr0 = (((laser->screenRow) >> 4) & 0xFF) | (0<<8) | (0<<13) | (0<<14);
+    } else {
+        if (laser->type == 1) {
+
+            shadowOAM[laser->index].attr0 = (((laser->screenRow) >> 4) & 0xFF) | (0<<8) | (0<<13) | (2<<14);
+        } else {
+
+            shadowOAM[laser->index].attr0 = (((laser->screenRow) >> 4) & 0xFF) | (0<<8) | (0<<13) | (1<<14);
+        }
+
     }
 
     shadowOAM[laser->index].attr1 = (((laser->screenCol) >> 4) & 0x1FF) | (0<<14);
-    shadowOAM[laser->index].attr2 = (((laser->curFrame / (laser->numFrames / 4)) * 2)*32+(2)) | ((0)<<12);
+
+    if (laser->type > 1) {
+        shadowOAM[laser->index].attr2 = (((laser->curFrame / (laser->numFrames / 4)))*32+(3)) | ((0)<<12);
+    } else {
+        shadowOAM[laser->index].attr2 = (((laser->curFrame / (laser->numFrames / 4)) * 2)*32+(2)) | ((0)<<12);
+    }
 }
 
 void updateAllLasers() {
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 50; i++) {
         if (lasers[i].active) {
             updateLaser(&lasers[i]);
         }
@@ -494,9 +536,15 @@ void updateLaser(Laser* laser) {
     }
 
     if (laser->hide == 0 && checkCollisionPlayerLaser(laser)) {
-        int direction = player.worldCol - laser->worldCol;
-        player.worldCol += signOf(direction) * (((8) << 4));
-        player.cdel = 0;
+        if (laser->type > 1) {
+            int direction = player.worldRow - laser->worldRow;
+            player.worldRow += signOf(direction) * (((8) << 4));
+            player.rdel = 0;
+        } else {
+            int direction = player.worldCol - laser->worldCol;
+            player.worldCol += signOf(direction) * (((8) << 4));
+            player.cdel = 0;
+        }
     }
 }
 
@@ -505,7 +553,7 @@ int checkCollisionPlayerLaser(Laser* laser) {
 }
 
 void showAllLasers() {
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 50; i++) {
         if (lasers[i].active) {
             showLaser(&lasers[i]);
         }
@@ -525,16 +573,53 @@ void showLaser(Laser* laser) {
     }
 
 
-    if (laser->tall) {
-        shadowOAM[laser->index].attr0 = (((laser->screenRow) >> 4) & 0xFF) | (0<<8) | (0<<13) | (2<<14);
-    } else {
+    if (laser->type % 2 == 0) {
+
         shadowOAM[laser->index].attr0 = (((laser->screenRow) >> 4) & 0xFF) | (0<<8) | (0<<13) | (0<<14);
+    } else {
+        if (laser->type == 1) {
+
+            shadowOAM[laser->index].attr0 = (((laser->screenRow) >> 4) & 0xFF) | (0<<8) | (0<<13) | (2<<14);
+        } else {
+
+            shadowOAM[laser->index].attr0 = (((laser->screenRow) >> 4) & 0xFF) | (0<<8) | (0<<13) | (1<<14);
+        }
+
     }
 
     shadowOAM[laser->index].attr1 = (((laser->screenCol) >> 4) & 0x1FF) | (0<<14);
-    shadowOAM[laser->index].attr2 = (((laser->curFrame / (laser->numFrames / 4)) * 2)*32+(2)) | ((0)<<12);
+
+    if (laser->type > 1) {
+        shadowOAM[laser->index].attr2 = (((laser->curFrame / (laser->numFrames / 4)))*32+(3)) | ((0)<<12);
+    } else {
+        shadowOAM[laser->index].attr2 = (((laser->curFrame / (laser->numFrames / 4)) * 2)*32+(2)) | ((0)<<12);
+    }
 
     if (laser->hide) {
         shadowOAM[laser->index].attr0 |= (2<<8);
+    }
+}
+
+void laserSling() {
+    Laser* nearest = ((void*) 0);
+    int minDistance = 2 * 1024;
+    for (int i = 0; i < 50; i++) {
+        if (lasers[i].active && !lasers[i].hide) {
+
+            int distance;
+            if (lasers[i].type > 1) {
+                distance = lasers[i].worldRow - player.worldRow;
+                if (distance < 16 && distance > -16) {
+                    player.worldRow += 2 * distance;
+                    break;
+                }
+            } else {
+                distance = lasers[i].worldCol - player.worldCol;
+                if (distance < ((16) << 4) && distance > -((16) << 4)) {
+                    player.worldCol += 2 * distance;
+                    break;
+                }
+            }
+        }
     }
 }

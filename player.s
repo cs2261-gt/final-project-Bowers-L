@@ -456,7 +456,7 @@ handlePlayerInput:
 	bne	.L47
 	ldr	r2, .L105+4
 	ldr	r3, [r2, #104]
-	cmp	r3, #3
+	cmp	r3, #8
 	bgt	.L47
 	ldr	r1, .L105+16
 	add	r3, r3, #1
@@ -665,7 +665,7 @@ resolveCollisions:
 	.align	2
 .L133:
 	.word	player
-	.word	round
+	.word	roundbase
 	.size	resolveCollisions, .-resolveCollisions
 	.align	2
 	.global	updatePlayer

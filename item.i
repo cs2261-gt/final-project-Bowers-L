@@ -124,7 +124,7 @@ int clamp(int value, int min, int max);
 int signOf(int value);
 int lerp(int a, int b, int curr, int max);
 
-int round(int value, int base);
+int roundbase(int value, int base);
 # 4 "item.h" 2
 
 # 1 "Spritesheet.h" 1
@@ -178,11 +178,14 @@ extern const unsigned short SplashScreen_InstructionsMap[1024];
 extern const unsigned short SplashScreenPal[256];
 # 8 "stateMachine.h" 2
 # 1 "InstructionsScreen.h" 1
-# 21 "InstructionsScreen.h"
-extern const unsigned short InstructionsScreenTiles[1776];
+# 22 "InstructionsScreen.h"
+extern const unsigned short InstructionsScreenTiles[2176];
 
 
 extern const unsigned short InstructionsScreenMap[1024];
+
+
+extern const unsigned short InstructionsScreenPal[256];
 # 9 "stateMachine.h" 2
 # 1 "PauseScreen_Resume.h" 1
 # 22 "PauseScreen_Resume.h"
@@ -313,12 +316,15 @@ int resolveCollisions();
 
 
 void shrinkPlayer();
+void equipBoots();
+void equipLegs();
+void equipGloves();
 # 7 "game.h" 2
 
 
 # 1 "laser.h" 1
        
-# 12 "laser.h"
+# 16 "laser.h"
 typedef struct {
     int screenRow;
     int screenCol;
@@ -331,12 +337,12 @@ typedef struct {
     int hide;
     int active;
 
-    int tall;
+    int type;
 
     int index;
 } Laser;
 
-extern Laser lasers[30];
+extern Laser lasers[50];
 
 void initAllLasers();
 void updateAllLasers();
@@ -345,6 +351,8 @@ void showAllLasers();
 void initLaser(Laser* laser, int col, int row, int tall);
 void updateLaser(Laser* laser);
 void showLaser(Laser* laser);
+
+void laserSling();
 # 10 "game.h" 2
 
 
@@ -423,8 +431,8 @@ typedef struct {
     int index;
 } Item;
 
-extern Item items[5];
-extern ItemType playerInventory[5];
+extern Item items[10];
+extern ItemType playerInventory[10];
 
 void initItem(Item* item, int col, int row, ItemType type);
 
@@ -437,21 +445,24 @@ void equipItem(Item* item);
 void useItem(ItemType item);
 # 2 "item.c" 2
 
-Item items[5];
+Item items[10];
 
-ItemType playerInventory[5];
+ItemType playerInventory[10];
 
 void initAllItems() {
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 10; i++) {
         items[i].active = 0;
         playerInventory[i] = NONE;
     }
 
-    initItem(&items[0], 1024 - 24, 1024 - 24, GLOVES);
+    initItem(&items[0], 1024 - 24, 1024 - 24, BOOTS);
     initItem(&items[1], 624, 904, SHRINK);
     initItem(&items[2], 24, 808, SPEED);
     initItem(&items[3], 1008, 800, GLOVES);
     initItem(&items[4], 224, 712, Z);
+
+
+
 }
 
 void initItem(Item* item, int col, int row, ItemType type) {
@@ -481,7 +492,7 @@ void initItem(Item* item, int col, int row, ItemType type) {
 }
 
 void updateAllItems() {
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 10; i++) {
         if (items[i].active) {
             updateItem(&items[i]);
         }
@@ -518,7 +529,7 @@ int checkCollisionPlayer(Item* item) {
 }
 
 void showAllItems() {
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 10; i++) {
         if (items[i].active) {
             showItem(&items[i]);
         }
@@ -574,6 +585,9 @@ void useItem(ItemType item) {
             break;
         case GLOVES:
             equipGloves();
+            break;
+        case Z:
+            laserSling();
             break;
     }
 }

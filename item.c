@@ -10,11 +10,14 @@ void initAllItems() {
         playerInventory[i] = NONE;
     }
 
-    initItem(&items[0], MAPWH - 24, MAPWH - 24, GLOVES);
+    initItem(&items[0], MAPWH - 24, MAPWH - 24, BOOTS);
     initItem(&items[1], 624, 904, SHRINK);
     initItem(&items[2], 24, 808, SPEED);
     initItem(&items[3], 1008, 800, GLOVES);
     initItem(&items[4], 224, 712, Z);
+
+    //test items
+    //initItem(&items[5], 16, 992, Z);
 }
 
 void initItem(Item* item, int col, int row, ItemType type) {
@@ -137,6 +140,9 @@ void useItem(ItemType item) {
             break;
         case GLOVES:
             equipGloves();
+            break;
+        case Z:
+            laserSling();
             break;
     }
 }

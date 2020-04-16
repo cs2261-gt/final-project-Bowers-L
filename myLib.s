@@ -731,12 +731,12 @@ lerp:
 	.size	lerp, .-lerp
 	.global	__aeabi_idivmod
 	.align	2
-	.global	round
+	.global	roundbase
 	.syntax unified
 	.arm
 	.fpu softvfp
-	.type	round, %function
-round:
+	.type	roundbase, %function
+roundbase:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
@@ -755,7 +755,7 @@ round:
 	.align	2
 .L121:
 	.word	__aeabi_idivmod
-	.size	round, .-round
+	.size	roundbase, .-roundbase
 	.comm	buttons,2,2
 	.comm	oldButtons,2,2
 	.comm	shadowOAM,1024,4

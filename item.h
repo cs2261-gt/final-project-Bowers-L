@@ -6,7 +6,7 @@
 
 #include "camera.h"
 
-#define NUMITEMS 5
+#define NUMITEMS 10
 
 //Items: OAM 1-10
 

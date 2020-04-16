@@ -211,7 +211,7 @@ int lerp(int a, int b, int curr, int max) {
 }
 
 //returns a multiple of base that is closest to value
-int round(int value, int base) {
+int roundbase(int value, int base) {
     int remainder = value % base;
     if (remainder >= base / 2) {
         //round up

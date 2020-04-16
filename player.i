@@ -124,7 +124,7 @@ int clamp(int value, int min, int max);
 int signOf(int value);
 int lerp(int a, int b, int curr, int max);
 
-int round(int value, int base);
+int roundbase(int value, int base);
 # 4 "player.h" 2
 # 1 "mapCollision.h" 1
 # 20 "mapCollision.h"
@@ -168,11 +168,14 @@ extern const unsigned short SplashScreen_InstructionsMap[1024];
 extern const unsigned short SplashScreenPal[256];
 # 8 "stateMachine.h" 2
 # 1 "InstructionsScreen.h" 1
-# 21 "InstructionsScreen.h"
-extern const unsigned short InstructionsScreenTiles[1776];
+# 22 "InstructionsScreen.h"
+extern const unsigned short InstructionsScreenTiles[2176];
 
 
 extern const unsigned short InstructionsScreenMap[1024];
+
+
+extern const unsigned short InstructionsScreenPal[256];
 # 9 "stateMachine.h" 2
 # 1 "PauseScreen_Resume.h" 1
 # 22 "PauseScreen_Resume.h"
@@ -284,8 +287,8 @@ typedef struct {
     int index;
 } Item;
 
-extern Item items[5];
-extern ItemType playerInventory[5];
+extern Item items[10];
+extern ItemType playerInventory[10];
 
 void initItem(Item* item, int col, int row, ItemType type);
 
@@ -299,7 +302,7 @@ void useItem(ItemType item);
 # 9 "game.h" 2
 # 1 "laser.h" 1
        
-# 12 "laser.h"
+# 16 "laser.h"
 typedef struct {
     int screenRow;
     int screenCol;
@@ -312,12 +315,12 @@ typedef struct {
     int hide;
     int active;
 
-    int tall;
+    int type;
 
     int index;
 } Laser;
 
-extern Laser lasers[30];
+extern Laser lasers[50];
 
 void initAllLasers();
 void updateAllLasers();
@@ -326,6 +329,8 @@ void showAllLasers();
 void initLaser(Laser* laser, int col, int row, int tall);
 void updateLaser(Laser* laser);
 void showLaser(Laser* laser);
+
+void laserSling();
 # 10 "game.h" 2
 
 
@@ -418,6 +423,9 @@ int resolveCollisions();
 
 
 void shrinkPlayer();
+void equipBoots();
+void equipLegs();
+void equipGloves();
 # 2 "player.c" 2
 
 Player player;
@@ -564,7 +572,7 @@ void handlePlayerInput() {
     }
 
     if ((!(~(oldButtons)&((1<<8))) && (~buttons & ((1<<8))))) {
-        if (player.currentItem < 5 - 1 && playerInventory[player.currentItem+1] != NONE) {
+        if (player.currentItem < 10 - 1 && playerInventory[player.currentItem+1] != NONE) {
             player.currentItem++;
         }
     }
@@ -649,7 +657,7 @@ int resolveCollisions() {
             player.worldCol -= xDepth * step;
         }
 
-        player.worldCol = round(player.worldCol, 16);
+        player.worldCol = roundbase(player.worldCol, 16);
     } else {
         if (yDepth != 0) {
             player.rdel = 0;
