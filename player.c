@@ -56,7 +56,7 @@ void updatePlayer() {
 
     //update player's world and screen positions
     player.worldCol = clamp(player.worldCol + player.cdel, 0, ENCODE4(MAPWH) - player.width);
-    player.worldRow = clamp(player.worldRow + player.rdel, 0, ENCODE4(MAPWH) - player.height);
+    player.worldRow = clamp(player.worldRow + player.rdel, -64, ENCODE4(MAPWH) - player.height);
     resolveCollisions();
 
 }
@@ -182,8 +182,7 @@ int collisionRight(int offset) {
 }
 
 int collisionAbove(int offset) {
-    return player.worldRow < 0
-        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol), DECODE4(player.worldRow) - offset, MAPWH)]
+    return mapCollisionBitmap[OFFSET(DECODE4(player.worldCol), DECODE4(player.worldRow) - offset, MAPWH)]
         || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width) - 1, DECODE4(player.worldRow) - offset, MAPWH)];
 }
 

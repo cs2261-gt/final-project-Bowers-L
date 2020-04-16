@@ -480,13 +480,7 @@ void initAllLasers() {
 
     initLaser(&lasers[60], 288, 112, 3);
     initLaser(&lasers[61], 304, 112, 2);
-
-    for (int i = 62; i < 65; i++) {
-        initLaser(&lasers[i], 464, 32 - (i - 62) * 16, 3);
-    }
-
-
-
+# 71 "laser.c"
 }
 
 void initLaser(Laser* laser, int col, int row, int type) {

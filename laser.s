@@ -123,7 +123,7 @@ initAllLasers:
 .L16:
 	str	r1, [r3, #36]
 	add	r3, r3, #48
-	cmp	r2, r3
+	cmp	r3, r2
 	bne	.L16
 	mov	r3, #1
 	mov	r2, #704
@@ -264,21 +264,6 @@ initAllLasers:
 	mov	r2, #112
 	mov	r1, #304
 	ldr	r0, .L24+88
-	bl	initLaser
-	mov	r3, #3
-	mov	r2, #32
-	mov	r1, #464
-	ldr	r0, .L24+92
-	bl	initLaser
-	mov	r3, #3
-	mov	r2, #16
-	mov	r1, #464
-	ldr	r0, .L24+96
-	bl	initLaser
-	mov	r3, #3
-	mov	r2, #0
-	mov	r1, #464
-	ldr	r0, .L24+100
 	pop	{r4, r5, r6, lr}
 	b	initLaser
 .L25:
@@ -307,9 +292,6 @@ initAllLasers:
 	.word	lasers+2832
 	.word	lasers+2880
 	.word	lasers+2928
-	.word	lasers+2976
-	.word	lasers+3024
-	.word	lasers+3072
 	.size	initAllLasers, .-initAllLasers
 	.align	2
 	.global	checkCollisionPlayerLaser
@@ -663,8 +645,8 @@ laserSling:
 	.bss
 	.align	2
 	.set	.LANCHOR0,. + 0
-	.type	laserCount.4321, %object
-	.size	laserCount.4321, 4
-laserCount.4321:
+	.type	laserCount.4317, %object
+	.size	laserCount.4317, 4
+laserCount.4317:
 	.space	4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

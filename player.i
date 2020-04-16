@@ -484,7 +484,7 @@ void updatePlayer() {
 
 
     player.worldCol = clamp(player.worldCol + player.cdel, 0, ((1024) << 4) - player.width);
-    player.worldRow = clamp(player.worldRow + player.rdel, 0, ((1024) << 4) - player.height);
+    player.worldRow = clamp(player.worldRow + player.rdel, -64, ((1024) << 4) - player.height);
     resolveCollisions();
 
 }
@@ -591,8 +591,7 @@ int collisionRight(int offset) {
 }
 
 int collisionAbove(int offset) {
-    return player.worldRow < 0
-        || mapCollisionBitmap[((((player.worldRow) >> 4) - offset)*(1024)+(((player.worldCol) >> 4)))]
+    return mapCollisionBitmap[((((player.worldRow) >> 4) - offset)*(1024)+(((player.worldCol) >> 4)))]
         || mapCollisionBitmap[((((player.worldRow) >> 4) - offset)*(1024)+(((player.worldCol + player.width) >> 4) - 1))];
 }
 
@@ -606,7 +605,7 @@ int touchingGround() {
     return mapCollisionBitmap[((((player.worldRow + player.height) >> 4))*(1024)+(((player.worldCol) >> 4)))]
     || mapCollisionBitmap[((((player.worldRow + player.height) >> 4))*(1024)+(((player.worldCol + player.width) >> 4) - 1))];
 }
-# 215 "player.c"
+# 214 "player.c"
 int resolveCollisions() {
     int xDepth = 0;
     int yDepth = 0;
