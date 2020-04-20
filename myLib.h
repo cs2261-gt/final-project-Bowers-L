@@ -126,9 +126,21 @@ typedef struct {
     unsigned short fill;
 } OBJ_ATTR;
 
+typedef struct {
+    unsigned short fill0[3];
+    short a;
+    unsigned short fill1[3];
+    short b;
+    unsigned short fill2[3];
+    short c;
+    unsigned short fill3[3];
+    short d;
+} OBJ_AFFINE;
+
 // Object Attribute Memory
 #define OAM ((OBJ_ATTR*)(0x7000000))
 extern OBJ_ATTR shadowOAM[];
+extern OBJ_AFFINE* shadowOAMAffine;
 
 // Attribute 0
 #define ATTR0_REGULAR      (0<<8)  // Normal Rendering
@@ -152,6 +164,8 @@ extern OBJ_ATTR shadowOAM[];
 #define ATTR1_SMALL  (1<<14)       // --------------------------------------------
 #define ATTR1_MEDIUM (2<<14)
 #define ATTR1_LARGE  (3<<14)
+
+#define ATTR1_AFFINE(index) ((index) << 9)
 
 // Attribute 2
 #define ATTR2_TILEID(col, row) ((row)*32+(col))
@@ -199,8 +213,8 @@ typedef struct {
 #define BLD_OBJb    (1<<12)
 #define BLD_BDb     (1<<13)
 
-#define BLD_STD     (1<<6)
 #define BLD_OFF     (0<<6)
+#define BLD_STD     (1<<6)
 #define BLD_WHITE   (1<<7)
 #define BLD_BLACK   (3<<6)
 
@@ -391,7 +405,7 @@ typedef struct{
     int duration;
     int priority;
     int vBlankCount;
-} SOUND;
+} Sound;
 
 // ============================== MISCELLANEOUS ===============================
 

@@ -52,10 +52,22 @@ typedef struct {
     unsigned short fill;
 } OBJ_ATTR;
 
+typedef struct {
+    unsigned short fill0[3];
+    short a;
+    unsigned short fill1[3];
+    short b;
+    unsigned short fill2[3];
+    short c;
+    unsigned short fill3[3];
+    short d;
+} OBJ_AFFINE;
+
 
 
 extern OBJ_ATTR shadowOAM[];
-# 162 "myLib.h"
+extern OBJ_AFFINE* shadowOAMAffine;
+# 176 "myLib.h"
 void hideSprites();
 
 
@@ -79,7 +91,7 @@ typedef struct {
     int numFrames;
     int hide;
 } ANISPRITE;
-# 232 "myLib.h"
+# 246 "myLib.h"
 extern unsigned short oldButtons;
 extern unsigned short buttons;
 
@@ -88,7 +100,7 @@ extern unsigned short buttons;
 
 
 void updateInput();
-# 251 "myLib.h"
+# 265 "myLib.h"
 typedef volatile struct {
     volatile const void *src;
     volatile void *dst;
@@ -97,9 +109,9 @@ typedef volatile struct {
 
 
 extern DMA *dma;
-# 291 "myLib.h"
+# 305 "myLib.h"
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt);
-# 385 "myLib.h"
+# 399 "myLib.h"
 typedef struct{
     const unsigned char* data;
     int length;
@@ -109,7 +121,7 @@ typedef struct{
     int duration;
     int priority;
     int vBlankCount;
-} SOUND;
+} Sound;
 
 
 
@@ -132,6 +144,7 @@ DMA *dma = (DMA *)0x40000B0;
 
 
 OBJ_ATTR shadowOAM[128];
+OBJ_AFFINE* shadowOAMAffine = (OBJ_AFFINE*) shadowOAM;
 
 
 u16 oldButtons;

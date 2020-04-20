@@ -17,7 +17,7 @@ void initAllItems() {
     initItem(&items[4], 224, 712, Z);
 
     //test items
-    //initItem(&items[5], 16, 992, Z);
+    initItem(&items[5], 16, 992, Z);
 }
 
 void initItem(Item* item, int col, int row, ItemType type) {
@@ -41,7 +41,7 @@ void initItem(Item* item, int col, int row, ItemType type) {
     item->type = type;
     item->index = itemCount;
 
-    shadowOAM[item->index].attr0 = (DECODE4(item->screenRow) & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_SQUARE;
+    shadowOAM[item->index].attr0 = (DECODE4(item->screenRow) & ROWMASK) | ATTR0_HIDE | ATTR0_4BPP | ATTR0_SQUARE;
     shadowOAM[item->index].attr1 = (DECODE4(item->screenCol) & COLMASK) | ATTR1_TINY;
     shadowOAM[item->index].attr2 = ATTR2_TILEID(0, 8) | ATTR2_PALROW(0);
 }
@@ -75,7 +75,7 @@ void updateItem(Item* item) {
     }
 
     if (item->hide == 0 && checkCollisionPlayer(item)) {
-        equipItem(item);
+        getItem(item);
     }
 }
 
@@ -113,16 +113,23 @@ void showItem(Item* item) {
     }
 }
 
-void equipItem(Item* item) {
+void getItem(Item* item) {
     item->active = 0;
     item->hide = 1;
-    shadowOAM[item->index].attr0 |= ATTR0_HIDE;
+    shadowOAM[item->index].attr0 = (ITEMSLOTROW & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_SQUARE;
+    shadowOAM[item->index].attr1 = ((ITEMSLOTCOL + (item->type-1)*ITEMSLOTSPACING) & COLMASK) | ATTR1_SMALL;
+    shadowOAM[item->index].attr2 = ATTR2_TILEID(1 + (item->type-1)*2, 8) | ATTR2_PALROW(0);
     
     int i = 0;
     while (playerInventory[i] != NONE) {
         i++;
     }
     playerInventory[i] = item->type;
+
+    if (item->type == 1) {
+        //the first item
+        showSelectorOnItem(player.currentItem);
+    }
 }
 
 void useItem(ItemType item) {
@@ -142,7 +149,13 @@ void useItem(ItemType item) {
             equipGloves();
             break;
         case Z:
-            laserSling();
+            startLaserSling();
             break;
     }
+}
+
+void showSelectorOnItem() {
+    shadowOAM[120].attr0 = (ITEMSLOTROW & COLMASK) | ATTR0_4BPP | ATTR0_REGULAR | ATTR0_SQUARE;
+    shadowOAM[120].attr1 = ((ITEMSLOTCOL + player.currentItem*ITEMSLOTSPACING) & COLMASK) | ATTR1_SMALL;
+    shadowOAM[120].attr2 = ATTR2_TILEID(1, 10);
 }

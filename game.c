@@ -4,43 +4,72 @@ GameState gameState;
 MenuState menuState;
 
 int debug;
+int fadeIn;
 
 void init() {
     REG_DISPCTL = MODE0;
     initSplash();
     setupDisplayInterrupt();
+    setupSounds();
 
     debug = 0;
+    fadeIn = 0;
 }
 
 void initGame() {
+    //test
+    
     //initialize variables
     gameState = GAME;
     initCamera(0, ENCODE4(MAPWH - SCREENHEIGHT));
     
     //setup background(s)
-    REG_DISPCTL = MODE0 | BG1_ENABLE;
+    REG_DISPCTL = MODE0 | BG0_ENABLE | BG1_ENABLE | BG2_ENABLE | SPRITE_ENABLE;
+
+    DMANow(3, GameOverlayTiles, &CHARBLOCK[0], GameOverlayTilesLen / 2);
+    DMANow(3, GameOverlayMap, &SCREENBLOCK[MAPSB-1], GameOverlayMapLen / 2);
+    REG_BG0CNT = BG_4BPP | BG_SIZE_SMALL | BG_CHARBLOCK(0) | BG_SCREENBLOCK(MAPSB-1);
+
+    DMANow(3, gameBackgroundTiles, &CHARBLOCK[2], gameBackgroundTilesLen / 2);
+    DMANow(3, gameBackgroundMap, &SCREENBLOCK[MAPSB-2], gameBackgroundMapLen / 2);
+    REG_BG2CNT = BG_4BPP | BG_SIZE_SMALL | BG_CHARBLOCK(2) | BG_SCREENBLOCK(MAPSB-2);
+
+    DMANow(3, gameBackgroundPal, PALETTE, 16);
+
     setupMap();
 
     //setup spritesheet
-    REG_DISPCTL |= SPRITE_ENABLE;
     hideSprites();
     DMANow(3, SpritesheetTiles, &CHARBLOCK[4], SpritesheetTilesLen / 2);
     DMANow(3, SpritesheetPal, SPRITEPALETTE, SpritesheetPalLen / 2);
 
+    //Set screen to first appear black
+    REG_BLDCNT = BLD_BG0a | BLD_BG1a | BLD_BG2a | BLD_OBJa  //layers to blend
+                | BLD_BLACK;
+    REG_BLDY = BLD_EY(17);
+
     initPlayer();
     initAllItems();
     initAllLasers();
+
+    fadeIn = 1;
 }
 
 void resumeGame() {
-    REG_DISPCTL |= SPRITE_ENABLE | BG1_ENABLE;
-    REG_DISPCTL &= ~BG0_ENABLE;
     gameState = GAME;
+
+    REG_DISPCTL = MODE0 | BG0_ENABLE | BG1_ENABLE | BG2_ENABLE | SPRITE_ENABLE;
+
+    //Re-DMA Background 0 since that was being used by the pause menu
+    DMANow(3, GameOverlayTiles, &CHARBLOCK[0], GameOverlayTilesLen / 2);
+    DMANow(3, GameOverlayMap, &SCREENBLOCK[MAPSB-1], GameOverlayMapLen / 2);
+    REG_BG0CNT = BG_4BPP | BG_SIZE_SMALL | BG_CHARBLOCK(0) | BG_SCREENBLOCK(MAPSB-1);
 
     REG_BG1CNT = BG_4BPP | BG_SIZE_LARGE | BG_CHARBLOCK(1) | BG_SCREENBLOCK(MAPSB + OFFSET(camera.sbbcol, camera.sbbrow, 2));
 
-    DMANow(3, mapPal, PALETTE, 16);
+    REG_BG2CNT = BG_4BPP | BG_SIZE_SMALL | BG_CHARBLOCK(2) | BG_SCREENBLOCK(MAPSB-2);
+
+    DMANow(3, gameBackgroundPal, PALETTE, gameBackgroundPalLen / 2);
 }
 
 void update() {
@@ -100,14 +129,32 @@ void updateGame() {
     showPlayer();
     showAllItems();
     showAllLasers();
+
+    if (fadeIn) {
+        fade();
+    }
 }
 
 void drawGame() {
+
     REG_BG1CNT = BG_4BPP | BG_SIZE_LARGE | BG_CHARBLOCK(1) | BG_SCREENBLOCK(MAPSB + OFFSET(camera.sbbcol, camera.sbbrow, 2));
     REG_BG1HOFF = DECODE4(camera.col) - camera.sbbcol * 256;
     REG_BG1VOFF = DECODE4(camera.row) - camera.sbbrow * 256;
 
     DMANow(3, shadowOAM, OAM, 128 * 4);
+}
+
+void fade() {
+    static int count = 0;
+    const static int speed = 1;
+    if (count/speed > 17) {
+        fadeIn = 0;
+        count = 0;
+    } else {
+        REG_BLDY = BLD_EY(17 - count/speed);
+    }
+
+    count++;
 }
 
 void setupMap() {
@@ -145,7 +192,6 @@ void setupMap() {
 
     //dma the charblock and palette as well
     DMANow(3, mapTiles, &CHARBLOCK[1], mapTilesLen / 2);
-    DMANow(3, mapPal, PALETTE, 16);
 }
 
 void setupDisplayInterrupt() {
@@ -167,6 +213,7 @@ void interruptHandler() {
         if (gameState == GAME) {
             drawGame();
         }
+        handleSoundVBlank();
     }
 
     REG_IF = REG_IF;

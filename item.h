@@ -8,6 +8,14 @@
 
 #define NUMITEMS 10
 
+#define ITEMSLOTROW 8
+#define ITEMSLOTCOL 8
+#define ITEMSLOTSPACING 20
+
+#define SELECTORPALINDEX 6
+#define SELECTEDCOLOR (COLOR(0, 24, 0))
+#define EQUIPPEDCOLOR (COLOR(13, 13, 0))
+
 //Items: OAM 1-10
 
 typedef enum {
@@ -43,5 +51,7 @@ void showItem(Item* item);
 
 int checkCollisionPlayer(Item* item);
 
-void equipItem(Item* item);
+void getItem(Item* item);
 void useItem(ItemType item);
+
+void showSelectorOnItem();

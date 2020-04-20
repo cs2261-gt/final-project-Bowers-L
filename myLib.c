@@ -8,6 +8,7 @@ DMA *dma = (DMA *)0x40000B0;
 
 // The shadowOAM
 OBJ_ATTR shadowOAM[128];
+OBJ_AFFINE* shadowOAMAffine = (OBJ_AFFINE*) shadowOAM;
 
 // Input
 u16 oldButtons;

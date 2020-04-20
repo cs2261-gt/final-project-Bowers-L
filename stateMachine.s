@@ -113,34 +113,23 @@ initPause:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, lr}
-	mov	ip, #2
 	mov	r4, #3
-	mov	r3, #67108864
-	mov	r1, #256
-	mov	r2, #5376
-	ldr	lr, .L12
-	ldr	r0, .L12+4
-	strb	r4, [lr]
-	strb	ip, [r0]
-	ldr	r5, .L12+8
+	mov	lr, #2
+	ldr	r1, .L12
+	ldr	ip, .L12+4
 	mov	r0, r4
-	strh	r1, [r3]	@ movhi
-	strh	r2, [r3, #8]	@ movhi
-	ldr	r1, .L12+12
+	strb	r4, [r1]
+	ldr	r5, .L12+8
 	mov	r3, #848
 	mov	r2, #100663296
+	ldr	r1, .L12+12
+	strb	lr, [ip]
 	mov	lr, pc
 	bx	r5
 	mov	r0, r4
 	mov	r3, #1024
 	ldr	r2, .L12+16
 	ldr	r1, .L12+20
-	mov	lr, pc
-	bx	r5
-	mov	r0, r4
-	mov	r3, #16
-	mov	r2, #83886080
-	ldr	r1, .L12+24
 	mov	lr, pc
 	bx	r5
 	pop	{r4, r5, r6, lr}
@@ -154,7 +143,6 @@ initPause:
 	.word	PauseScreen_ResumeTiles
 	.word	100706304
 	.word	PauseScreen_ResumeMap
-	.word	PauseScreen_ResumePal
 	.size	initPause, .-initPause
 	.align	2
 	.global	initWin
@@ -460,4 +448,6 @@ updateWin:
 	@ link register save eliminated.
 	b	updateInstructions
 	.size	updateWin, .-updateWin
+	.comm	soundB,32,4
+	.comm	soundA,32,4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

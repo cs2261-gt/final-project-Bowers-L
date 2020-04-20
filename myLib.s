@@ -758,6 +758,7 @@ roundbase:
 	.size	roundbase, .-roundbase
 	.comm	buttons,2,2
 	.comm	oldButtons,2,2
+	.global	shadowOAMAffine
 	.comm	shadowOAM,1024,4
 	.global	dma
 	.global	videoBuffer
@@ -772,4 +773,8 @@ videoBuffer:
 	.size	dma, 4
 dma:
 	.word	67109040
+	.type	shadowOAMAffine, %object
+	.size	shadowOAMAffine, 4
+shadowOAMAffine:
+	.word	shadowOAM
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

@@ -5,9 +5,18 @@
 #include "game.h"
 #include "item.h"
 
+#include <stdlib.h>
+#include <math.h>
+
+#define PI (3.14159265)
+
 typedef enum {
-    LEFT, RIGHT
-} PlayerState;
+    GETUP = 1, LASER
+} SpecialAnim;
+
+typedef enum {
+    IDLE, RIGHT, LEFT
+} AniState;
 
 typedef struct {
     //animated sprite stuff
@@ -20,10 +29,12 @@ typedef struct {
     int width;
     int height;
     int aniCounter;
-    int aniState;
+    AniState aniState;
     int prevAniState;
     int curFrame;
     int numFrames;
+    int aniSpeed;
+    int isIdle;
     int hide;
 
     //acceleration
@@ -49,11 +60,18 @@ typedef struct {
     int currentItem;
     int shrunk;
     int canWallJump;
+
+    //transformation stuff
+    int rotation;
+
+    //misc
+    SpecialAnim specialAnim;
 } Player;
 
 //Player: OAM 0
 extern Player player;
-extern const int playerMaxSpeed;
+
+extern short sinLut[];
 
 void initPlayer();
 void updatePlayer();
@@ -70,8 +88,16 @@ int touchingGround();
 int resolveCollisions();
 
 //item stuff
-void shrinkPlayer();
 void equipBoots();
+void shrinkPlayer();
 void equipLegs();
 void equipGloves();
+void startLaserSling();
+void finishLaserSling(Laser* laser);
 
+//affine transformations
+void setTransform(int index, short scalex, short scaley, int deg);
+void generateSinLut(short table[], size_t size);
+
+void getUpAnimation();
+void laserSlingAnimation();

@@ -99,14 +99,14 @@ void initLaser(Laser* laser, int col, int row, int type) {
 
     if (laser->type % 2 == 0) {
         //normal
-        shadowOAM[laser->index].attr0 = (DECODE4(laser->screenRow) & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_SQUARE;   
+        shadowOAM[laser->index].attr0 = (DECODE4(laser->screenRow) & ROWMASK) | ATTR0_HIDE | ATTR0_4BPP | ATTR0_SQUARE;   
     } else {
         if (laser->type == 1) {
             //tall vert
-            shadowOAM[laser->index].attr0 = (DECODE4(laser->screenRow) & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_TALL;
+            shadowOAM[laser->index].attr0 = (DECODE4(laser->screenRow) & ROWMASK) | ATTR0_HIDE | ATTR0_4BPP | ATTR0_TALL;
         } else {
             //wide horiz
-            shadowOAM[laser->index].attr0 = (DECODE4(laser->screenRow) & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_WIDE;
+            shadowOAM[laser->index].attr0 = (DECODE4(laser->screenRow) & ROWMASK) | ATTR0_HIDE | ATTR0_4BPP | ATTR0_WIDE;
         }
         
     }
@@ -114,9 +114,9 @@ void initLaser(Laser* laser, int col, int row, int type) {
     shadowOAM[laser->index].attr1 = (DECODE4(laser->screenCol) & COLMASK) | ATTR1_TINY;
 
     if (laser->type > 1) {
-        shadowOAM[laser->index].attr2 = ATTR2_TILEID(3, (laser->curFrame / (laser->numFrames / 4))) | ATTR2_PALROW(0);
+        shadowOAM[laser->index].attr2 = ATTR2_TILEID(SPRITESHEETINDEX+1, (laser->curFrame / (laser->numFrames / 4))) | ATTR2_PALROW(0);
     } else {
-        shadowOAM[laser->index].attr2 = ATTR2_TILEID(2, (laser->curFrame / (laser->numFrames / 4)) * 2) | ATTR2_PALROW(0);
+        shadowOAM[laser->index].attr2 = ATTR2_TILEID(SPRITESHEETINDEX, (laser->curFrame / (laser->numFrames / 4)) * 2) | ATTR2_PALROW(0);
     }
 }
 
@@ -191,9 +191,9 @@ void showLaser(Laser* laser) {
     shadowOAM[laser->index].attr1 = (DECODE4(laser->screenCol) & COLMASK) | ATTR1_TINY;
 
     if (laser->type > 1) {
-        shadowOAM[laser->index].attr2 = ATTR2_TILEID(3, (laser->curFrame / (laser->numFrames / 4))) | ATTR2_PALROW(0);
+        shadowOAM[laser->index].attr2 = ATTR2_TILEID(SPRITESHEETINDEX+1, (laser->curFrame / (laser->numFrames / 4))) | ATTR2_PALROW(0);
     } else {
-        shadowOAM[laser->index].attr2 = ATTR2_TILEID(2, (laser->curFrame / (laser->numFrames / 4)) * 2) | ATTR2_PALROW(0);
+        shadowOAM[laser->index].attr2 = ATTR2_TILEID(SPRITESHEETINDEX, (laser->curFrame / (laser->numFrames / 4)) * 2) | ATTR2_PALROW(0);
     }
 
     if (laser->hide) {
@@ -201,26 +201,28 @@ void showLaser(Laser* laser) {
     }
 }
 
-void laserSling() {
-    Laser* nearest = NULL;
-    int minDistance = 2 * MAPWH;    //basically infinity
+Laser* findCloseLaser() {
     for (int i = 0; i < NUMLASERS; i++) {
         if (lasers[i].active && !lasers[i].hide) {
             //laser is active, on the screen
             int distance;
             if (lasers[i].type > 1) {
                 distance = lasers[i].worldRow - player.worldRow;
-                if (distance < 16 && distance > -16) {
-                    player.worldRow += 2 * distance;
-                    break;
-                }
             } else {
                 distance = lasers[i].worldCol - player.worldCol;
-                if (distance < ENCODE4(16) && distance > -ENCODE4(16)) {
-                    player.worldCol += 2 * distance;
-                    break;
-                }
+            }
+
+            if (distance < ENCODE4(16) && distance > -ENCODE4(16)) {
+                return &laser[i];
             }
         }
     }
+
+    return NULL;
+}
+
+void laserSling() {
+    //Laser* nearest = NULL;
+    //int minDistance = 2 * MAPWH;    //basically infinity
+
 }

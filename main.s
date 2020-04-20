@@ -38,4 +38,6 @@ main:
 	.word	init
 	.word	update
 	.size	main, .-main
+	.comm	soundB,32,4
+	.comm	soundA,32,4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

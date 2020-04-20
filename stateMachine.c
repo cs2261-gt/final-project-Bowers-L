@@ -22,13 +22,12 @@ void initInstructions() {
 void initPause() {
     gameState = PAUSED;
     menuState = OPTRESUME;
-    REG_DISPCTL = MODE0 | BG0_ENABLE;
-    REG_BG0CNT = BG_4BPP | BG_SIZE_SMALL | BG_CHARBLOCK(0) | BG_SCREENBLOCK(MAPSB - 1);
-    //waitForVBlank();    //need to do or else the offset update will lag
+    //REG_DISPCTL = MODE0 | BG0_ENABLE;
+    //REG_BG0CNT = BG_4BPP | BG_SIZE_SMALL | BG_CHARBLOCK(0) | BG_SCREENBLOCK(MAPSB - 1);
 
     DMANow(3, PauseScreen_ResumeTiles, &CHARBLOCK[0], PauseScreen_ResumeTilesLen/2);
     DMANow(3, PauseScreen_ResumeMap, &SCREENBLOCK[MAPSB - 1], PauseScreen_ResumeMapLen/2);
-    DMANow(3, PauseScreen_ResumePal, PALETTE, 16);
+    //DMANow(3, PauseScreen_ResumePal, PALETTE, 16);
     
 }
 

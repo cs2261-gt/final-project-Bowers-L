@@ -8,11 +8,16 @@
 #include "item.h"
 #include "laser.h"
 
+
+#include "GameOverlay.h"
+#include "gameBackground.h"
+
 #define MAPWH 1024
 #define MAPSB 22
 
 //used to look around the level without camera being tied to the player
 extern int debug;
+extern int fadeIn;
 
 void init();
 void update();
@@ -21,9 +26,12 @@ void initGame();
 void resumeGame();
 void updateGame();
 
+//do during vblank
 void drawGame();
 
+//misc
 void setupMap();
+void fade();
 
 
 //interrupts
