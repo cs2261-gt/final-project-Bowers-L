@@ -618,8 +618,8 @@ updateAllItems:
 	.bss
 	.align	2
 	.set	.LANCHOR0,. + 0
-	.type	itemCount.5329, %object
-	.size	itemCount.5329, 4
-itemCount.5329:
+	.type	itemCount.5332, %object
+	.size	itemCount.5332, 4
+itemCount.5332:
 	.space	4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

@@ -163,6 +163,16 @@ extern const unsigned short SplashScreen_InstructionsMap[1024];
 
 extern const unsigned short SplashScreenPal[256];
 # 8 "stateMachine.h" 2
+# 1 "SplashBack.h" 1
+# 22 "SplashBack.h"
+extern const unsigned short SplashBackTiles[288];
+
+
+extern const unsigned short SplashBackMap[1024];
+
+
+extern const unsigned short SplashBackPal[256];
+# 9 "stateMachine.h" 2
 # 1 "InstructionsScreen.h" 1
 # 22 "InstructionsScreen.h"
 extern const unsigned short InstructionsScreenTiles[2176];
@@ -172,21 +182,21 @@ extern const unsigned short InstructionsScreenMap[1024];
 
 
 extern const unsigned short InstructionsScreenPal[256];
-# 9 "stateMachine.h" 2
+# 10 "stateMachine.h" 2
 # 1 "PauseScreen_Resume.h" 1
 # 21 "PauseScreen_Resume.h"
 extern const unsigned short PauseScreen_ResumeTiles[848];
 
 
 extern const unsigned short PauseScreen_ResumeMap[1024];
-# 10 "stateMachine.h" 2
+# 11 "stateMachine.h" 2
 # 1 "PauseScreen_Quit.h" 1
 # 21 "PauseScreen_Quit.h"
 extern const unsigned short PauseScreen_QuitTiles[848];
 
 
 extern const unsigned short PauseScreen_QuitMap[1024];
-# 11 "stateMachine.h" 2
+# 12 "stateMachine.h" 2
 # 1 "WinScreen.h" 1
 # 22 "WinScreen.h"
 extern const unsigned short WinScreenTiles[1232];
@@ -196,14 +206,15 @@ extern const unsigned short WinScreenMap[1024];
 
 
 extern const unsigned short WinScreenPal[256];
-# 12 "stateMachine.h" 2
+# 13 "stateMachine.h" 2
 # 1 "Spritesheet.h" 1
 # 21 "Spritesheet.h"
 extern const unsigned short SpritesheetTiles[16384];
 
 
 extern const unsigned short SpritesheetPal[256];
-# 13 "stateMachine.h" 2
+# 14 "stateMachine.h" 2
+
 
 # 1 "game.h" 1
        
@@ -1594,14 +1605,14 @@ void fade();
 
 void setupDisplayInterrupt();
 void interruptHandler();
-# 15 "stateMachine.h" 2
+# 17 "stateMachine.h" 2
 
 
 
 # 1 "mus_start.h" 1
 # 20 "mus_start.h"
 extern const unsigned char mus_start[816943];
-# 19 "stateMachine.h" 2
+# 21 "stateMachine.h" 2
 
 
 
@@ -1631,16 +1642,22 @@ void initSplash() {
     gameState = SPLASH;
     menuState = OPTSTART;
 
-    (*(unsigned short *)0x4000000) = 0 | (1<<8);
+    (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<10);
     (*(volatile unsigned short*)0x4000008) = (0<<7) | (0<<14) | ((0)<<2) | ((22 - 1)<<8);
+    (*(volatile unsigned short*)0x400000C) = (0<<7) | (0<<14) | ((2)<<2) | ((22 - 2)<<8);
 
     DMANow(3, SplashScreen_StartTiles, &((charblock *)0x6000000)[0], 3392/2);
     DMANow(3, SplashScreen_StartMap, &((screenblock *)0x6000000)[22 - 1], 2048/2);
     DMANow(3, SplashScreenPal, ((unsigned short *)0x5000000), 16);
+
+    DMANow(3, SplashBackTiles, &((charblock *)0x6000000)[2], 3392/2);
+    DMANow(3, SplashBackMap, &((screenblock *)0x6000000)[22 - 2], 2048/2);
+    DMANow(3, &SplashBackPal[16], &((unsigned short *)0x5000000)[16], 16);
 }
 
 void initInstructions() {
     gameState = INSTRUCTIONS;
+    (*(unsigned short *)0x4000000) = 0 | (1<<8);
     DMANow(3, InstructionsScreenTiles, &((charblock *)0x6000000)[0], 4352/2);
     DMANow(3, InstructionsScreenMap, &((screenblock *)0x6000000)[22 - 1], 2048/2);
 }
@@ -1701,14 +1718,14 @@ void updateSplash() {
 void glitchEffect() {
     static int glitchCounter = 0;
     static int duration;
-    if (rand() % 100 == 1) {
+    if (rand() % 50 == 1) {
         glitchCounter = 1;
         duration = rand() % 10;
     }
 
     if (glitchCounter) {
         (*(volatile unsigned short*)0x4000008) = (0<<7) | (0<<14) | ((0)<<2) | ((22 - 1)<<8) | (1 << 6);
-        (*(volatile u16*) 0x0400004C) = ((5) << 0);
+        (*(volatile u16*) 0x0400004C) = ((rand() % 15) << 0);
         glitchCounter++;
         if (glitchCounter >= duration) {
             glitchCounter = 0;
@@ -1722,6 +1739,8 @@ void updateInstructions() {
     if ((!(~(oldButtons)&((1<<2))) && (~buttons & ((1<<2))))) {
         initSplash();
     }
+
+    glitchEffect();
 }
 
 void updatePause() {

@@ -1640,12 +1640,12 @@ updatePlayer:
 	.bss
 	.align	2
 	.set	.LANCHOR0,. + 0
-	.type	curFrame.5404, %object
-	.size	curFrame.5404, 4
-curFrame.5404:
+	.type	curFrame.5407, %object
+	.size	curFrame.5407, 4
+curFrame.5407:
 	.space	4
-	.type	curFrame.5408, %object
-	.size	curFrame.5408, 4
-curFrame.5408:
+	.type	curFrame.5411, %object
+	.size	curFrame.5411, 4
+curFrame.5411:
 	.space	4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

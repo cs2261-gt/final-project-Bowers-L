@@ -662,8 +662,8 @@ setupDisplayInterrupt:
 	.bss
 	.align	2
 	.set	.LANCHOR0,. + 0
-	.type	count.5338, %object
-	.size	count.5338, 4
-count.5338:
+	.type	count.5341, %object
+	.size	count.5341, 4
+count.5341:
 	.space	4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

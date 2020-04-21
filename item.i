@@ -186,6 +186,16 @@ extern const unsigned short SplashScreen_InstructionsMap[1024];
 
 extern const unsigned short SplashScreenPal[256];
 # 8 "stateMachine.h" 2
+# 1 "SplashBack.h" 1
+# 22 "SplashBack.h"
+extern const unsigned short SplashBackTiles[288];
+
+
+extern const unsigned short SplashBackMap[1024];
+
+
+extern const unsigned short SplashBackPal[256];
+# 9 "stateMachine.h" 2
 # 1 "InstructionsScreen.h" 1
 # 22 "InstructionsScreen.h"
 extern const unsigned short InstructionsScreenTiles[2176];
@@ -195,21 +205,21 @@ extern const unsigned short InstructionsScreenMap[1024];
 
 
 extern const unsigned short InstructionsScreenPal[256];
-# 9 "stateMachine.h" 2
+# 10 "stateMachine.h" 2
 # 1 "PauseScreen_Resume.h" 1
 # 21 "PauseScreen_Resume.h"
 extern const unsigned short PauseScreen_ResumeTiles[848];
 
 
 extern const unsigned short PauseScreen_ResumeMap[1024];
-# 10 "stateMachine.h" 2
+# 11 "stateMachine.h" 2
 # 1 "PauseScreen_Quit.h" 1
 # 21 "PauseScreen_Quit.h"
 extern const unsigned short PauseScreen_QuitTiles[848];
 
 
 extern const unsigned short PauseScreen_QuitMap[1024];
-# 11 "stateMachine.h" 2
+# 12 "stateMachine.h" 2
 # 1 "WinScreen.h" 1
 # 22 "WinScreen.h"
 extern const unsigned short WinScreenTiles[1232];
@@ -219,7 +229,8 @@ extern const unsigned short WinScreenMap[1024];
 
 
 extern const unsigned short WinScreenPal[256];
-# 12 "stateMachine.h" 2
+# 13 "stateMachine.h" 2
+
 
 
 
@@ -244,11 +255,11 @@ void handleSoundVBlank();
 void pauseSound();
 void unpauseSound();
 void stopSound();
-# 18 "stateMachine.h" 2
+# 20 "stateMachine.h" 2
 # 1 "mus_start.h" 1
 # 20 "mus_start.h"
 extern const unsigned char mus_start[816943];
-# 19 "stateMachine.h" 2
+# 21 "stateMachine.h" 2
 
 # 1 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\stdlib.h" 1 3
 # 10 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\stdlib.h" 3
@@ -1058,10 +1069,10 @@ extern long double _strtold_r (struct _reent *, const char *restrict, char **res
 extern long double strtold (const char *restrict, char **restrict);
 # 336 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\stdlib.h" 3
 
-# 21 "stateMachine.h" 2
+# 23 "stateMachine.h" 2
 
 
-# 22 "stateMachine.h"
+# 24 "stateMachine.h"
 typedef enum {
     SPLASH, INSTRUCTIONS, GAME, PAUSED, WIN
 } GameState;

@@ -5,11 +5,13 @@
 //backgrounds
 #include "map.h"
 #include "SplashScreen.h"
+#include "SplashBack.h"
 #include "InstructionsScreen.h"
 #include "PauseScreen_Resume.h"
 #include "PauseScreen_Quit.h"
 #include "WinScreen.h"
 #include "Spritesheet.h"
+
 
 #include "game.h"
 
