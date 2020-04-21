@@ -21,8 +21,8 @@
 *
 * Bugs:
 * -There's a lot of bugs with collisions:
-*   -Jumping down into a corner sometimes zips the player somewhere else
-*   -off by one errors: Player appears one pixel above the platform (most have been stopped but this still sometimes happens)
+* -Jumping down into a corner sometimes zips the player somewhere else
+* -off by one errors: Player appears one pixel above the platform (most have been stopped but this still sometimes happens)
 * - Camera movement can influence other sprite positions by a couple of pixels
 * - Player's x movement stopping when they hit the ground
 * - High speed collisions
@@ -39,6 +39,35 @@
 * 
 * - Since even with this description it is still kind of hard to keep track of items without a visual, there is a file in this folder 
 * called solution.mkv that is a video of how to complete the level with all of the item properties being used.
+*
+*
+*M4 Update:
+*Progress:
+* -Added Item UI
+* -Updated backgrounds
+* -Added player animations
+* -Added fade in at beginning using blending
+* -Added player rotations ("wake up" animation at the beginning)
+* -Added the cheat: Gravity Flip
+* -Added glitch effect to splash screen
+* -Added music
+* -Added sound effects with laser sling ability
+* -Gameplay:
+*   -Increased friction between walls so that wall jumping is easier
+*   -Changed the laser sling ability to have an animation that freezes the player in midair as it happens
+*   -Laser sling adds velocity to the player based on distance from the laser
+*   -General bug fixes: most notably with the laser sling ability
+*
+* Bugs:
+*   -Essentially the same as M3, except they happen less often
+*
+* Other Notes:
+* -Since there is now an item UI, it is easier to tell which item you are using
+* -Activate the cheat by holding down B as you press A to start the game
+* -An easy way to beat the game is to use the cheat, get the shrink ray item (near the bottom of the map),
+*  and then use the cheat to reach the ceiling of the top left of the map. You can then drop down and use the shrink ray to go through to the final room of the game.
+* Jumping through the top will take you to the win state.
+* -I deleted the solution video because it was taking up space, but my demo on Tuesday 4/21 should cover the same material.
 */
 
 int main() {
