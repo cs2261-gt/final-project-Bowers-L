@@ -163,7 +163,7 @@ extern const unsigned short SpritesheetPal[256];
 
 # 1 "map.h" 1
 # 21 "map.h"
-extern const unsigned short mapTiles[224];
+extern const unsigned short mapTiles[192];
 
 
 extern const unsigned short mapMap[16384];
@@ -293,6 +293,37 @@ void useItem(ItemType item);
 
 void showSelectorOnItem();
 # 7 "player.h" 2
+
+
+
+# 1 "sound.h" 1
+       
+
+
+
+Sound soundA;
+Sound soundB;
+
+
+
+void setupSounds();
+void playSoundA(const signed char* sound, int length, int loops);
+void playSoundB(const signed char* sound, int length, int loops);
+
+void handleSoundVBlank();
+
+void pauseSound();
+void unpauseSound();
+void stopSound();
+# 11 "player.h" 2
+# 1 "snd_Ding.h" 1
+# 20 "snd_Ding.h"
+extern const unsigned char snd_Ding[5200];
+# 12 "player.h" 2
+# 1 "snd_Zap.h" 1
+# 20 "snd_Zap.h"
+extern const unsigned char snd_Zap[6061];
+# 13 "player.h" 2
 
 # 1 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\stdlib.h" 1 3
 # 10 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\stdlib.h" 3
@@ -1102,7 +1133,7 @@ extern long double _strtold_r (struct _reent *, const char *restrict, char **res
 extern long double strtold (const char *restrict, char **restrict);
 # 336 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\stdlib.h" 3
 
-# 9 "player.h" 2
+# 15 "player.h" 2
 # 1 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\math.h" 1 3
 
 
@@ -1348,19 +1379,21 @@ extern long double erfl (long double);
 extern long double erfcl (long double);
 # 662 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\math.h" 3
 
-# 10 "player.h" 2
+# 16 "player.h" 2
 
 
 
 
-# 13 "player.h"
+# 19 "player.h"
 typedef enum {
     GETUP = 1, LASER
 } SpecialAnim;
 
 typedef enum {
-    IDLE, RIGHT, LEFT
+    IDLE, RIGHT, LEFT, SPEEDRIGHT, SPEEDLEFT
 } AniState;
+
+
 
 typedef struct {
 
@@ -1389,6 +1422,7 @@ typedef struct {
     int accelCurve;
     int decelCurve;
     int maxSpeed;
+    int hardSpeedCap;
     int terminalVel;
 
 
@@ -1437,6 +1471,7 @@ void shrinkPlayer();
 void equipLegs();
 void equipGloves();
 void startLaserSling();
+void finishLaserSling();
 
 
 void setTransform(int index, short scalex, short scaley, int deg);
@@ -1520,34 +1555,7 @@ void centerCameraToPlayer();
 
 void updateSBB();
 # 6 "laser.h" 2
-
-# 1 "sound.h" 1
-       
-
-
-
-Sound soundA;
-Sound soundB;
-
-
-
-void setupSounds();
-void playSoundA(const signed char* sound, int length, int loops);
-void playSoundB(const signed char* sound, int length, int loops);
-
-void handleSoundVBlank();
-
-void pauseSound();
-void unpauseSound();
-void stopSound();
-# 8 "laser.h" 2
-
-
-# 1 "snd_Ding.h" 1
-# 20 "snd_Ding.h"
-extern const unsigned char snd_Ding[5200];
-# 11 "laser.h" 2
-# 21 "laser.h"
+# 22 "laser.h"
 typedef struct {
     int screenRow;
     int screenCol;
@@ -1565,7 +1573,13 @@ typedef struct {
     int index;
 } Laser;
 
+typedef struct {
+    Laser* laser;
+    int distance;
+} SlingData;
+
 extern Laser lasers[65];
+extern SlingData* nearestLaser;
 
 void initAllLasers();
 void updateAllLasers();
@@ -1575,13 +1589,14 @@ void initLaser(Laser* laser, int col, int row, int tall);
 void updateLaser(Laser* laser);
 void showLaser(Laser* laser);
 
+SlingData* findCloseLaser();
 void laserSling();
-void playLaserSlingAnimation();
 # 2 "laser.c" 2
 
 
 
 Laser lasers[65];
+SlingData* nearestLaser;
 
 void initAllLasers() {
     for (int i = 0; i < 65; i++) {
@@ -1621,13 +1636,13 @@ void initAllLasers() {
 
     initLaser(&lasers[50], 504, 200, 1);
     initLaser(&lasers[51], 504, 184, 1);
-# 57 "laser.c"
+# 58 "laser.c"
     initLaser(&lasers[58], 504, 120, 1);
     initLaser(&lasers[59], 504, 112, 0);
 
     initLaser(&lasers[60], 288, 112, 3);
     initLaser(&lasers[61], 304, 112, 2);
-# 71 "laser.c"
+# 72 "laser.c"
 }
 
 void initLaser(Laser* laser, int col, int row, int type) {
@@ -1674,9 +1689,9 @@ void initLaser(Laser* laser, int col, int row, int type) {
     shadowOAM[laser->index].attr1 = (((laser->screenCol) >> 4) & 0x1FF) | (0<<14);
 
     if (laser->type > 1) {
-        shadowOAM[laser->index].attr2 = (((laser->curFrame / (laser->numFrames / 4)))*32+(9 +1)) | ((0)<<12);
+        shadowOAM[laser->index].attr2 = (((laser->curFrame / (laser->numFrames / 4)))*32+(10 +1)) | ((0)<<12);
     } else {
-        shadowOAM[laser->index].attr2 = (((laser->curFrame / (laser->numFrames / 4)) * 2)*32+(9)) | ((0)<<12);
+        shadowOAM[laser->index].attr2 = (((laser->curFrame / (laser->numFrames / 4)) * 2)*32+(10)) | ((0)<<12);
     }
 }
 
@@ -1751,9 +1766,9 @@ void showLaser(Laser* laser) {
     shadowOAM[laser->index].attr1 = (((laser->screenCol) >> 4) & 0x1FF) | (0<<14);
 
     if (laser->type > 1) {
-        shadowOAM[laser->index].attr2 = (((laser->curFrame / (laser->numFrames / 4)))*32+(9 +1)) | ((0)<<12);
+        shadowOAM[laser->index].attr2 = (((laser->curFrame / (laser->numFrames / 4)))*32+(10 +1)) | ((0)<<12);
     } else {
-        shadowOAM[laser->index].attr2 = (((laser->curFrame / (laser->numFrames / 4)) * 2)*32+(9)) | ((0)<<12);
+        shadowOAM[laser->index].attr2 = (((laser->curFrame / (laser->numFrames / 4)) * 2)*32+(10)) | ((0)<<12);
     }
 
     if (laser->hide) {
@@ -1761,26 +1776,29 @@ void showLaser(Laser* laser) {
     }
 }
 
-void laserSling() {
-    Laser* nearest = ((void*) 0);
-    int minDistance = 2 * 1024;
+SlingData* findCloseLaser() {
     for (int i = 0; i < 65; i++) {
         if (lasers[i].active && !lasers[i].hide) {
 
             int distance;
             if (lasers[i].type > 1) {
                 distance = lasers[i].worldRow - player.worldRow;
-                if (distance < 16 && distance > -16) {
-                    player.worldRow += 2 * distance;
-                    break;
-                }
             } else {
                 distance = lasers[i].worldCol - player.worldCol;
-                if (distance < ((16) << 4) && distance > -((16) << 4)) {
-                    player.worldCol += 2 * distance;
-                    break;
+            }
+
+            if (distance < ((16) << 4) && distance > -((16) << 4)) {
+                SlingData* data = (SlingData*) malloc(sizeof(SlingData));
+                if (data == ((void*) 0)) {
+                    return ((void*) 0);
                 }
+                data->laser = &lasers[i];
+                data->distance = distance;
+
+                return data;
             }
         }
     }
+
+    return ((void*) 0);
 }

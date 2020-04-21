@@ -4,6 +4,12 @@
 #include "mapCollision.h"
 #include "game.h"
 #include "item.h"
+#include "laser.h"
+
+//sounds
+#include "sound.h"
+#include "snd_Ding.h"
+#include "snd_Zap.h"
 
 #include <stdlib.h>
 #include <math.h>
@@ -15,8 +21,10 @@ typedef enum {
 } SpecialAnim;
 
 typedef enum {
-    IDLE, RIGHT, LEFT
+    IDLE, RIGHT, LEFT, SPEEDRIGHT, SPEEDLEFT
 } AniState;
+
+#define NUMSTATES 5
 
 typedef struct {
     //animated sprite stuff
@@ -45,6 +53,7 @@ typedef struct {
     int accelCurve;
     int decelCurve;
     int maxSpeed;
+    int hardSpeedCap;
     int terminalVel;
 
     //jumping
@@ -93,7 +102,7 @@ void shrinkPlayer();
 void equipLegs();
 void equipGloves();
 void startLaserSling();
-void finishLaserSling(Laser* laser);
+void finishLaserSling();
 
 //affine transformations
 void setTransform(int index, short scalex, short scaley, int deg);

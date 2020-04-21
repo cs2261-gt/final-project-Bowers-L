@@ -17,7 +17,7 @@ void initAllItems() {
     initItem(&items[4], 224, 712, Z);
 
     //test items
-    initItem(&items[5], 16, 992, Z);
+    //initItem(&items[5], 16, 992, Z);
 }
 
 void initItem(Item* item, int col, int row, ItemType type) {

@@ -3,6 +3,7 @@
 //A lot of this is copy/paste from item.c for obvious reasons
 
 Laser lasers[NUMLASERS];
+SlingData* nearestLaser;
 
 void initAllLasers() {
     for (int i = 0; i < NUMLASERS; i++) {
@@ -201,7 +202,7 @@ void showLaser(Laser* laser) {
     }
 }
 
-Laser* findCloseLaser() {
+SlingData* findCloseLaser() {
     for (int i = 0; i < NUMLASERS; i++) {
         if (lasers[i].active && !lasers[i].hide) {
             //laser is active, on the screen
@@ -213,16 +214,17 @@ Laser* findCloseLaser() {
             }
 
             if (distance < ENCODE4(16) && distance > -ENCODE4(16)) {
-                return &laser[i];
+                SlingData* data = (SlingData*) malloc(sizeof(SlingData));
+                if (data == NULL) {
+                    return NULL;
+                }
+                data->laser = &lasers[i];
+                data->distance = distance;
+                
+                return data;
             }
         }
     }
 
     return NULL;
-}
-
-void laserSling() {
-    //Laser* nearest = NULL;
-    //int minDistance = 2 * MAPWH;    //basically infinity
-
 }

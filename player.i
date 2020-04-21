@@ -155,7 +155,7 @@ extern const unsigned short mapCollisionBitmap[1048576];
 
 # 1 "map.h" 1
 # 21 "map.h"
-extern const unsigned short mapTiles[224];
+extern const unsigned short mapTiles[192];
 
 
 extern const unsigned short mapMap[16384];
@@ -315,109 +315,6 @@ void showSelectorOnItem();
 
 
 
-# 1 "sound.h" 1
-       
-
-
-
-Sound soundA;
-Sound soundB;
-
-
-
-void setupSounds();
-void playSoundA(const signed char* sound, int length, int loops);
-void playSoundB(const signed char* sound, int length, int loops);
-
-void handleSoundVBlank();
-
-void pauseSound();
-void unpauseSound();
-void stopSound();
-# 8 "laser.h" 2
-
-
-# 1 "snd_Ding.h" 1
-# 20 "snd_Ding.h"
-extern const unsigned char snd_Ding[5200];
-# 11 "laser.h" 2
-# 21 "laser.h"
-typedef struct {
-    int screenRow;
-    int screenCol;
-    int worldRow;
-    int worldCol;
-    int width;
-    int height;
-    int curFrame;
-    int numFrames;
-    int hide;
-    int active;
-
-    int type;
-
-    int index;
-} Laser;
-
-extern Laser lasers[65];
-
-void initAllLasers();
-void updateAllLasers();
-void showAllLasers();
-
-void initLaser(Laser* laser, int col, int row, int tall);
-void updateLaser(Laser* laser);
-void showLaser(Laser* laser);
-
-void laserSling();
-void playLaserSlingAnimation();
-# 10 "game.h" 2
-
-
-# 1 "GameOverlay.h" 1
-# 21 "GameOverlay.h"
-extern const unsigned short GameOverlayTiles[128];
-
-
-extern const unsigned short GameOverlayMap[1024];
-# 13 "game.h" 2
-# 1 "gameBackground.h" 1
-# 22 "gameBackground.h"
-extern const unsigned short gameBackgroundTiles[32];
-
-
-extern const unsigned short gameBackgroundMap[1024];
-
-
-extern const unsigned short gameBackgroundPal[256];
-# 14 "game.h" 2
-
-
-
-
-
-extern int debug;
-extern int fadeIn;
-
-void init();
-void update();
-
-void initGame();
-void resumeGame();
-void updateGame();
-
-
-void drawGame();
-
-
-void setupMap();
-void fade();
-
-
-
-void setupDisplayInterrupt();
-void interruptHandler();
-# 6 "player.h" 2
 
 
 # 1 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\stdlib.h" 1 3
@@ -1228,7 +1125,126 @@ extern long double _strtold_r (struct _reent *, const char *restrict, char **res
 extern long double strtold (const char *restrict, char **restrict);
 # 336 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\stdlib.h" 3
 
-# 9 "player.h" 2
+# 10 "laser.h" 2
+# 22 "laser.h"
+
+# 22 "laser.h"
+typedef struct {
+    int screenRow;
+    int screenCol;
+    int worldRow;
+    int worldCol;
+    int width;
+    int height;
+    int curFrame;
+    int numFrames;
+    int hide;
+    int active;
+
+    int type;
+
+    int index;
+} Laser;
+
+typedef struct {
+    Laser* laser;
+    int distance;
+} SlingData;
+
+extern Laser lasers[65];
+extern SlingData* nearestLaser;
+
+void initAllLasers();
+void updateAllLasers();
+void showAllLasers();
+
+void initLaser(Laser* laser, int col, int row, int tall);
+void updateLaser(Laser* laser);
+void showLaser(Laser* laser);
+
+SlingData* findCloseLaser();
+void laserSling();
+# 10 "game.h" 2
+
+
+# 1 "GameOverlay.h" 1
+# 21 "GameOverlay.h"
+extern const unsigned short GameOverlayTiles[128];
+
+
+extern const unsigned short GameOverlayMap[1024];
+# 13 "game.h" 2
+# 1 "gameBackground.h" 1
+# 22 "gameBackground.h"
+extern const unsigned short gameBackgroundTiles[32];
+
+
+extern const unsigned short gameBackgroundMap[1024];
+
+
+extern const unsigned short gameBackgroundPal[256];
+# 14 "game.h" 2
+
+
+
+
+
+extern int debug;
+extern int fadeIn;
+
+void init();
+void update();
+
+void initGame();
+void resumeGame();
+void updateGame();
+
+
+void drawGame();
+
+
+void setupMap();
+void fade();
+
+
+
+void setupDisplayInterrupt();
+void interruptHandler();
+# 6 "player.h" 2
+
+
+
+
+# 1 "sound.h" 1
+       
+
+
+
+Sound soundA;
+Sound soundB;
+
+
+
+void setupSounds();
+void playSoundA(const signed char* sound, int length, int loops);
+void playSoundB(const signed char* sound, int length, int loops);
+
+void handleSoundVBlank();
+
+void pauseSound();
+void unpauseSound();
+void stopSound();
+# 11 "player.h" 2
+# 1 "snd_Ding.h" 1
+# 20 "snd_Ding.h"
+extern const unsigned char snd_Ding[5200];
+# 12 "player.h" 2
+# 1 "snd_Zap.h" 1
+# 20 "snd_Zap.h"
+extern const unsigned char snd_Zap[6061];
+# 13 "player.h" 2
+
+
 # 1 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\math.h" 1 3
 
 
@@ -1240,6 +1256,8 @@ extern long double strtold (const char *restrict, char **restrict);
 # 8 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\math.h" 2 3
 
 
+
+# 86 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\math.h" 3
 
 # 86 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\math.h" 3
 extern double atan (double);
@@ -1474,19 +1492,21 @@ extern long double erfl (long double);
 extern long double erfcl (long double);
 # 662 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\math.h" 3
 
-# 10 "player.h" 2
+# 16 "player.h" 2
 
 
 
 
-# 13 "player.h"
+# 19 "player.h"
 typedef enum {
     GETUP = 1, LASER
 } SpecialAnim;
 
 typedef enum {
-    IDLE, RIGHT, LEFT
+    IDLE, RIGHT, LEFT, SPEEDRIGHT, SPEEDLEFT
 } AniState;
+
+
 
 typedef struct {
 
@@ -1515,6 +1535,7 @@ typedef struct {
     int accelCurve;
     int decelCurve;
     int maxSpeed;
+    int hardSpeedCap;
     int terminalVel;
 
 
@@ -1563,6 +1584,7 @@ void shrinkPlayer();
 void equipLegs();
 void equipGloves();
 void startLaserSling();
+void finishLaserSling();
 
 
 void setTransform(int index, short scalex, short scaley, int deg);
@@ -1574,6 +1596,7 @@ void laserSlingAnimation();
 
 Player player;
 short sinLut[360];
+SlingData* nearestLaser;
 
 void initPlayer() {
     player.worldRow = ((1024 - 32) << 4);
@@ -1592,6 +1615,7 @@ void initPlayer() {
     player.accelCurve = 4;
     player.decelCurve = 8;
     player.maxSpeed = 16;
+    player.hardSpeedCap = 128;
     player.terminalVel = 64;
 
 
@@ -1649,8 +1673,8 @@ void updatePlayer() {
     }
 
 
-    player.rdel = clamp(player.rdel + player.raccel, -player.jumpSpeed, player.terminalVel);
-    player.cdel = clamp(player.cdel + player.caccel, -player.maxSpeed, player.maxSpeed);
+    player.rdel = clamp(player.rdel + player.raccel, -player.hardSpeedCap, player.terminalVel);
+    player.cdel = clamp(player.cdel + player.caccel, -player.hardSpeedCap, player.hardSpeedCap);
 
 
     player.worldCol = clamp(player.worldCol + player.cdel, 0, ((1024) << 4) - player.width);
@@ -1683,7 +1707,7 @@ void showPlayer() {
     if (player.shrunk) {
         shadowOAM[0].attr0 = (((player.screenRow) >> 4) & 0xFF) | (0<<8) | (0<<13) | (0<<14) | (1<<10);
         shadowOAM[0].attr1 = (((player.screenCol) >> 4) & 0x1FF) | (0<<14);
-        shadowOAM[0].attr2 = (((player.curFrame / player.aniSpeed))*32+(3 + player.aniState)) | ((0)<<12);
+        shadowOAM[0].attr2 = (((player.curFrame / player.aniSpeed))*32+(5 + player.aniState)) | ((0)<<12);
     } else {
         shadowOAM[0].attr0 = (((player.screenRow) >> 4) & 0xFF) | (3<<8) | (0<<13) | (2<<14) | (1<<10);
         shadowOAM[0].attr1 = (((player.screenCol) >> 4) & 0x1FF) | (0<<14) | ((0) << 9);
@@ -1703,6 +1727,9 @@ void showPlayer() {
 void handlePlayerInput() {
     if (!(~((*(volatile unsigned short *)0x04000130)) & ((1<<5))) && !(~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
 
+
+
+
         if (signOf(player.direction) == signOf(player.cdel)) {
 
             player.caccel = -1 * signOf(player.direction) * player.decelCurve;
@@ -1710,32 +1737,45 @@ void handlePlayerInput() {
             player.cdel = 0;
             player.caccel = 0;
         }
-
         player.aniState = IDLE;
     } else {
         if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
             player.direction = -1;
             if (player.worldCol > 0) {
-                player.caccel = -player.accelCurve;
+                if (player.cdel > -player.maxSpeed) {
+                    player.caccel = -player.accelCurve;
+                } else {
+                    player.caccel = 0;
+                }
             }
 
             if (touchingGround()) {
                 player.isIdle = 0;
-                player.aniState = LEFT;
+                if (player.cdel < -32) {
+                    player.aniState = SPEEDLEFT;
+                } else {
+                    player.aniState = LEFT;
+                }
             }
-
         }
         if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
             player.direction = 1;
             if (player.worldCol < ((1024) << 4) - player.width) {
-                player.caccel = player.accelCurve;
+                if (player.cdel < player.maxSpeed) {
+                    player.caccel = player.accelCurve;
+                } else {
+                    player.caccel = 0;
+                }
             }
 
             if (touchingGround()) {
                 player.isIdle = 0;
-                player.aniState = RIGHT;
+                if (player.cdel > 32) {
+                    player.aniState = SPEEDRIGHT;
+                } else {
+                    player.aniState = RIGHT;
+                }
             }
-
         }
     }
 
@@ -1782,7 +1822,7 @@ void handlePlayerInput() {
         }
     }
 }
-# 233 "player.c"
+# 251 "player.c"
 int collisionLeft(int offset) {
     return player.worldCol < 0
         || mapCollisionBitmap[((((player.worldRow) >> 4))*(1024)+(((player.worldCol) >> 4) - offset))]
@@ -1810,7 +1850,7 @@ int touchingGround() {
     return mapCollisionBitmap[((((player.worldRow + player.height) >> 4))*(1024)+(((player.worldCol) >> 4)))]
     || mapCollisionBitmap[((((player.worldRow + player.height) >> 4))*(1024)+(((player.worldCol + player.width) >> 4) - 1))];
 }
-# 275 "player.c"
+# 293 "player.c"
 int resolveCollisions() {
     int xDepth = 0;
     int yDepth = 0;
@@ -1927,8 +1967,23 @@ void equipGloves() {
 }
 
 void startLaserSling() {
-    playSoundB(snd_Ding, 5200, 0);
-    player.specialAnim = LASER;
+    nearestLaser = findCloseLaser();
+    if (nearestLaser) {
+        playSoundB(snd_Ding, 5200, 0);
+        player.specialAnim = LASER;
+    }
+}
+
+void finishLaserSling() {
+    playSoundB(snd_Zap, 6061, 0);
+    if (nearestLaser->laser->type > 1) {
+        player.worldRow += 2 * nearestLaser->distance;
+        player.rdel = nearestLaser->distance / 4;
+    } else {
+        player.worldCol += 2 * nearestLaser->distance;
+        player.cdel = nearestLaser->distance / 4;
+    }
+    free(nearestLaser);
 }
 
 void equipCurrentItem(int equip) {
@@ -1967,15 +2022,19 @@ void getUpAnimation() {
 }
 
 void laserSlingAnimation() {
-    static int numFrames = 200;
+    static int numFrames = 60;
     static int curFrame = 0;
 
+    player.raccel = 0;
+    player.caccel = 0;
     player.rdel = 0;
     player.cdel = 0;
+    player.isIdle = 1;
 
     curFrame++;
     if (curFrame > numFrames) {
+        curFrame = 0;
         player.specialAnim = 0;
-        laserSling();
+        finishLaserSling();
     }
 }

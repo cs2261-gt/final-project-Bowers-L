@@ -469,7 +469,7 @@ setupMap:
 	ldr	r2, .L61+28
 	mov	lr, pc
 	bx	r4
-	mov	r3, #224
+	mov	r3, #192
 	mov	r0, #3
 	ldr	r2, .L61+32
 	ldr	r1, .L61+36
@@ -649,8 +649,8 @@ setupDisplayInterrupt:
 	.bss
 	.align	2
 	.set	.LANCHOR0,. + 0
-	.type	count.5327, %object
-	.size	count.5327, 4
-count.5327:
+	.type	count.5337, %object
+	.size	count.5337, 4
+count.5337:
 	.space	4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

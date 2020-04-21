@@ -72,8 +72,8 @@ initLaser:
 	strh	lr, [r1, r0]	@ movhi
 .L5:
 	cmp	r3, #1
-	movgt	r3, #10
-	movle	r3, #9
+	movgt	r3, #11
+	movle	r3, #10
 	add	r2, r1, r0
 	add	r1, r1, r0
 	strh	ip, [r2, #2]	@ movhi
@@ -86,7 +86,7 @@ initLaser:
 	orrne	lr, lr, #16896
 	strhne	lr, [r1, r0]	@ movhi
 	bne	.L5
-	mov	r3, #9
+	mov	r3, #10
 	lsl	r0, r2, #3
 	orr	lr, lr, #33280
 	strh	lr, [r1, r0]	@ movhi
@@ -487,7 +487,7 @@ showLaser:
 	ble	.L58
 .L68:
 	lsl	r0, r0, #21
-	add	r0, r0, #655360
+	add	r0, r0, #720896
 	lsr	r0, r0, #16
 .L59:
 	add	r2, r3, r1
@@ -512,7 +512,7 @@ showLaser:
 	bgt	.L68
 .L58:
 	lsl	r0, r0, #22
-	add	r0, r0, #589824
+	add	r0, r0, #655360
 	lsr	r0, r0, #16
 	b	.L59
 .L66:
@@ -530,7 +530,7 @@ showLaser:
 	ldr	r3, .L69+8
 	lsl	r0, r0, #22
 	lsl	r1, r8, #3
-	add	r0, r0, #589824
+	add	r0, r0, #655360
 	add	r8, r3, r8, lsl #3
 	strh	r2, [r3, r1]	@ movhi
 	lsr	r0, r0, #16
@@ -579,34 +579,23 @@ showAllLasers:
 	.word	lasers
 	.size	showAllLasers, .-showAllLasers
 	.align	2
-	.global	laserSling
+	.global	findCloseLaser
 	.syntax unified
 	.arm
 	.fpu softvfp
-	.type	laserSling, %function
-laserSling:
+	.type	findCloseLaser, %function
+findCloseLaser:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	push	{r4, r5, lr}
-	ldr	r5, .L94
-	ldr	r3, .L94+4
-	add	ip, r5, #8
-	ldm	ip, {ip, lr}
-	ldr	r4, .L94+8
-	add	r1, r3, #3120
-	b	.L86
-.L93:
-	ldr	r2, [r3]
-	sub	r2, r2, ip
-	add	r0, r2, #15
-	cmp	r0, #30
-	bls	.L92
-.L83:
-	add	r3, r3, #48
-	cmp	r3, r1
-	beq	.L82
-.L86:
+	push	{r4, r5, r6, lr}
+	mov	r4, #0
+	ldr	r2, .L97
+	add	r0, r2, #8
+	ldr	r3, .L97+4
+	ldm	r0, {r0, ip}
+	ldr	r1, .L97+8
+.L87:
 	ldr	r2, [r3, #28]
 	cmp	r2, #0
 	beq	.L83
@@ -615,37 +604,53 @@ laserSling:
 	bne	.L83
 	ldr	r2, [r3, #32]
 	cmp	r2, #1
-	bgt	.L93
-	ldr	r2, [r3, #4]
-	sub	r2, r2, lr
-	add	r0, r2, #255
-	cmp	r0, r4
-	bhi	.L83
-	add	r2, lr, r2, lsl #1
-	str	r2, [r5, #12]
+	ldrgt	r5, [r3]
+	ldrle	r5, [r3, #4]
+	subgt	r5, r5, r0
+	suble	r5, r5, ip
+	add	r2, r5, #255
+	cmp	r2, r1
+	bls	.L96
+.L83:
+	add	r4, r4, #1
+	cmp	r4, #65
+	add	r3, r3, #48
+	bne	.L87
+	mov	r0, #0
 .L82:
-	pop	{r4, r5, lr}
+	pop	{r4, r5, r6, lr}
 	bx	lr
-.L92:
-	add	r2, ip, r2, lsl #1
-	str	r2, [r5, #8]
-	pop	{r4, r5, lr}
+.L96:
+	mov	r0, #8
+	ldr	r3, .L97+12
+	mov	lr, pc
+	bx	r3
+	cmp	r0, #0
+	beq	.L82
+	ldr	r3, .L97+16
+	add	r4, r4, r4, lsl #1
+	add	r4, r3, r4, lsl #4
+	stm	r0, {r4, r5}
+	pop	{r4, r5, r6, lr}
 	bx	lr
-.L95:
+.L98:
 	.align	2
-.L94:
+.L97:
 	.word	player
 	.word	lasers+8
 	.word	510
-	.size	laserSling, .-laserSling
+	.word	malloc
+	.word	lasers
+	.size	findCloseLaser, .-findCloseLaser
+	.comm	nearestLaser,4,4
 	.comm	lasers,3120,4
 	.comm	soundB,32,4
 	.comm	soundA,32,4
 	.bss
 	.align	2
 	.set	.LANCHOR0,. + 0
-	.type	laserCount.5330, %object
-	.size	laserCount.5330, 4
-laserCount.5330:
+	.type	laserCount.5341, %object
+	.size	laserCount.5341, 4
+laserCount.5341:
 	.space	4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

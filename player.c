@@ -2,6 +2,7 @@
 
 Player player;
 short sinLut[360];
+SlingData* nearestLaser;
 
 void initPlayer() {
     player.worldRow = ENCODE4(MAPWH - 32);
@@ -20,6 +21,7 @@ void initPlayer() {
     player.accelCurve = 4;
     player.decelCurve = 8;
     player.maxSpeed = 16;
+    player.hardSpeedCap = 128;
     player.terminalVel = 64;
 
     //Note: Normal jump speed: 512, High jump speed: ~700
@@ -77,8 +79,8 @@ void updatePlayer() {
     }
 
     //update player velocity
-    player.rdel = clamp(player.rdel + player.raccel, -player.jumpSpeed, player.terminalVel);
-    player.cdel = clamp(player.cdel + player.caccel, -player.maxSpeed, player.maxSpeed);
+    player.rdel = clamp(player.rdel + player.raccel, -player.hardSpeedCap, player.terminalVel);
+    player.cdel = clamp(player.cdel + player.caccel, -player.hardSpeedCap, player.hardSpeedCap);
 
     //update player's world and screen positions
     player.worldCol = clamp(player.worldCol + player.cdel, 0, ENCODE4(MAPWH) - player.width);
@@ -111,7 +113,7 @@ void showPlayer() {
     if (player.shrunk) {
         shadowOAM[0].attr0 = (DECODE4(player.screenRow) & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_SQUARE | ATTR0_BLEND;
         shadowOAM[0].attr1 = (DECODE4(player.screenCol) & COLMASK) | ATTR1_TINY;
-        shadowOAM[0].attr2 = ATTR2_TILEID(3 + player.aniState, (player.curFrame / player.aniSpeed)) | ATTR2_PALROW(0);
+        shadowOAM[0].attr2 = ATTR2_TILEID(NUMSTATES + player.aniState, (player.curFrame / player.aniSpeed)) | ATTR2_PALROW(0);
     } else {
         shadowOAM[0].attr0 = (DECODE4(player.screenRow) & ROWMASK) | ATTR0_DOUBLEAFFINE | ATTR0_4BPP | ATTR0_TALL | ATTR0_BLEND;
         shadowOAM[0].attr1 = (DECODE4(player.screenCol) & COLMASK) | ATTR1_TINY | ATTR1_AFFINE(0);
@@ -130,6 +132,9 @@ void showPlayer() {
 
 void handlePlayerInput() {
     if (!BUTTON_HELD(BUTTON_LEFT) && !BUTTON_HELD(BUTTON_RIGHT)) {
+        //if (touchingGround()) {
+
+        //}
 
         if (signOf(player.direction) == signOf(player.cdel)) {
             //implement friction to slow down player
@@ -138,32 +143,45 @@ void handlePlayerInput() {
             player.cdel = 0;
             player.caccel = 0;
         }
-
         player.aniState = IDLE;
     } else {
         if (BUTTON_HELD(BUTTON_LEFT)) {
             player.direction = -1;
             if (player.worldCol > 0) {
-                player.caccel = -player.accelCurve;
+                if (player.cdel > -player.maxSpeed) {
+                    player.caccel = -player.accelCurve;
+                } else {
+                    player.caccel = 0;
+                }
             }
             
             if (touchingGround()) {
                 player.isIdle = 0;
-                player.aniState = LEFT;
+                if (player.cdel < -32) {
+                    player.aniState = SPEEDLEFT;
+                } else {
+                    player.aniState = LEFT;
+                }
             }
-
         }
         if (BUTTON_HELD(BUTTON_RIGHT)) {
             player.direction = 1;
             if (player.worldCol < ENCODE4(MAPWH) - player.width) {
-                player.caccel = player.accelCurve;
+                if (player.cdel < player.maxSpeed) {
+                    player.caccel = player.accelCurve;
+                } else {
+                    player.caccel = 0;
+                }
             }
 
             if (touchingGround()) {
                 player.isIdle = 0;
-                player.aniState = RIGHT;
+                if (player.cdel > 32) {
+                    player.aniState = SPEEDRIGHT;
+                } else {
+                    player.aniState = RIGHT;
+                }
             }
-
         }
     }
 
@@ -388,13 +406,23 @@ void equipGloves() {
 }
 
 void startLaserSling() {
-    if (findClose)
-    playSoundB(snd_Ding, SND_DINGLEN, 0);
-    player.specialAnim = LASER;
+    nearestLaser = findCloseLaser();
+    if (nearestLaser) {
+        playSoundB(snd_Ding, SND_DINGLEN, 0);
+        player.specialAnim = LASER;
+    }
 }
 
-void finishLaserSling(Laser* laser) {
-    
+void finishLaserSling() {
+    playSoundB(snd_Zap, SND_ZAPLEN, 0);
+    if (nearestLaser->laser->type > 1) {
+        player.worldRow += 2 * nearestLaser->distance;
+        player.rdel = nearestLaser->distance / 4;
+    } else {
+        player.worldCol += 2 * nearestLaser->distance;
+        player.cdel = nearestLaser->distance / 4;
+    }
+    free(nearestLaser);
 }
 
 void equipCurrentItem(int equip) {
@@ -432,16 +460,20 @@ void getUpAnimation() {
     }
 }
 
-void laserSlingAnimation(Laser* laser) {
-    static int numFrames = 200;
+void laserSlingAnimation() {
+    static int numFrames = 60;
     static int curFrame = 0;
 
+    player.raccel = 0;
+    player.caccel = 0;
     player.rdel = 0;
     player.cdel = 0;
+    player.isIdle = 1;
     
     curFrame++;
     if (curFrame > numFrames) {
+        curFrame = 0;
         player.specialAnim = 0;
-        finishLaserSling(laser);
+        finishLaserSling();
     }
 }

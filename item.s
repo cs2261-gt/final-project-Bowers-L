@@ -118,11 +118,6 @@ initAllItems:
 	mov	r2, #712
 	mov	r1, #224
 	ldr	r0, .L10+20
-	bl	initItem
-	mov	r3, #5
-	mov	r2, #992
-	mov	r1, #16
-	ldr	r0, .L10+24
 	pop	{r4, lr}
 	b	initItem
 .L11:
@@ -134,7 +129,6 @@ initAllItems:
 	.word	items+104
 	.word	items+156
 	.word	items+208
-	.word	items+260
 	.size	initAllItems, .-initAllItems
 	.align	2
 	.global	checkCollisionPlayer
@@ -356,7 +350,7 @@ showSelectorOnItem:
 	@ link register save eliminated.
 	mov	ip, #8
 	ldr	r3, .L51
-	ldr	r3, [r3, #112]
+	ldr	r3, [r3, #116]
 	add	r3, r3, r3, lsl #2
 	lsl	r3, r3, #2
 	ldr	r2, .L51+4
@@ -431,7 +425,7 @@ getItem:
 .L60:
 	ldr	r3, .L61+8
 	pop	{r4, lr}
-	ldr	r0, [r3, #112]
+	ldr	r0, [r3, #116]
 	b	showSelectorOnItem
 .L57:
 	mov	r3, r4
@@ -578,8 +572,8 @@ updateAllItems:
 	.bss
 	.align	2
 	.set	.LANCHOR0,. + 0
-	.type	itemCount.5311, %object
-	.size	itemCount.5311, 4
-itemCount.5311:
+	.type	itemCount.5321, %object
+	.size	itemCount.5321, 4
+itemCount.5321:
 	.space	4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"
