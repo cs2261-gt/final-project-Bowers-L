@@ -103,6 +103,7 @@ void equipLegs();
 void equipGloves();
 void startLaserSling();
 void finishLaserSling();
+void reverseGravity();
 
 //affine transformations
 void setTransform(int index, short scalex, short scaley, int deg);

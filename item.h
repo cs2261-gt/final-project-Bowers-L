@@ -52,7 +52,7 @@ void initItem(Item* item, int col, int row, ItemType type);
 void updateItem(Item* item);
 void showItem(Item* item);
 
-void initAllItems();
+void initAllItems(int cheat);
 void updateAllItems();
 void showAllItems();
 

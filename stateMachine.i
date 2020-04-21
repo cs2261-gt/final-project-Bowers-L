@@ -279,7 +279,7 @@ extern const unsigned char mus_game2[2733395];
 # 11 "item.h" 2
 # 24 "item.h"
 typedef enum {
-    NONE, BOOTS, SHRINK, SPEED, GLOVES, Z
+    NONE, BOOTS, SHRINK, SPEED, GLOVES, Z, GRAVITY
 } ItemType;
 
 typedef struct {
@@ -308,6 +308,10 @@ void initItem(Item* item, int col, int row, ItemType type);
 
 void updateItem(Item* item);
 void showItem(Item* item);
+
+void initAllItems(int cheat);
+void updateAllItems();
+void showAllItems();
 
 int checkCollisionPlayer(Item* item);
 
@@ -1526,6 +1530,7 @@ void equipLegs();
 void equipGloves();
 void startLaserSling();
 void finishLaserSling();
+void reverseGravity();
 
 
 void setTransform(int index, short scalex, short scaley, int deg);
@@ -1621,7 +1626,6 @@ void updateWin();
 # 2 "stateMachine.c" 2
 
 void initSplash() {
-    playSoundA(mus_start, 816943, 1);
     gameState = SPLASH;
     menuState = OPTSTART;
 

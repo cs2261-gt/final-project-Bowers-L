@@ -24,27 +24,33 @@ init:
 	push	{r4, r5, r6, lr}
 	mov	r5, #67108864
 	mov	r4, #0
-	ldr	r3, .L4
+	mov	r2, #1
+	ldr	r1, .L4
+	ldr	r0, .L4+4
 	strh	r4, [r5]	@ movhi
+	ldr	r3, .L4+8
+	mov	lr, pc
+	bx	r3
+	ldr	r3, .L4+12
 	mov	lr, pc
 	bx	r3
 	mov	ip, #1
 	ldrh	r1, [r5, #4]
-	ldr	r3, .L4+4
+	ldr	r3, .L4+16
 	orr	r1, r1, #8
 	ldrh	r2, [r3]
-	ldr	r0, .L4+8
+	ldr	r0, .L4+20
 	strh	r1, [r5, #4]	@ movhi
-	ldr	r1, .L4+12
+	ldr	r1, .L4+24
 	orr	r2, r2, ip
 	strh	r2, [r3]	@ movhi
 	strh	ip, [r3, #8]	@ movhi
-	ldr	r3, .L4+16
-	str	r0, [r1, #4092]
+	ldr	r3, .L4+28
+	str	r1, [r0, #4092]
 	mov	lr, pc
 	bx	r3
-	ldr	r2, .L4+20
-	ldr	r3, .L4+24
+	ldr	r2, .L4+32
+	ldr	r3, .L4+36
 	str	r4, [r2]
 	str	r4, [r3]
 	pop	{r4, r5, r6, lr}
@@ -52,10 +58,13 @@ init:
 .L5:
 	.align	2
 .L4:
+	.word	816943
+	.word	mus_start
+	.word	playSoundA
 	.word	initSplash
 	.word	67109376
-	.word	interruptHandler
 	.word	50360320
+	.word	interruptHandler
 	.word	setupSounds
 	.word	debug
 	.word	fadeIn
@@ -503,94 +512,99 @@ initGame:
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, lr}
 	mov	r2, #1
-	ldr	r1, .L65
-	ldr	r0, .L65+4
-	ldr	r3, .L65+8
+	ldr	r1, .L67
+	ldr	r0, .L67+4
+	ldr	r3, .L67+8
 	mov	lr, pc
 	bx	r3
 	mov	ip, #2
-	ldr	r2, .L65+12
+	ldr	r2, .L67+12
 	mov	r1, #13824
 	mov	r0, #0
-	ldr	r3, .L65+16
+	ldr	r3, .L67+16
 	strb	ip, [r2]
 	mov	r5, #67108864
 	mov	lr, pc
 	bx	r3
 	mov	r2, #5888
-	ldr	r4, .L65+20
+	ldr	r4, .L67+20
 	strh	r2, [r5]	@ movhi
 	mov	r3, #128
 	mov	r2, #100663296
 	mov	r0, #3
-	ldr	r1, .L65+24
+	ldr	r1, .L67+24
 	mov	lr, pc
 	bx	r4
 	mov	r3, #1024
 	mov	r0, #3
-	ldr	r2, .L65+28
-	ldr	r1, .L65+32
+	ldr	r2, .L67+28
+	ldr	r1, .L67+32
 	mov	lr, pc
 	bx	r4
 	mov	r2, #5376
 	mov	r3, #32
 	strh	r2, [r5, #8]	@ movhi
 	mov	r0, #3
-	ldr	r2, .L65+36
-	ldr	r1, .L65+40
+	ldr	r2, .L67+36
+	ldr	r1, .L67+40
 	mov	lr, pc
 	bx	r4
 	mov	r3, #1024
 	mov	r0, #3
-	ldr	r2, .L65+44
-	ldr	r1, .L65+48
+	ldr	r2, .L67+44
+	ldr	r1, .L67+48
 	mov	lr, pc
 	bx	r4
-	ldr	r2, .L65+52
+	ldr	r2, .L67+52
 	mov	r0, #3
-	ldr	r1, .L65+56
+	ldr	r1, .L67+56
 	mov	r3, #16
 	strh	r2, [r5, #12]	@ movhi
 	mov	r2, #83886080
 	mov	lr, pc
 	bx	r4
 	bl	setupMap
-	ldr	r3, .L65+60
+	ldr	r3, .L67+60
 	mov	lr, pc
 	bx	r3
 	mov	r3, #16384
 	mov	r0, #3
-	ldr	r2, .L65+64
-	ldr	r1, .L65+68
+	ldr	r2, .L67+64
+	ldr	r1, .L67+68
 	mov	lr, pc
 	bx	r4
-	ldr	r1, .L65+72
 	mov	r0, #3
+	ldr	r1, .L67+72
 	mov	r3, #256
-	ldr	r2, .L65+76
+	ldr	r2, .L67+76
 	mov	lr, pc
 	bx	r4
 	mov	r2, #17
 	mov	r3, #215
 	strh	r3, [r5, #80]	@ movhi
 	strh	r2, [r5, #84]	@ movhi
-	ldr	r3, .L65+80
+	ldr	r3, .L67+80
 	mov	lr, pc
 	bx	r3
-	ldr	r3, .L65+84
+	ldr	r3, .L67+84
+	ldrh	r3, [r3, #48]
+	tst	r3, #2
+	moveq	r0, #1
+	movne	r0, #0
+	ldr	r3, .L67+88
 	mov	lr, pc
 	bx	r3
-	ldr	r3, .L65+88
+	ldr	r3, .L67+92
 	mov	lr, pc
 	bx	r3
 	mov	r2, #1
-	ldr	r3, .L65+92
+	ldr	r3, .L67+96
 	pop	{r4, r5, r6, lr}
 	str	r2, [r3]
 	bx	lr
-.L66:
+.L68:
 	.align	2
-.L65:
+.L67:
 	.word	1749550
 	.word	mus_game1
 	.word	playSoundA
@@ -612,6 +626,7 @@ initGame:
 	.word	SpritesheetPal
 	.word	83886592
 	.word	initPlayer
+	.word	67109120
 	.word	initAllItems
 	.word	initAllLasers
 	.word	fadeIn
@@ -630,21 +645,21 @@ setupDisplayInterrupt:
 	str	lr, [sp, #-4]!
 	mov	lr, #1
 	ldrh	r1, [r0, #4]
-	ldr	r3, .L69
+	ldr	r3, .L71
 	orr	r1, r1, #8
 	ldrh	r2, [r3]
-	ldr	ip, .L69+4
+	ldr	ip, .L71+4
 	strh	r1, [r0, #4]	@ movhi
-	ldr	r1, .L69+8
+	ldr	r1, .L71+8
 	orr	r2, r2, lr
 	strh	lr, [r3, #8]	@ movhi
 	strh	r2, [r3]	@ movhi
 	ldr	lr, [sp], #4
 	str	r1, [ip, #4092]
 	bx	lr
-.L70:
+.L72:
 	.align	2
-.L69:
+.L71:
 	.word	67109376
 	.word	50360320
 	.word	interruptHandler

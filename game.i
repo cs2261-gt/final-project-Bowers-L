@@ -308,7 +308,7 @@ extern const unsigned char mus_game2[2733395];
 # 11 "item.h" 2
 # 24 "item.h"
 typedef enum {
-    NONE, BOOTS, SHRINK, SPEED, GLOVES, Z
+    NONE, BOOTS, SHRINK, SPEED, GLOVES, Z, GRAVITY
 } ItemType;
 
 typedef struct {
@@ -337,6 +337,10 @@ void initItem(Item* item, int col, int row, ItemType type);
 
 void updateItem(Item* item);
 void showItem(Item* item);
+
+void initAllItems(int cheat);
+void updateAllItems();
+void showAllItems();
 
 int checkCollisionPlayer(Item* item);
 
@@ -1555,6 +1559,7 @@ void equipLegs();
 void equipGloves();
 void startLaserSling();
 void finishLaserSling();
+void reverseGravity();
 
 
 void setTransform(int index, short scalex, short scaley, int deg);
@@ -1628,6 +1633,7 @@ int fadeIn;
 
 void init() {
     (*(unsigned short *)0x4000000) = 0;
+    playSoundA(mus_start, 816943, 1);
     initSplash();
     setupDisplayInterrupt();
     setupSounds();
@@ -1669,7 +1675,12 @@ void initGame() {
     (*(volatile u16*) 0x04000054) = ((17) <<0);
 
     initPlayer();
-    initAllItems();
+    if ((~((*(volatile unsigned short *)0x04000130)) & ((1<<1)))) {
+        initAllItems(1);
+    } else {
+        initAllItems(0);
+    }
+
     initAllLasers();
 
     fadeIn = 1;
@@ -1715,7 +1726,7 @@ void update() {
 }
 
 void updateGame() {
-# 113 "game.c"
+# 119 "game.c"
     if (player.worldRow < 0) {
         initWin();
     }
@@ -1764,7 +1775,7 @@ void fade() {
 }
 
 void setupMap() {
-# 181 "game.c"
+# 187 "game.c"
     (*(volatile unsigned short*)0x400000A) = (0<<7) | (3<<14) | ((1)<<2) | ((22 + ((camera.sbbrow)*(2)+(camera.sbbcol)))<<8);
 
 

@@ -1491,6 +1491,7 @@ void equipLegs();
 void equipGloves();
 void startLaserSling();
 void finishLaserSling();
+void reverseGravity();
 
 
 void setTransform(int index, short scalex, short scaley, int deg);
@@ -1589,7 +1590,7 @@ extern const unsigned char mus_game2[2733395];
 # 11 "item.h" 2
 # 24 "item.h"
 typedef enum {
-    NONE, BOOTS, SHRINK, SPEED, GLOVES, Z
+    NONE, BOOTS, SHRINK, SPEED, GLOVES, Z, GRAVITY
 } ItemType;
 
 typedef struct {
@@ -1619,6 +1620,10 @@ void initItem(Item* item, int col, int row, ItemType type);
 void updateItem(Item* item);
 void showItem(Item* item);
 
+void initAllItems(int cheat);
+void updateAllItems();
+void showAllItems();
+
 int checkCollisionPlayer(Item* item);
 
 void getItem(Item* item);
@@ -1631,7 +1636,7 @@ Item items[10];
 
 ItemType playerInventory[10];
 
-void initAllItems() {
+void initAllItems(int cheat) {
     for (int i = 0; i < 10; i++) {
         items[i].active = 0;
         playerInventory[i] = NONE;
@@ -1643,8 +1648,9 @@ void initAllItems() {
     initItem(&items[3], 1008, 800, GLOVES);
     initItem(&items[4], 224, 712, Z);
 
-
-
+    if (cheat) {
+        initItem(&items[5], 8, 992, GRAVITY);
+    }
 }
 
 void initItem(Item* item, int col, int row, ItemType type) {
@@ -1743,9 +1749,7 @@ void showItem(Item* item) {
 void getItem(Item* item) {
     item->active = 0;
     item->hide = 1;
-    shadowOAM[item->index].attr0 = (8 & 0xFF) | (0<<8) | (0<<13) | (0<<14);
-    shadowOAM[item->index].attr1 = ((8 + (item->type-1)*20) & 0x1FF) | (1<<14);
-    shadowOAM[item->index].attr2 = ((8)*32+(1 + (item->type-1)*2)) | ((0)<<12);
+
 
     int i = 0;
     while (playerInventory[i] != NONE) {
@@ -1753,7 +1757,11 @@ void getItem(Item* item) {
     }
     playerInventory[i] = item->type;
 
-    if (item->type == 1) {
+    shadowOAM[item->index].attr0 = (8 & 0xFF) | (0<<8) | (0<<13) | (0<<14);
+    shadowOAM[item->index].attr1 = ((8 + i*20) & 0x1FF) | (1<<14);
+    shadowOAM[item->index].attr2 = ((8)*32+(1 + (item->type-1)*2)) | ((0)<<12);
+
+    if (i == 0) {
 
         showSelectorOnItem(player.currentItem);
     }
@@ -1780,6 +1788,9 @@ void useItem(ItemType item) {
             break;
         case Z:
             startLaserSling();
+            break;
+        case GRAVITY:
+            reverseGravity();
             break;
     }
 }

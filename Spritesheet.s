@@ -4551,6 +4551,11 @@ SpritesheetTiles:
 	.short	0
 	.short	0
 	.short	0
+	.short	8192
+	.short	0
+	.short	512
+	.short	0
+	.short	32
 	.short	0
 	.short	0
 	.short	0
@@ -4561,24 +4566,19 @@ SpritesheetTiles:
 	.short	0
 	.short	0
 	.short	0
+	.short	34
+	.short	0
+	.short	512
+	.short	0
+	.short	8192
 	.short	0
 	.short	0
+	.short	2
 	.short	0
+	.short	2
 	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
+	.short	2
+	.short	8192
 	.short	0
 	.short	0
 	.short	0
@@ -5076,19 +5076,19 @@ SpritesheetTiles:
 	.short	0
 	.short	0
 	.short	0
+	.short	544
+	.short	0
+	.short	2
+	.short	0
+	.short	2
+	.short	0
+	.short	2
+	.short	0
+	.short	2
 	.short	0
 	.short	0
 	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
-	.short	0
+	.short	2
 	.short	0
 	.short	0
 	.short	0

@@ -272,8 +272,14 @@ int collisionBelow(int offset) {
 }
 
 int touchingGround() {
-    return mapCollisionBitmap[OFFSET(DECODE4(player.worldCol), DECODE4(player.worldRow + player.height), MAPWH)]
-    || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width) - 1, DECODE4(player.worldRow + player.height), MAPWH)];
+    if (player.gravity > 0) {
+        return mapCollisionBitmap[OFFSET(DECODE4(player.worldCol), DECODE4(player.worldRow + player.height), MAPWH)]
+        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width) - 1, DECODE4(player.worldRow + player.height), MAPWH)];
+    } else {
+        return mapCollisionBitmap[OFFSET(DECODE4(player.worldCol), DECODE4(player.worldRow) - 1, MAPWH)]
+        || mapCollisionBitmap[OFFSET(DECODE4(player.worldCol + player.width) - 1, DECODE4(player.worldRow) - 1, MAPWH)];  
+    }
+
 }
 
 /*
@@ -423,6 +429,12 @@ void finishLaserSling() {
         player.cdel = nearestLaser->distance / 4;
     }
     free(nearestLaser);
+}
+
+void reverseGravity() {
+    player.gravity *= -1;
+    player.jumpSpeed *= -1;
+    player.rotation = (player.rotation + 180) % 360;
 }
 
 void equipCurrentItem(int equip) {

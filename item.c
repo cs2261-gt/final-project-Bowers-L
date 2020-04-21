@@ -4,7 +4,7 @@ Item items[NUMITEMS];
 
 ItemType playerInventory[NUMITEMS];
 
-void initAllItems() {
+void initAllItems(int cheat) {
     for (int i = 0; i < NUMITEMS; i++) {
         items[i].active = 0;
         playerInventory[i] = NONE;
@@ -16,8 +16,9 @@ void initAllItems() {
     initItem(&items[3], 1008, 800, GLOVES);
     initItem(&items[4], 224, 712, Z);
 
-    //test items
-    //initItem(&items[5], 16, 992, Z);
+    if (cheat) {
+        initItem(&items[5], 8, 992, GRAVITY);
+    }
 }
 
 void initItem(Item* item, int col, int row, ItemType type) {
@@ -128,7 +129,7 @@ void getItem(Item* item) {
     shadowOAM[item->index].attr1 = ((ITEMSLOTCOL + i*ITEMSLOTSPACING) & COLMASK) | ATTR1_SMALL;
     shadowOAM[item->index].attr2 = ATTR2_TILEID(1 + (item->type-1)*2, 8) | ATTR2_PALROW(0);
 
-    if (item->type == 1) {
+    if (i == 0) {
         //the first item
         showSelectorOnItem(player.currentItem);
     }
@@ -155,6 +156,9 @@ void useItem(ItemType item) {
             break;
         case Z:
             startLaserSling();
+            break;
+        case GRAVITY:
+            reverseGravity();
             break;
     }
 }

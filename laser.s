@@ -649,8 +649,8 @@ findCloseLaser:
 	.bss
 	.align	2
 	.set	.LANCHOR0,. + 0
-	.type	laserCount.5344, %object
-	.size	laserCount.5344, 4
-laserCount.5344:
+	.type	laserCount.5350, %object
+	.size	laserCount.5350, 4
+laserCount.5350:
 	.space	4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

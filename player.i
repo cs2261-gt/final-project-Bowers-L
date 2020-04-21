@@ -302,7 +302,7 @@ extern const unsigned char mus_game2[2733395];
 # 11 "item.h" 2
 # 24 "item.h"
 typedef enum {
-    NONE, BOOTS, SHRINK, SPEED, GLOVES, Z
+    NONE, BOOTS, SHRINK, SPEED, GLOVES, Z, GRAVITY
 } ItemType;
 
 typedef struct {
@@ -331,6 +331,10 @@ void initItem(Item* item, int col, int row, ItemType type);
 
 void updateItem(Item* item);
 void showItem(Item* item);
+
+void initAllItems(int cheat);
+void updateAllItems();
+void showAllItems();
 
 int checkCollisionPlayer(Item* item);
 
@@ -1604,6 +1608,7 @@ void equipLegs();
 void equipGloves();
 void startLaserSling();
 void finishLaserSling();
+void reverseGravity();
 
 
 void setTransform(int index, short scalex, short scaley, int deg);
@@ -1866,10 +1871,16 @@ int collisionBelow(int offset) {
 }
 
 int touchingGround() {
-    return mapCollisionBitmap[((((player.worldRow + player.height) >> 4))*(1024)+(((player.worldCol) >> 4)))]
-    || mapCollisionBitmap[((((player.worldRow + player.height) >> 4))*(1024)+(((player.worldCol + player.width) >> 4) - 1))];
+    if (player.gravity > 0) {
+        return mapCollisionBitmap[((((player.worldRow + player.height) >> 4))*(1024)+(((player.worldCol) >> 4)))]
+        || mapCollisionBitmap[((((player.worldRow + player.height) >> 4))*(1024)+(((player.worldCol + player.width) >> 4) - 1))];
+    } else {
+        return mapCollisionBitmap[((((player.worldRow) >> 4) - 1)*(1024)+(((player.worldCol) >> 4)))]
+        || mapCollisionBitmap[((((player.worldRow) >> 4) - 1)*(1024)+(((player.worldCol + player.width) >> 4) - 1))];
+    }
+
 }
-# 293 "player.c"
+# 299 "player.c"
 int resolveCollisions() {
     int xDepth = 0;
     int yDepth = 0;
@@ -2003,6 +2014,12 @@ void finishLaserSling() {
         player.cdel = nearestLaser->distance / 4;
     }
     free(nearestLaser);
+}
+
+void reverseGravity() {
+    player.gravity *= -1;
+    player.jumpSpeed *= -1;
+    player.rotation = (player.rotation + 180) % 360;
 }
 
 void equipCurrentItem(int equip) {

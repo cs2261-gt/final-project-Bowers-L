@@ -8,6 +8,7 @@ int fadeIn;
 
 void init() {
     REG_DISPCTL = MODE0;
+    playSoundA(mus_start, MUS_STARTLEN, 1);
     initSplash();
     setupDisplayInterrupt();
     setupSounds();
@@ -49,7 +50,12 @@ void initGame() {
     REG_BLDY = BLD_EY(17);
 
     initPlayer();
-    initAllItems(int cheat);
+    if (BUTTON_HELD(BUTTON_B)) {
+        initAllItems(1);
+    } else {
+        initAllItems(0);
+    }
+
     initAllLasers();
 
     fadeIn = 1;
