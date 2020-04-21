@@ -17,7 +17,7 @@ void init() {
 }
 
 void initGame() {
-    //test
+    playSoundA(mus_game1, MUS_GAME1LEN, 1);
     
     //initialize variables
     gameState = GAME;
@@ -49,7 +49,7 @@ void initGame() {
     REG_BLDY = BLD_EY(17);
 
     initPlayer();
-    initAllItems();
+    initAllItems(int cheat);
     initAllLasers();
 
     fadeIn = 1;

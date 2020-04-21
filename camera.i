@@ -217,6 +217,32 @@ extern const unsigned short SpritesheetPal[256];
 
 
 
+
+# 1 "sound.h" 1
+       
+
+
+
+Sound soundA;
+Sound soundB;
+
+
+
+void setupSounds();
+void playSoundA(const signed char* sound, int length, int loops);
+void playSoundB(const signed char* sound, int length, int loops);
+
+void handleSoundVBlank();
+
+void pauseSound();
+void unpauseSound();
+void stopSound();
+# 18 "stateMachine.h" 2
+# 1 "mus_start.h" 1
+# 20 "mus_start.h"
+extern const unsigned char mus_start[816943];
+# 19 "stateMachine.h" 2
+
 typedef enum {
     SPLASH, INSTRUCTIONS, GAME, PAUSED, WIN
 } GameState;
@@ -249,7 +275,12 @@ extern const unsigned short mapCollisionBitmap[1048576];
 
 # 1 "item.h" 1
        
-# 21 "item.h"
+# 10 "item.h"
+# 1 "mus_game2.h" 1
+# 20 "mus_game2.h"
+extern const unsigned char mus_game2[2733395];
+# 11 "item.h" 2
+# 24 "item.h"
 typedef enum {
     NONE, BOOTS, SHRINK, SPEED, GLOVES, Z
 } ItemType;
@@ -1147,26 +1178,7 @@ void laserSling();
 # 8 "player.h" 2
 
 
-# 1 "sound.h" 1
-       
 
-
-
-Sound soundA;
-Sound soundB;
-
-
-
-void setupSounds();
-void playSoundA(const signed char* sound, int length, int loops);
-void playSoundB(const signed char* sound, int length, int loops);
-
-void handleSoundVBlank();
-
-void pauseSound();
-void unpauseSound();
-void stopSound();
-# 11 "player.h" 2
 # 1 "snd_Ding.h" 1
 # 20 "snd_Ding.h"
 extern const unsigned char snd_Ding[5200];
@@ -1547,6 +1559,13 @@ extern const unsigned short gameBackgroundMap[1024];
 
 extern const unsigned short gameBackgroundPal[256];
 # 14 "game.h" 2
+
+
+
+# 1 "mus_game1.h" 1
+# 20 "mus_game1.h"
+extern const unsigned char mus_game1[1749550];
+# 18 "game.h" 2
 
 
 

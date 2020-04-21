@@ -13,6 +13,10 @@
 
 #include "game.h"
 
+//sounds
+#include "sound.h"
+#include "mus_start.h"
+
 typedef enum {
     SPLASH, INSTRUCTIONS, GAME, PAUSED, WIN
 } GameState;

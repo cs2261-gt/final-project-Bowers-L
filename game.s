@@ -501,90 +501,99 @@ initGame:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	mov	ip, #2
-	ldr	r2, .L65
 	push	{r4, r5, r6, lr}
+	mov	r2, #1
+	ldr	r1, .L65
+	ldr	r0, .L65+4
+	ldr	r3, .L65+8
+	mov	lr, pc
+	bx	r3
+	mov	ip, #2
+	ldr	r2, .L65+12
 	mov	r1, #13824
 	mov	r0, #0
-	ldr	r3, .L65+4
+	ldr	r3, .L65+16
 	strb	ip, [r2]
 	mov	r5, #67108864
 	mov	lr, pc
 	bx	r3
 	mov	r2, #5888
-	ldr	r4, .L65+8
+	ldr	r4, .L65+20
 	strh	r2, [r5]	@ movhi
 	mov	r3, #128
 	mov	r2, #100663296
 	mov	r0, #3
-	ldr	r1, .L65+12
+	ldr	r1, .L65+24
 	mov	lr, pc
 	bx	r4
 	mov	r3, #1024
 	mov	r0, #3
-	ldr	r2, .L65+16
-	ldr	r1, .L65+20
+	ldr	r2, .L65+28
+	ldr	r1, .L65+32
 	mov	lr, pc
 	bx	r4
 	mov	r2, #5376
 	mov	r3, #32
 	strh	r2, [r5, #8]	@ movhi
 	mov	r0, #3
-	ldr	r2, .L65+24
-	ldr	r1, .L65+28
+	ldr	r2, .L65+36
+	ldr	r1, .L65+40
 	mov	lr, pc
 	bx	r4
 	mov	r3, #1024
 	mov	r0, #3
-	ldr	r2, .L65+32
-	ldr	r1, .L65+36
+	ldr	r2, .L65+44
+	ldr	r1, .L65+48
 	mov	lr, pc
 	bx	r4
-	ldr	r2, .L65+40
+	ldr	r2, .L65+52
 	mov	r0, #3
-	ldr	r1, .L65+44
+	ldr	r1, .L65+56
 	mov	r3, #16
 	strh	r2, [r5, #12]	@ movhi
 	mov	r2, #83886080
 	mov	lr, pc
 	bx	r4
 	bl	setupMap
-	ldr	r3, .L65+48
+	ldr	r3, .L65+60
 	mov	lr, pc
 	bx	r3
 	mov	r3, #16384
 	mov	r0, #3
-	ldr	r2, .L65+52
-	ldr	r1, .L65+56
+	ldr	r2, .L65+64
+	ldr	r1, .L65+68
 	mov	lr, pc
 	bx	r4
-	ldr	r1, .L65+60
+	ldr	r1, .L65+72
 	mov	r0, #3
 	mov	r3, #256
-	ldr	r2, .L65+64
+	ldr	r2, .L65+76
 	mov	lr, pc
 	bx	r4
 	mov	r2, #17
 	mov	r3, #215
 	strh	r3, [r5, #80]	@ movhi
 	strh	r2, [r5, #84]	@ movhi
-	ldr	r3, .L65+68
+	ldr	r3, .L65+80
 	mov	lr, pc
 	bx	r3
-	ldr	r3, .L65+72
+	ldr	r3, .L65+84
 	mov	lr, pc
 	bx	r3
-	ldr	r3, .L65+76
+	ldr	r3, .L65+88
 	mov	lr, pc
 	bx	r3
 	mov	r2, #1
-	ldr	r3, .L65+80
+	ldr	r3, .L65+92
 	pop	{r4, r5, r6, lr}
 	str	r2, [r3]
 	bx	lr
 .L66:
 	.align	2
 .L65:
+	.word	1749550
+	.word	mus_game1
+	.word	playSoundA
 	.word	gameState
 	.word	initCamera
 	.word	DMANow
@@ -649,8 +658,8 @@ setupDisplayInterrupt:
 	.bss
 	.align	2
 	.set	.LANCHOR0,. + 0
-	.type	count.5337, %object
-	.size	count.5337, 4
-count.5337:
+	.type	count.5340, %object
+	.size	count.5340, 4
+count.5340:
 	.space	4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

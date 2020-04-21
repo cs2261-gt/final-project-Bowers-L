@@ -116,9 +116,7 @@ void showItem(Item* item) {
 void getItem(Item* item) {
     item->active = 0;
     item->hide = 1;
-    shadowOAM[item->index].attr0 = (ITEMSLOTROW & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_SQUARE;
-    shadowOAM[item->index].attr1 = ((ITEMSLOTCOL + (item->type-1)*ITEMSLOTSPACING) & COLMASK) | ATTR1_SMALL;
-    shadowOAM[item->index].attr2 = ATTR2_TILEID(1 + (item->type-1)*2, 8) | ATTR2_PALROW(0);
+
     
     int i = 0;
     while (playerInventory[i] != NONE) {
@@ -126,9 +124,16 @@ void getItem(Item* item) {
     }
     playerInventory[i] = item->type;
 
+    shadowOAM[item->index].attr0 = (ITEMSLOTROW & ROWMASK) | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_SQUARE;
+    shadowOAM[item->index].attr1 = ((ITEMSLOTCOL + i*ITEMSLOTSPACING) & COLMASK) | ATTR1_SMALL;
+    shadowOAM[item->index].attr2 = ATTR2_TILEID(1 + (item->type-1)*2, 8) | ATTR2_PALROW(0);
+
     if (item->type == 1) {
         //the first item
         showSelectorOnItem(player.currentItem);
+    }
+    if (item->type == Z) {
+        playSoundA(mus_game2, MUS_GAME2LEN, 1);
     }
 }
 

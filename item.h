@@ -6,6 +6,9 @@
 
 #include "camera.h"
 
+#include "sound.h"
+#include "mus_game2.h"
+
 #define NUMITEMS 10
 
 #define ITEMSLOTROW 8
@@ -19,7 +22,7 @@
 //Items: OAM 1-10
 
 typedef enum {
-    NONE, BOOTS, SHRINK, SPEED, GLOVES, Z
+    NONE, BOOTS, SHRINK, SPEED, GLOVES, Z, GRAVITY
 } ItemType;
 
 typedef struct {
@@ -48,6 +51,10 @@ void initItem(Item* item, int col, int row, ItemType type);
 
 void updateItem(Item* item);
 void showItem(Item* item);
+
+void initAllItems();
+void updateAllItems();
+void showAllItems();
 
 int checkCollisionPlayer(Item* item);
 

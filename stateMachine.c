@@ -1,6 +1,7 @@
 #include "stateMachine.h"
 
 void initSplash() {
+    playSoundA(mus_start, MUS_STARTLEN, 1);
     gameState = SPLASH;
     menuState = OPTSTART;
 

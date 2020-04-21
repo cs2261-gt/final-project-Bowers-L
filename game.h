@@ -8,9 +8,13 @@
 #include "item.h"
 #include "laser.h"
 
-
+//backgrounds
 #include "GameOverlay.h"
 #include "gameBackground.h"
+
+//sound
+#include "sound.h"
+#include "mus_game1.h"
 
 #define MAPWH 1024
 #define MAPSB 22

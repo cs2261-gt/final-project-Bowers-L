@@ -21,34 +21,40 @@ initSplash:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
+	push	{r4, lr}
+	mov	r2, #1
+	ldr	r1, .L4
+	ldr	r0, .L4+4
+	ldr	r3, .L4+8
+	mov	lr, pc
+	bx	r3
 	mov	r3, #0
 	mov	r2, #67108864
 	mov	r0, #256
 	mov	r1, #5376
-	push	{r4, lr}
-	ldr	ip, .L4
-	ldr	lr, .L4+4
-	strb	r3, [ip]
+	ldr	lr, .L4+12
+	ldr	ip, .L4+16
 	strb	r3, [lr]
-	ldr	r4, .L4+8
+	strb	r3, [ip]
+	ldr	r4, .L4+20
 	strh	r0, [r2]	@ movhi
 	strh	r1, [r2, #8]	@ movhi
 	mov	r3, #1696
 	mov	r2, #100663296
 	mov	r0, #3
-	ldr	r1, .L4+12
+	ldr	r1, .L4+24
 	mov	lr, pc
 	bx	r4
 	mov	r3, #1024
 	mov	r0, #3
-	ldr	r2, .L4+16
-	ldr	r1, .L4+20
+	ldr	r2, .L4+28
+	ldr	r1, .L4+32
 	mov	lr, pc
 	bx	r4
 	mov	r3, #16
 	mov	r2, #83886080
 	mov	r0, #3
-	ldr	r1, .L4+24
+	ldr	r1, .L4+36
 	mov	lr, pc
 	bx	r4
 	pop	{r4, lr}
@@ -56,8 +62,11 @@ initSplash:
 .L5:
 	.align	2
 .L4:
-	.word	menuState
+	.word	816943
+	.word	mus_start
+	.word	playSoundA
 	.word	gameState
+	.word	menuState
 	.word	DMANow
 	.word	SplashScreen_StartTiles
 	.word	100706304

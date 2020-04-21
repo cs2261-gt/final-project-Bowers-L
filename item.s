@@ -381,35 +381,36 @@ getItem:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	mov	ip, #1
+	push	{r4, r5, r6, lr}
+	mov	r4, r0
 	mov	r3, #0
+	mov	r0, #1
 	mov	r1, #8
-	push	{r4, lr}
-	ldr	r4, [r0, #48]
-	ldr	lr, .L61
-	lsl	r2, r4, #3
-	str	ip, [r0, #32]
-	str	r3, [r0, #36]
+	ldr	r5, [r4, #48]
+	ldr	lr, .L63
+	lsl	r2, r5, #3
+	str	r0, [r4, #32]
+	str	r3, [r4, #36]
 	strh	r1, [lr, r2]	@ movhi
-	ldrb	r0, [r0, #44]	@ zero_extendqisi2
+	ldrb	r0, [r4, #44]	@ zero_extendqisi2
 	sub	r2, r0, #1
 	lsl	r2, r2, #16
 	lsr	r2, r2, #16
 	add	r1, r2, r2, lsl #2
-	ldr	ip, .L61+4
+	ldr	ip, .L63+4
 	lsl	r1, r1, #2
-	add	lr, lr, r4, lsl #3
+	add	lr, lr, r5, lsl #3
 	add	r1, r1, #8
-	ldrb	r4, [ip]	@ zero_extendqisi2
+	ldrb	r5, [ip]	@ zero_extendqisi2
 	lsl	r2, r2, #1
 	and	r1, r1, #508
 	add	r2, r2, #256
 	orr	r1, r1, #16384
 	add	r2, r2, #1
-	cmp	r4, r3
+	cmp	r5, r3
 	strh	r1, [lr, #2]	@ movhi
 	strh	r2, [lr, #4]	@ movhi
-	beq	.L57
+	beq	.L58
 	add	r2, ip, #1
 .L55:
 	ldrb	r1, [r2], #1	@ zero_extendqisi2
@@ -419,23 +420,40 @@ getItem:
 .L54:
 	cmp	r0, #1
 	strb	r0, [ip, r3]
-	beq	.L60
-	pop	{r4, lr}
+	beq	.L61
+	cmp	r0, #5
+	beq	.L62
+.L53:
+	pop	{r4, r5, r6, lr}
 	bx	lr
-.L60:
-	ldr	r3, .L61+8
-	pop	{r4, lr}
-	ldr	r0, [r3, #116]
-	b	showSelectorOnItem
-.L57:
-	mov	r3, r4
-	b	.L54
-.L62:
-	.align	2
 .L61:
+	ldr	r3, .L63+8
+	ldr	r0, [r3, #116]
+	bl	showSelectorOnItem
+	ldrb	r0, [r4, #44]	@ zero_extendqisi2
+	cmp	r0, #5
+	bne	.L53
+.L62:
+	mov	r2, #1
+	ldr	r1, .L63+12
+	ldr	r0, .L63+16
+	ldr	r3, .L63+20
+	mov	lr, pc
+	bx	r3
+	pop	{r4, r5, r6, lr}
+	bx	lr
+.L58:
+	mov	r3, r5
+	b	.L54
+.L64:
+	.align	2
+.L63:
 	.word	shadowOAM
 	.word	playerInventory
 	.word	player
+	.word	2733395
+	.word	mus_game2
+	.word	playSoundA
 	.size	getItem, .-getItem
 	.align	2
 	.global	updateItem
@@ -454,9 +472,9 @@ updateItem:
 	push	{r4, r5, r6, r7, r8, lr}
 	asr	r3, r3, #1
 	mov	r4, r0
-	ble	.L64
+	ble	.L66
 	mov	r1, #16
-	ldr	r6, .L75
+	ldr	r6, .L77
 	mov	r0, #27
 	mov	lr, pc
 	bx	r6
@@ -469,10 +487,10 @@ updateItem:
 	ldr	r2, [r4, #24]
 	mov	lr, pc
 	bx	r6
-	ldr	r3, .L75+4
+	ldr	r3, .L77+4
 	orr	r5, r5, r0, lsl #5
 	strh	r5, [r3, #4]	@ movhi
-.L65:
+.L67:
 	ldr	r3, [r4, #24]
 	ldr	r2, [r4, #28]
 	add	r3, r3, #1
@@ -482,12 +500,12 @@ updateItem:
 	strgt	r3, [r4, #24]
 	ldr	r3, [r4, #32]
 	cmp	r3, #0
-	beq	.L74
-.L63:
+	beq	.L76
+.L65:
 	pop	{r4, r5, r6, r7, r8, lr}
 	bx	lr
-.L64:
-	ldr	r7, .L75
+.L66:
+	ldr	r7, .L77
 	mov	r1, #27
 	mov	r0, #16
 	mov	lr, pc
@@ -511,22 +529,22 @@ updateItem:
 	mov	lr, pc
 	bx	r7
 	lsl	r3, r0, #10
-	ldr	r2, .L75+4
+	ldr	r2, .L77+4
 	orr	r3, r3, r6, lsl #5
 	orr	r0, r3, r5
 	strh	r0, [r2, #4]	@ movhi
-	b	.L65
-.L74:
+	b	.L67
+.L76:
 	mov	r0, r4
 	bl	checkCollisionPlayer
 	cmp	r0, #0
-	beq	.L63
+	beq	.L65
 	mov	r0, r4
 	pop	{r4, r5, r6, r7, r8, lr}
 	b	getItem
-.L76:
+.L78:
 	.align	2
-.L75:
+.L77:
 	.word	lerp
 	.word	83886592
 	.size	updateItem, .-updateItem
@@ -541,28 +559,28 @@ updateAllItems:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, lr}
-	ldr	r4, .L86
+	ldr	r4, .L88
 	add	r5, r4, #520
-	b	.L79
-.L78:
+	b	.L81
+.L80:
 	add	r4, r4, #52
 	cmp	r4, r5
-	beq	.L85
-.L79:
+	beq	.L87
+.L81:
 	ldr	r3, [r4, #36]
 	cmp	r3, #0
-	beq	.L78
+	beq	.L80
 	mov	r0, r4
 	add	r4, r4, #52
 	bl	updateItem
 	cmp	r4, r5
-	bne	.L79
-.L85:
+	bne	.L81
+.L87:
 	pop	{r4, r5, r6, lr}
 	bx	lr
-.L87:
+.L89:
 	.align	2
-.L86:
+.L88:
 	.word	items
 	.size	updateAllItems, .-updateAllItems
 	.comm	playerInventory,10,4
@@ -572,8 +590,8 @@ updateAllItems:
 	.bss
 	.align	2
 	.set	.LANCHOR0,. + 0
-	.type	itemCount.5321, %object
-	.size	itemCount.5321, 4
-itemCount.5321:
+	.type	itemCount.5324, %object
+	.size	itemCount.5324, 4
+itemCount.5324:
 	.space	4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"
