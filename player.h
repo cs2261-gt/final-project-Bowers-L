@@ -36,9 +36,7 @@ typedef struct {
     int cdel;
     int width;
     int height;
-    int aniCounter;
     AniState aniState;
-    int prevAniState;
     int curFrame;
     int numFrames;
     int aniSpeed;

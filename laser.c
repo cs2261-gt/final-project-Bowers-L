@@ -34,38 +34,30 @@ void initAllLasers() {
     }
     initLaser(&lasers[44], 632, 416, 1);
 
-    initLaser(&lasers[45], 472, 304, 1);
-    initLaser(&lasers[46], 472, 288, 1);
-    initLaser(&lasers[47], 472, 280, 0);
+    initLaser(&lasers[45], 472, 280, 1);
+    initLaser(&lasers[46], 472, 296, 0);
+    initLaser(&lasers[47], 472, 216, 1);
+    initLaser(&lasers[47], 472, 232, 1);
 
     initLaser(&lasers[48], 472, 232, 1);
     initLaser(&lasers[49], 472, 216, 1);
 
-    initLaser(&lasers[50], 504, 200, 1);
-    initLaser(&lasers[51], 504, 184, 1);
+    initLaser(&lasers[50], 496, 184, 1);
+    initLaser(&lasers[51], 496, 200, 0);
 
-    /*
-    initLaser(&lasers[52], 472, 168, 1);
-    initLaser(&lasers[53], 472, 160, 0);
-    
-    initLaser(&lasers[54], 504, 152, 1);
-    initLaser(&lasers[55], 504, 144, 0);
+    initLaser(&lasers[52], 416, 144, 1);
 
-    initLaser(&lasers[56], 472, 136, 1);
-    initLaser(&lasers[57], 472, 128, 0);
-    */
+    initLaser(&lasers[53], 376, 136, 3);
+    initLaser(&lasers[54], 392, 136, 2);
 
-    initLaser(&lasers[58], 504, 120, 1);
-    initLaser(&lasers[59], 504, 112, 0);
+    initLaser(&lasers[55], 344, 136, 3);
+    initLaser(&lasers[56], 360, 136, 2);
 
-    initLaser(&lasers[60], 288, 112, 3);
-    initLaser(&lasers[61], 304, 112, 2);
+    initLaser(&lasers[57], 336, 112, 1);
 
-    /*
-    for (int i = 62; i < 65; i++) {
-        initLaser(&lasers[i], 464, 32 - (i - 62) * 16, 3);
-    }
-    */
+    initLaser(&lasers[58], 296, 104, 3);
+    initLaser(&lasers[59], 312, 104, 2);
+
 
     //test lasers
     //initLaser(&lasers[38], 192, 984, 1);
@@ -73,7 +65,10 @@ void initAllLasers() {
 
 void initLaser(Laser* laser, int col, int row, int type) {
     static int laserCount = 0;
-
+    if (laserCount > NUMLASERS) {
+        laserCount = 0;
+    }
+    
     laser->worldRow = ENCODE4(row);
     laser->worldCol = ENCODE4(col);
     laser->screenRow = laser->worldRow - camera.row;

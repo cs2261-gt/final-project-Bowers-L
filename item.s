@@ -21,57 +21,62 @@ initItem:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	push	{r4, r5, r6, r7, r8, lr}
-	mov	r4, #1
-	mov	r7, #60
-	mov	r5, #128
-	mov	r8, #0
-	mov	r6, #256
-	ldr	lr, .L4
-	ldm	lr, {ip, lr}
-	lsl	r2, r2, #4
-	str	r2, [r0, #8]
-	sub	ip, r2, ip
-	ldr	r2, .L4+4
+	push	{r4, r5, r6, r7, r8, r9, lr}
+	ldr	lr, .L6
+	ldr	ip, [lr]
+	add	ip, ip, #1
+	cmp	ip, #6
+	movgt	r4, #1
+	strgt	r4, [lr]
+	movgt	ip, r4
+	mov	r4, #128
+	strle	ip, [lr]
+	mov	r7, #0
+	mov	lr, #1
+	mov	r6, #60
+	mov	r5, #256
+	ldr	r8, .L6+4
 	strb	r3, [r0, #44]
+	ldr	r3, [r8, #4]
+	ldr	r9, [r8]
 	lsl	r1, r1, #4
-	ldr	r3, [r2]
 	str	r1, [r0, #12]
-	sub	lr, r1, lr
-	ldr	r1, .L4+8
-	add	r3, r3, r4
-	str	r3, [r2]
-	str	ip, [r0]
-	str	r1, [r0, #40]
-	ldr	r2, .L4+12
-	ldr	r1, .L4+16
-	asr	ip, ip, #4
-	and	ip, ip, #255
-	str	lr, [r0, #4]
-	str	r7, [r0, #28]
-	str	r3, [r0, #48]
-	lsl	r7, r3, #3
-	and	lr, r2, lr, asr #4
-	add	r3, r1, r3, lsl #3
-	orr	ip, ip, #512
-	str	r8, [r0, #24]
-	str	r5, [r0, #16]
-	str	r5, [r0, #20]
-	str	r4, [r0, #32]
-	str	r4, [r0, #36]
-	strh	ip, [r1, r7]	@ movhi
-	strh	lr, [r3, #2]	@ movhi
-	strh	r6, [r3, #4]	@ movhi
-	pop	{r4, r5, r6, r7, r8, lr}
+	lsl	r2, r2, #4
+	sub	r1, r1, r3
+	ldr	r3, .L6+8
+	str	r2, [r0, #8]
+	sub	r2, r2, r9
+	str	r2, [r0]
+	str	r1, [r0, #4]
+	str	r4, [r0, #16]
+	str	r4, [r0, #20]
+	and	r1, r3, r1, asr #4
+	ldr	r4, .L6+12
+	ldr	r3, .L6+16
+	asr	r2, r2, #4
+	and	r2, r2, #255
+	str	ip, [r0, #48]
+	str	r3, [r0, #40]
+	orr	r2, r2, #512
+	lsl	r3, ip, #3
+	add	ip, r4, ip, lsl #3
+	str	r7, [r0, #24]
+	str	r6, [r0, #28]
+	str	lr, [r0, #32]
+	str	lr, [r0, #36]
+	strh	r2, [r4, r3]	@ movhi
+	strh	r5, [ip, #4]	@ movhi
+	strh	r1, [ip, #2]	@ movhi
+	pop	{r4, r5, r6, r7, r8, r9, lr}
 	bx	lr
-.L5:
+.L7:
 	.align	2
-.L4:
-	.word	camera
+.L6:
 	.word	.LANCHOR0
-	.word	58409488
+	.word	camera
 	.word	511
 	.word	shadowOAM
+	.word	58409488
 	.size	initItem, .-initItem
 	.align	2
 	.global	initAllItems
@@ -86,54 +91,54 @@ initAllItems:
 	push	{r4, lr}
 	mov	r1, #0
 	mov	r4, r0
-	ldr	r3, .L12
-	ldr	r2, .L12+4
-	add	ip, r3, #520
-.L7:
+	ldr	r3, .L14
+	ldr	r2, .L14+4
+	add	ip, r3, #312
+.L9:
 	str	r1, [r3, #36]
 	add	r3, r3, #52
 	cmp	r3, ip
 	strb	r1, [r2, #1]!
-	bne	.L7
+	bne	.L9
 	mov	r2, #1000
 	mov	r3, #1
 	mov	r1, r2
-	ldr	r0, .L12
+	ldr	r0, .L14
 	bl	initItem
 	mov	r3, #2
 	mov	r2, #904
 	mov	r1, #624
-	ldr	r0, .L12+8
+	ldr	r0, .L14+8
 	bl	initItem
 	mov	r3, #3
 	mov	r2, #808
 	mov	r1, #24
-	ldr	r0, .L12+12
+	ldr	r0, .L14+12
 	bl	initItem
 	mov	r3, #4
 	mov	r2, #800
 	mov	r1, #1008
-	ldr	r0, .L12+16
+	ldr	r0, .L14+16
 	bl	initItem
 	mov	r3, #5
 	mov	r2, #712
 	mov	r1, #224
-	ldr	r0, .L12+20
+	ldr	r0, .L14+20
 	bl	initItem
 	cmp	r4, #0
-	bne	.L11
+	bne	.L13
 	pop	{r4, lr}
 	bx	lr
-.L11:
+.L13:
 	mov	r3, #6
 	mov	r2, #992
 	mov	r1, #8
-	ldr	r0, .L12+24
+	ldr	r0, .L14+24
 	pop	{r4, lr}
 	b	initItem
-.L13:
+.L15:
 	.align	2
-.L12:
+.L14:
 	.word	items
 	.word	playerInventory-1
 	.word	items+52
@@ -158,7 +163,7 @@ checkCollisionPlayer:
 	ldm	r1, {r1, lr}
 	ldm	r2, {r2, r3}
 	sub	sp, sp, #16
-	ldr	ip, .L16
+	ldr	ip, .L18
 	str	r1, [sp, #8]
 	str	r2, [sp, #4]
 	str	lr, [sp, #12]
@@ -167,16 +172,16 @@ checkCollisionPlayer:
 	ldm	r2, {r2, r3}
 	ldr	r1, [ip, #8]
 	ldr	r0, [ip, #12]
-	ldr	r4, .L16+4
+	ldr	r4, .L18+4
 	mov	lr, pc
 	bx	r4
 	add	sp, sp, #16
 	@ sp needed
 	pop	{r4, lr}
 	bx	lr
-.L17:
+.L19:
 	.align	2
-.L16:
+.L18:
 	.word	player
 	.word	collision
 	.size	checkCollisionPlayer, .-checkCollisionPlayer
@@ -190,7 +195,7 @@ showItem:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	ip, .L28
+	ldr	ip, .L30
 	ldr	r3, [r0, #8]
 	ldr	r2, [ip]
 	sub	r3, r3, r2
@@ -213,21 +218,21 @@ showItem:
 	ldr	r3, [r0, #48]
 	and	r1, r1, #255
 	lsr	ip, ip, #23
-	beq	.L27
+	beq	.L29
 	mov	r2, #1
 	mov	r4, #256
-	ldr	lr, .L28+4
+	ldr	lr, .L30+4
 	str	r2, [r0, #32]
 	add	r2, lr, r3, lsl #3
 	strh	ip, [r2, #2]	@ movhi
 	strh	r4, [r2, #4]	@ movhi
 	lsl	r3, r3, #3
-.L21:
+.L23:
 	orr	r1, r1, #512
 	strh	r1, [lr, r3]	@ movhi
 	pop	{r4, r5, lr}
 	bx	lr
-.L27:
+.L29:
 	cmp	r2, #3824
 	movle	lr, #0
 	movgt	lr, #1
@@ -237,7 +242,7 @@ showItem:
 	movge	r2, lr
 	orrlt	r2, lr, #1
 	mov	r5, #256
-	ldr	lr, .L28+4
+	ldr	lr, .L30+4
 	cmp	r2, #0
 	add	r4, lr, r3, lsl #3
 	lsl	r3, r3, #3
@@ -245,12 +250,12 @@ showItem:
 	strh	r1, [lr, r3]	@ movhi
 	strh	ip, [r4, #2]	@ movhi
 	strh	r5, [r4, #4]	@ movhi
-	bne	.L21
+	bne	.L23
 	pop	{r4, r5, lr}
 	bx	lr
-.L29:
+.L31:
 	.align	2
-.L28:
+.L30:
 	.word	camera
 	.word	shadowOAM
 	.size	showItem, .-showItem
@@ -264,28 +269,28 @@ showAllItems:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	r0, .L39
+	ldr	r0, .L41
 	push	{r4, lr}
-	add	r4, r0, #520
-	b	.L32
-.L31:
+	add	r4, r0, #312
+	b	.L34
+.L33:
 	add	r0, r0, #52
 	cmp	r0, r4
-	beq	.L38
-.L32:
+	beq	.L40
+.L34:
 	ldr	r3, [r0, #36]
 	cmp	r3, #0
-	beq	.L31
+	beq	.L33
 	bl	showItem
 	add	r0, r0, #52
 	cmp	r0, r4
-	bne	.L32
-.L38:
+	bne	.L34
+.L40:
 	pop	{r4, lr}
 	bx	lr
-.L40:
+.L42:
 	.align	2
-.L39:
+.L41:
 	.word	items
 	.size	showAllItems, .-showAllItems
 	.align	2
@@ -302,54 +307,54 @@ useItem:
 	push	{r4, lr}
 	cmp	r0, #5
 	ldrls	pc, [pc, r0, asl #2]
-	b	.L41
-.L44:
+	b	.L43
+.L46:
+	.word	.L51
+	.word	.L50
 	.word	.L49
 	.word	.L48
 	.word	.L47
-	.word	.L46
 	.word	.L45
-	.word	.L43
-.L43:
-	ldr	r3, .L51
+.L45:
+	ldr	r3, .L53
 	mov	lr, pc
 	bx	r3
-.L41:
+.L43:
+	pop	{r4, lr}
+	bx	lr
+.L51:
+	ldr	r3, .L53+4
+	mov	lr, pc
+	bx	r3
+	pop	{r4, lr}
+	bx	lr
+.L50:
+	ldr	r3, .L53+8
+	mov	lr, pc
+	bx	r3
 	pop	{r4, lr}
 	bx	lr
 .L49:
-	ldr	r3, .L51+4
+	ldr	r3, .L53+12
 	mov	lr, pc
 	bx	r3
 	pop	{r4, lr}
 	bx	lr
 .L48:
-	ldr	r3, .L51+8
+	ldr	r3, .L53+16
 	mov	lr, pc
 	bx	r3
 	pop	{r4, lr}
 	bx	lr
 .L47:
-	ldr	r3, .L51+12
+	ldr	r3, .L53+20
 	mov	lr, pc
 	bx	r3
 	pop	{r4, lr}
 	bx	lr
-.L46:
-	ldr	r3, .L51+16
-	mov	lr, pc
-	bx	r3
-	pop	{r4, lr}
-	bx	lr
-.L45:
-	ldr	r3, .L51+20
-	mov	lr, pc
-	bx	r3
-	pop	{r4, lr}
-	bx	lr
-.L52:
+.L54:
 	.align	2
-.L51:
+.L53:
 	.word	reverseGravity
 	.word	equipBoots
 	.word	shrinkPlayer
@@ -369,13 +374,13 @@ showSelectorOnItem:
 	@ frame_needed = 0, uses_anonymous_args = 0
 	@ link register save eliminated.
 	mov	ip, #8
-	ldr	r3, .L54
-	ldr	r3, [r3, #116]
+	ldr	r3, .L56
+	ldr	r3, [r3, #108]
 	add	r3, r3, r3, lsl #2
 	lsl	r3, r3, #2
-	ldr	r2, .L54+4
+	ldr	r2, .L56+4
 	add	r3, r3, ip
-	ldr	r0, .L54+8
+	ldr	r0, .L56+8
 	and	r3, r3, #508
 	add	r1, r2, #960
 	orr	r3, r3, #16384
@@ -384,9 +389,9 @@ showSelectorOnItem:
 	strh	ip, [r1]	@ movhi
 	strh	r0, [r2]	@ movhi
 	bx	lr
-.L55:
+.L57:
 	.align	2
-.L54:
+.L56:
 	.word	player
 	.word	shadowOAM
 	.word	321
@@ -404,24 +409,24 @@ getItem:
 	mov	r3, #0
 	mov	r2, #1
 	push	{r4, r5, r6, lr}
-	ldr	ip, .L64
+	ldr	ip, .L66
 	ldrb	r1, [ip]	@ zero_extendqisi2
 	cmp	r1, r3
 	mov	r4, r0
 	str	r2, [r0, #32]
 	str	r3, [r0, #36]
-	beq	.L57
+	beq	.L59
 	add	r2, ip, r2
-.L58:
+.L60:
 	ldrb	r1, [r2], #1	@ zero_extendqisi2
 	cmp	r1, #0
 	add	r3, r3, #1
-	bne	.L58
+	bne	.L60
 	mov	r5, #8
 	ldrb	r0, [r4, #44]	@ zero_extendqisi2
 	add	r2, r3, r3, lsl #2
 	ldr	r1, [r4, #48]
-	ldr	lr, .L64+4
+	ldr	lr, .L66+4
 	lsl	r2, r2, #2
 	strb	r0, [ip, r3]
 	add	r2, r2, r5
@@ -434,42 +439,42 @@ getItem:
 	strh	r5, [lr, r4]	@ movhi
 	strh	r2, [r3, #2]	@ movhi
 	strh	r1, [r3, #4]	@ movhi
-	beq	.L63
-.L56:
+	beq	.L65
+.L58:
 	pop	{r4, r5, r6, lr}
 	bx	lr
-.L57:
+.L59:
 	mov	lr, #8
 	ldrb	r3, [r0, #44]	@ zero_extendqisi2
 	ldr	r2, [r0, #48]
-	ldr	r1, .L64+4
-	ldr	r0, .L64+8
+	ldr	r1, .L66+4
+	ldr	r0, .L66+8
 	strb	r3, [ip]
 	lsl	ip, r2, #3
-	ldr	r0, [r0, #116]
+	ldr	r0, [r0, #108]
 	add	r2, r1, r2, lsl #3
 	strh	lr, [r1, ip]	@ movhi
 	lsl	r3, r3, #1
-	ldr	r1, .L64+12
+	ldr	r1, .L66+12
 	add	r3, r3, #255
 	strh	r3, [r2, #4]	@ movhi
 	strh	r1, [r2, #2]	@ movhi
 	bl	showSelectorOnItem
 	ldrb	r0, [r4, #44]	@ zero_extendqisi2
 	cmp	r0, #5
-	bne	.L56
-.L63:
+	bne	.L58
+.L65:
 	mov	r2, #1
-	ldr	r1, .L64+16
-	ldr	r0, .L64+20
-	ldr	r3, .L64+24
+	ldr	r1, .L66+16
+	ldr	r0, .L66+20
+	ldr	r3, .L66+24
 	mov	lr, pc
 	bx	r3
 	pop	{r4, r5, r6, lr}
 	bx	lr
-.L65:
+.L67:
 	.align	2
-.L64:
+.L66:
 	.word	playerInventory
 	.word	shadowOAM
 	.word	player
@@ -495,9 +500,9 @@ updateItem:
 	push	{r4, r5, r6, r7, r8, lr}
 	asr	r3, r3, #1
 	mov	r4, r0
-	ble	.L67
+	ble	.L69
 	mov	r1, #16
-	ldr	r6, .L78
+	ldr	r6, .L80
 	mov	r0, #27
 	mov	lr, pc
 	bx	r6
@@ -510,10 +515,10 @@ updateItem:
 	ldr	r2, [r4, #24]
 	mov	lr, pc
 	bx	r6
-	ldr	r3, .L78+4
+	ldr	r3, .L80+4
 	orr	r5, r5, r0, lsl #5
 	strh	r5, [r3, #4]	@ movhi
-.L68:
+.L70:
 	ldr	r3, [r4, #24]
 	ldr	r2, [r4, #28]
 	add	r3, r3, #1
@@ -523,12 +528,12 @@ updateItem:
 	strgt	r3, [r4, #24]
 	ldr	r3, [r4, #32]
 	cmp	r3, #0
-	beq	.L77
-.L66:
+	beq	.L79
+.L68:
 	pop	{r4, r5, r6, r7, r8, lr}
 	bx	lr
-.L67:
-	ldr	r7, .L78
+.L69:
+	ldr	r7, .L80
 	mov	r1, #27
 	mov	r0, #16
 	mov	lr, pc
@@ -552,22 +557,22 @@ updateItem:
 	mov	lr, pc
 	bx	r7
 	lsl	r3, r0, #10
-	ldr	r2, .L78+4
+	ldr	r2, .L80+4
 	orr	r3, r3, r6, lsl #5
 	orr	r0, r3, r5
 	strh	r0, [r2, #4]	@ movhi
-	b	.L68
-.L77:
+	b	.L70
+.L79:
 	mov	r0, r4
 	bl	checkCollisionPlayer
 	cmp	r0, #0
-	beq	.L66
+	beq	.L68
 	mov	r0, r4
 	pop	{r4, r5, r6, r7, r8, lr}
 	b	getItem
-.L79:
+.L81:
 	.align	2
-.L78:
+.L80:
 	.word	lerp
 	.word	83886592
 	.size	updateItem, .-updateItem
@@ -582,39 +587,39 @@ updateAllItems:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, lr}
-	ldr	r4, .L89
-	add	r5, r4, #520
-	b	.L82
-.L81:
+	ldr	r4, .L91
+	add	r5, r4, #312
+	b	.L84
+.L83:
 	add	r4, r4, #52
 	cmp	r4, r5
-	beq	.L88
-.L82:
+	beq	.L90
+.L84:
 	ldr	r3, [r4, #36]
 	cmp	r3, #0
-	beq	.L81
+	beq	.L83
 	mov	r0, r4
 	add	r4, r4, #52
 	bl	updateItem
 	cmp	r4, r5
-	bne	.L82
-.L88:
+	bne	.L84
+.L90:
 	pop	{r4, r5, r6, lr}
 	bx	lr
-.L90:
+.L92:
 	.align	2
-.L89:
+.L91:
 	.word	items
 	.size	updateAllItems, .-updateAllItems
-	.comm	playerInventory,10,4
-	.comm	items,520,4
+	.comm	playerInventory,6,4
+	.comm	items,312,4
 	.comm	soundB,32,4
 	.comm	soundA,32,4
 	.bss
 	.align	2
 	.set	.LANCHOR0,. + 0
-	.type	itemCount.5331, %object
-	.size	itemCount.5331, 4
-itemCount.5331:
+	.type	itemCount.5329, %object
+	.size	itemCount.5329, 4
+itemCount.5329:
 	.space	4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

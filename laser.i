@@ -13,9 +13,9 @@
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
-# 66 "myLib.h"
+# 67 "myLib.h"
 extern unsigned short *videoBuffer;
-# 90 "myLib.h"
+# 91 "myLib.h"
 typedef struct {
  u16 tileimg[8192];
 } charblock;
@@ -70,7 +70,7 @@ typedef struct {
 
 extern OBJ_ATTR shadowOAM[];
 extern OBJ_AFFINE* shadowOAMAffine;
-# 176 "myLib.h"
+# 177 "myLib.h"
 void hideSprites();
 
 
@@ -94,7 +94,7 @@ typedef struct {
     int numFrames;
     int hide;
 } ANISPRITE;
-# 246 "myLib.h"
+# 254 "myLib.h"
 extern unsigned short oldButtons;
 extern unsigned short buttons;
 
@@ -103,7 +103,7 @@ extern unsigned short buttons;
 
 
 void updateInput();
-# 265 "myLib.h"
+# 273 "myLib.h"
 typedef volatile struct {
     volatile const void *src;
     volatile void *dst;
@@ -112,9 +112,9 @@ typedef volatile struct {
 
 
 extern DMA *dma;
-# 305 "myLib.h"
+# 313 "myLib.h"
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt);
-# 399 "myLib.h"
+# 407 "myLib.h"
 typedef struct{
     const unsigned char* data;
     int length;
@@ -247,99 +247,6 @@ void stopSound();
 # 20 "mus_start.h"
 extern const unsigned char mus_start[816943];
 # 19 "stateMachine.h" 2
-
-typedef enum {
-    SPLASH, INSTRUCTIONS, GAME, PAUSED, WIN
-} GameState;
-
-typedef enum {
-    OPTSTART, OPTINST, OPTRESUME, OPTQUIT
-} MenuState;
-
-extern GameState gameState;
-extern MenuState menuState;
-
-void initSplash();
-void initInstructions();
-void initPause();
-void initWin();
-
-void updateSplash();
-void updateInstructions();
-void updatePause();
-void updateWin();
-# 6 "game.h" 2
-# 1 "player.h" 1
-       
-
-
-# 1 "mapCollision.h" 1
-# 20 "mapCollision.h"
-extern const unsigned short mapCollisionBitmap[1048576];
-# 5 "player.h" 2
-
-# 1 "item.h" 1
-       
-# 10 "item.h"
-# 1 "mus_game2.h" 1
-# 20 "mus_game2.h"
-extern const unsigned char mus_game2[2733395];
-# 11 "item.h" 2
-# 24 "item.h"
-typedef enum {
-    NONE, BOOTS, SHRINK, SPEED, GLOVES, Z, GRAVITY
-} ItemType;
-
-typedef struct {
-    int screenRow;
-    int screenCol;
-    int worldRow;
-    int worldCol;
-    int width;
-    int height;
-    int curFrame;
-    int numFrames;
-    int hide;
-    int active;
-
-    u16 color1;
-    u16 color2;
-
-    ItemType type;
-    int index;
-} Item;
-
-extern Item items[10];
-extern ItemType playerInventory[10];
-
-void initItem(Item* item, int col, int row, ItemType type);
-
-void updateItem(Item* item);
-void showItem(Item* item);
-
-void initAllItems(int cheat);
-void updateAllItems();
-void showAllItems();
-
-int checkCollisionPlayer(Item* item);
-
-void getItem(Item* item);
-void useItem(ItemType item);
-
-void showSelectorOnItem();
-# 7 "player.h" 2
-
-
-
-
-# 1 "snd_Ding.h" 1
-# 20 "snd_Ding.h"
-extern const unsigned char snd_Ding[5200];
-# 12 "player.h" 2
-# 1 "snd_Zap.h" 1
-# 20 "snd_Zap.h"
-extern const unsigned char snd_Zap[6061];
-# 13 "player.h" 2
 
 # 1 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\stdlib.h" 1 3
 # 10 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\stdlib.h" 3
@@ -1149,7 +1056,104 @@ extern long double _strtold_r (struct _reent *, const char *restrict, char **res
 extern long double strtold (const char *restrict, char **restrict);
 # 336 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\stdlib.h" 3
 
-# 15 "player.h" 2
+# 21 "stateMachine.h" 2
+
+
+# 22 "stateMachine.h"
+typedef enum {
+    SPLASH, INSTRUCTIONS, GAME, PAUSED, WIN
+} GameState;
+
+typedef enum {
+    OPTSTART, OPTINST, OPTRESUME, OPTQUIT
+} MenuState;
+
+extern GameState gameState;
+extern MenuState menuState;
+
+void initSplash();
+void initInstructions();
+void initPause();
+void initWin();
+
+void updateSplash();
+void updateInstructions();
+void updatePause();
+void updateWin();
+# 6 "game.h" 2
+# 1 "player.h" 1
+       
+
+
+# 1 "mapCollision.h" 1
+# 20 "mapCollision.h"
+extern const unsigned short mapCollisionBitmap[1048576];
+# 5 "player.h" 2
+
+# 1 "item.h" 1
+       
+# 10 "item.h"
+# 1 "mus_game2.h" 1
+# 20 "mus_game2.h"
+extern const unsigned char mus_game2[2733395];
+# 11 "item.h" 2
+# 24 "item.h"
+typedef enum {
+    NONE, BOOTS, SHRINK, SPEED, GLOVES, Z, GRAVITY
+} ItemType;
+
+typedef struct {
+    int screenRow;
+    int screenCol;
+    int worldRow;
+    int worldCol;
+    int width;
+    int height;
+    int curFrame;
+    int numFrames;
+    int hide;
+    int active;
+
+    u16 color1;
+    u16 color2;
+
+    ItemType type;
+    int index;
+} Item;
+
+extern Item items[6];
+extern ItemType playerInventory[6];
+
+void initItem(Item* item, int col, int row, ItemType type);
+
+void updateItem(Item* item);
+void showItem(Item* item);
+
+void initAllItems(int cheat);
+void updateAllItems();
+void showAllItems();
+
+int checkCollisionPlayer(Item* item);
+
+void getItem(Item* item);
+void useItem(ItemType item);
+
+void showSelectorOnItem();
+# 7 "player.h" 2
+
+
+
+
+# 1 "snd_Ding.h" 1
+# 20 "snd_Ding.h"
+extern const unsigned char snd_Ding[5200];
+# 12 "player.h" 2
+# 1 "snd_Zap.h" 1
+# 20 "snd_Zap.h"
+extern const unsigned char snd_Zap[6061];
+# 13 "player.h" 2
+
+
 # 1 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\math.h" 1 3
 
 
@@ -1161,6 +1165,8 @@ extern long double strtold (const char *restrict, char **restrict);
 # 8 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\math.h" 2 3
 
 
+
+# 86 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\math.h" 3
 
 # 86 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\math.h" 3
 extern double atan (double);
@@ -1421,9 +1427,7 @@ typedef struct {
     int cdel;
     int width;
     int height;
-    int aniCounter;
     AniState aniState;
-    int prevAniState;
     int curFrame;
     int numFrames;
     int aniSpeed;
@@ -1531,6 +1535,8 @@ extern const unsigned char mus_game1[1749550];
 
 
 
+
+
 extern int debug;
 extern int fadeIn;
 
@@ -1602,7 +1608,7 @@ typedef struct {
     int distance;
 } SlingData;
 
-extern Laser lasers[65];
+extern Laser lasers[60];
 extern SlingData* nearestLaser;
 
 void initAllLasers();
@@ -1619,11 +1625,11 @@ void laserSling();
 
 
 
-Laser lasers[65];
+Laser lasers[60];
 SlingData* nearestLaser;
 
 void initAllLasers() {
-    for (int i = 0; i < 65; i++) {
+    for (int i = 0; i < 60; i++) {
         lasers[i].active = 0;
     }
 
@@ -1651,26 +1657,40 @@ void initAllLasers() {
     }
     initLaser(&lasers[44], 632, 416, 1);
 
-    initLaser(&lasers[45], 472, 304, 1);
-    initLaser(&lasers[46], 472, 288, 1);
-    initLaser(&lasers[47], 472, 280, 0);
+    initLaser(&lasers[45], 472, 280, 1);
+    initLaser(&lasers[46], 472, 296, 0);
+    initLaser(&lasers[47], 472, 216, 1);
+    initLaser(&lasers[47], 472, 232, 1);
 
     initLaser(&lasers[48], 472, 232, 1);
     initLaser(&lasers[49], 472, 216, 1);
 
-    initLaser(&lasers[50], 504, 200, 1);
-    initLaser(&lasers[51], 504, 184, 1);
-# 58 "laser.c"
-    initLaser(&lasers[58], 504, 120, 1);
-    initLaser(&lasers[59], 504, 112, 0);
+    initLaser(&lasers[50], 496, 184, 1);
+    initLaser(&lasers[51], 496, 200, 0);
 
-    initLaser(&lasers[60], 288, 112, 3);
-    initLaser(&lasers[61], 304, 112, 2);
-# 72 "laser.c"
+    initLaser(&lasers[52], 416, 144, 1);
+
+    initLaser(&lasers[53], 376, 136, 3);
+    initLaser(&lasers[54], 392, 136, 2);
+
+    initLaser(&lasers[55], 344, 136, 3);
+    initLaser(&lasers[56], 360, 136, 2);
+
+    initLaser(&lasers[57], 336, 112, 1);
+
+    initLaser(&lasers[58], 296, 104, 3);
+    initLaser(&lasers[59], 312, 104, 2);
+
+
+
+
 }
 
 void initLaser(Laser* laser, int col, int row, int type) {
     static int laserCount = 0;
+    if (laserCount > 60) {
+        laserCount = 0;
+    }
 
     laser->worldRow = ((row) << 4);
     laser->worldCol = ((col) << 4);
@@ -1720,7 +1740,7 @@ void initLaser(Laser* laser, int col, int row, int type) {
 }
 
 void updateAllLasers() {
-    for (int i = 0; i < 65; i++) {
+    for (int i = 0; i < 60; i++) {
         if (lasers[i].active) {
             updateLaser(&lasers[i]);
         }
@@ -1753,7 +1773,7 @@ int checkCollisionPlayerLaser(Laser* laser) {
 }
 
 void showAllLasers() {
-    for (int i = 0; i < 65; i++) {
+    for (int i = 0; i < 60; i++) {
         if (lasers[i].active) {
             showLaser(&lasers[i]);
         }
@@ -1801,7 +1821,7 @@ void showLaser(Laser* laser) {
 }
 
 SlingData* findCloseLaser() {
-    for (int i = 0; i < 65; i++) {
+    for (int i = 0; i < 60; i++) {
         if (lasers[i].active && !lasers[i].hide) {
 
             int distance;

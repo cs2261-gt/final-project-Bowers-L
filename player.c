@@ -468,6 +468,7 @@ void getUpAnimation() {
 
     curFrame++;
     if (curFrame == numFrames) {
+        curFrame = 0;
         player.specialAnim = 0;   
     }
 }
@@ -483,9 +484,23 @@ void laserSlingAnimation() {
     player.isIdle = 1;
     
     curFrame++;
+    if (nearestLaser->laser->type > 1) {
+        shadowOAM[NUMLASERS+LASERINDEX+1].attr0 = ((DECODE4(nearestLaser->laser->screenRow) - signOf(nearestLaser->distance) * 4) & ROWMASK) 
+                                        | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_SQUARE;
+        shadowOAM[NUMLASERS+LASERINDEX+1].attr1 = (DECODE4(player.screenCol) & COLMASK) 
+                                        | ATTR1_TINY;
+    } else {
+        shadowOAM[NUMLASERS+LASERINDEX+1].attr0 = (DECODE4(player.screenRow) & ROWMASK) 
+                                        | ATTR0_REGULAR | ATTR0_4BPP | ATTR0_SQUARE;
+        shadowOAM[NUMLASERS+LASERINDEX+1].attr1 = ((DECODE4(nearestLaser->laser->screenCol) - signOf(nearestLaser->distance) * 4) & COLMASK) 
+                                        | ATTR1_TINY;
+    }
+    shadowOAM[NUMLASERS+LASERINDEX+1].attr2 = ATTR2_TILEID(SPRITESHEETINDEX+3, min(curFrame / (numFrames / 8), 3)) | ATTR2_PALROW(0);
     if (curFrame > numFrames) {
         curFrame = 0;
         player.specialAnim = 0;
+        shadowOAM[NUMLASERS+LASERINDEX+1].attr0 = ATTR0_HIDE;
         finishLaserSling();
+        
     }
 }

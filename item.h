@@ -9,7 +9,7 @@
 #include "sound.h"
 #include "mus_game2.h"
 
-#define NUMITEMS 10
+#define NUMITEMS 6
 
 #define ITEMSLOTROW 8
 #define ITEMSLOTCOL 8

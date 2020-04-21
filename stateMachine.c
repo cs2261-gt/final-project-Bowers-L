@@ -6,6 +6,7 @@ void initSplash() {
 
     REG_DISPCTL = MODE0 | BG0_ENABLE;
     REG_BG0CNT = BG_4BPP | BG_SIZE_SMALL | BG_CHARBLOCK(0) | BG_SCREENBLOCK(MAPSB - 1);
+
     DMANow(3, SplashScreen_StartTiles, &CHARBLOCK[0], SplashScreen_StartTilesLen/2);
     DMANow(3, SplashScreen_StartMap, &SCREENBLOCK[MAPSB - 1], SplashScreen_StartMapLen/2);
     DMANow(3, SplashScreenPal, PALETTE, 16);
@@ -22,7 +23,7 @@ void initInstructions() {
 void initPause() {
     gameState = PAUSED;
     menuState = OPTRESUME;
-    //REG_DISPCTL = MODE0 | BG0_ENABLE;
+    REG_DISPCTL = MODE0 | BG0_ENABLE | BG1_ENABLE | BG2_ENABLE;
     //REG_BG0CNT = BG_4BPP | BG_SIZE_SMALL | BG_CHARBLOCK(0) | BG_SCREENBLOCK(MAPSB - 1);
 
     DMANow(3, PauseScreen_ResumeTiles, &CHARBLOCK[0], PauseScreen_ResumeTilesLen/2);
@@ -43,6 +44,7 @@ void initWin() {
 }
 
 void updateSplash() {
+
     if (BUTTON_PRESSED(BUTTON_DOWN) && (menuState == OPTSTART)) {
         menuState = OPTINST;
         DMANow(3, SplashScreen_InstructionsTiles, &CHARBLOCK[0], SplashScreen_InstructionsTilesLen/2);
@@ -64,6 +66,28 @@ void updateSplash() {
                 initInstructions();
                 break;
         }
+    }
+
+    glitchEffect();
+}
+
+void glitchEffect() {
+    static int glitchCounter = 0;
+    static int duration;
+    if (rand() % 50 == 1) {
+        glitchCounter = 1;
+        duration = rand() % 10;
+    }
+
+    if (glitchCounter) {
+        REG_BG0CNT = BG_4BPP | BG_SIZE_SMALL | BG_CHARBLOCK(0) | BG_SCREENBLOCK(MAPSB - 1) | BG_MOSAIC;
+        REG_MOSAIC = MOSAIC_HORIZ_BG(5);
+        glitchCounter++;
+        if (glitchCounter >= duration) {
+            glitchCounter = 0;
+        }
+    } else {
+        REG_BG0CNT = BG_4BPP | BG_SIZE_SMALL | BG_CHARBLOCK(0) | BG_SCREENBLOCK(MAPSB - 1);
     }
 }
 
@@ -93,6 +117,7 @@ void updatePause() {
                 break;
             case OPTQUIT:
                 initSplash();
+                playSoundA(mus_start, MUS_STARTLEN, 1);
                 break;
         }
     }

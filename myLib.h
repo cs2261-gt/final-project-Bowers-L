@@ -39,6 +39,7 @@ typedef unsigned int u32;
 #define BG_SIZE_WIDE        (1<<14)  // 64x32 tiles
 #define BG_SIZE_TALL        (2<<14)  // 32x64 tiles
 #define BG_SIZE_LARGE       (3<<14)  // 64x64 tiles
+#define BG_MOSAIC           (1 << 6)
 
 // Background Offset Registers
 #define REG_BG0HOFF (*(volatile unsigned short *)0x04000010)
@@ -224,6 +225,13 @@ typedef struct {
 
 #define REG_BLDY        (*(volatile u16*) 0x04000054)
 #define BLD_EY(num)     ((num) <<0)
+
+//MOSAIC
+#define REG_MOSAIC (*(volatile u16*) 0x0400004C)
+#define MOSAIC_HORIZ_BG(num) ((num) << 0)
+#define MOSAIC_VERT_BG(num) ((num) << 4)
+#define MOSAIC_HORIZ_OBJ(num) ((num) << 8)
+#define MOSAIC_VERT_OBJ(num) ((num) << 12)
 
 // ================================== INPUT ===================================
 

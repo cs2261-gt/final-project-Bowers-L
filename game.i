@@ -13,9 +13,9 @@
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
-# 66 "myLib.h"
+# 67 "myLib.h"
 extern unsigned short *videoBuffer;
-# 90 "myLib.h"
+# 91 "myLib.h"
 typedef struct {
  u16 tileimg[8192];
 } charblock;
@@ -70,7 +70,7 @@ typedef struct {
 
 extern OBJ_ATTR shadowOAM[];
 extern OBJ_AFFINE* shadowOAMAffine;
-# 176 "myLib.h"
+# 177 "myLib.h"
 void hideSprites();
 
 
@@ -94,7 +94,7 @@ typedef struct {
     int numFrames;
     int hide;
 } ANISPRITE;
-# 246 "myLib.h"
+# 254 "myLib.h"
 extern unsigned short oldButtons;
 extern unsigned short buttons;
 
@@ -103,7 +103,7 @@ extern unsigned short buttons;
 
 
 void updateInput();
-# 265 "myLib.h"
+# 273 "myLib.h"
 typedef volatile struct {
     volatile const void *src;
     volatile void *dst;
@@ -112,9 +112,9 @@ typedef volatile struct {
 
 
 extern DMA *dma;
-# 305 "myLib.h"
+# 313 "myLib.h"
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt);
-# 399 "myLib.h"
+# 407 "myLib.h"
 typedef struct{
     const unsigned char* data;
     int length;
@@ -237,126 +237,6 @@ void stopSound();
 # 20 "mus_start.h"
 extern const unsigned char mus_start[816943];
 # 19 "stateMachine.h" 2
-
-typedef enum {
-    SPLASH, INSTRUCTIONS, GAME, PAUSED, WIN
-} GameState;
-
-typedef enum {
-    OPTSTART, OPTINST, OPTRESUME, OPTQUIT
-} MenuState;
-
-extern GameState gameState;
-extern MenuState menuState;
-
-void initSplash();
-void initInstructions();
-void initPause();
-void initWin();
-
-void updateSplash();
-void updateInstructions();
-void updatePause();
-void updateWin();
-# 6 "game.h" 2
-# 1 "player.h" 1
-       
-
-
-# 1 "mapCollision.h" 1
-# 20 "mapCollision.h"
-extern const unsigned short mapCollisionBitmap[1048576];
-# 5 "player.h" 2
-
-# 1 "item.h" 1
-       
-
-
-
-
-
-# 1 "camera.h" 1
-       
-# 10 "camera.h"
-typedef struct {
-
-    int row;
-    int col;
-
-
-
-    int sbbrow;
-    int sbbcol;
-} Camera;
-
-extern Camera camera;
-
-
-void initCamera();
-void updateCamera();
-
-void cameraDebug();
-void centerCameraToPlayer();
-
-void updateSBB();
-# 8 "item.h" 2
-
-
-# 1 "mus_game2.h" 1
-# 20 "mus_game2.h"
-extern const unsigned char mus_game2[2733395];
-# 11 "item.h" 2
-# 24 "item.h"
-typedef enum {
-    NONE, BOOTS, SHRINK, SPEED, GLOVES, Z, GRAVITY
-} ItemType;
-
-typedef struct {
-    int screenRow;
-    int screenCol;
-    int worldRow;
-    int worldCol;
-    int width;
-    int height;
-    int curFrame;
-    int numFrames;
-    int hide;
-    int active;
-
-    u16 color1;
-    u16 color2;
-
-    ItemType type;
-    int index;
-} Item;
-
-extern Item items[10];
-extern ItemType playerInventory[10];
-
-void initItem(Item* item, int col, int row, ItemType type);
-
-void updateItem(Item* item);
-void showItem(Item* item);
-
-void initAllItems(int cheat);
-void updateAllItems();
-void showAllItems();
-
-int checkCollisionPlayer(Item* item);
-
-void getItem(Item* item);
-void useItem(ItemType item);
-
-void showSelectorOnItem();
-# 7 "player.h" 2
-# 1 "laser.h" 1
-       
-
-
-
-
-
-
 
 # 1 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\stdlib.h" 1 3
 # 10 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\stdlib.h" 3
@@ -1166,9 +1046,123 @@ extern long double _strtold_r (struct _reent *, const char *restrict, char **res
 extern long double strtold (const char *restrict, char **restrict);
 # 336 "c:\\devkitpro\\devkitarm\\arm-none-eabi\\include\\stdlib.h" 3
 
-# 10 "laser.h" 2
-# 22 "laser.h"
+# 21 "stateMachine.h" 2
 
+
+# 22 "stateMachine.h"
+typedef enum {
+    SPLASH, INSTRUCTIONS, GAME, PAUSED, WIN
+} GameState;
+
+typedef enum {
+    OPTSTART, OPTINST, OPTRESUME, OPTQUIT
+} MenuState;
+
+extern GameState gameState;
+extern MenuState menuState;
+
+void initSplash();
+void initInstructions();
+void initPause();
+void initWin();
+
+void updateSplash();
+void updateInstructions();
+void updatePause();
+void updateWin();
+# 6 "game.h" 2
+# 1 "player.h" 1
+       
+
+
+# 1 "mapCollision.h" 1
+# 20 "mapCollision.h"
+extern const unsigned short mapCollisionBitmap[1048576];
+# 5 "player.h" 2
+
+# 1 "item.h" 1
+       
+
+
+
+
+
+# 1 "camera.h" 1
+       
+# 10 "camera.h"
+typedef struct {
+
+    int row;
+    int col;
+
+
+
+    int sbbrow;
+    int sbbcol;
+} Camera;
+
+extern Camera camera;
+
+
+void initCamera();
+void updateCamera();
+
+void cameraDebug();
+void centerCameraToPlayer();
+
+void updateSBB();
+# 8 "item.h" 2
+
+
+# 1 "mus_game2.h" 1
+# 20 "mus_game2.h"
+extern const unsigned char mus_game2[2733395];
+# 11 "item.h" 2
+# 24 "item.h"
+typedef enum {
+    NONE, BOOTS, SHRINK, SPEED, GLOVES, Z, GRAVITY
+} ItemType;
+
+typedef struct {
+    int screenRow;
+    int screenCol;
+    int worldRow;
+    int worldCol;
+    int width;
+    int height;
+    int curFrame;
+    int numFrames;
+    int hide;
+    int active;
+
+    u16 color1;
+    u16 color2;
+
+    ItemType type;
+    int index;
+} Item;
+
+extern Item items[6];
+extern ItemType playerInventory[6];
+
+void initItem(Item* item, int col, int row, ItemType type);
+
+void updateItem(Item* item);
+void showItem(Item* item);
+
+void initAllItems(int cheat);
+void updateAllItems();
+void showAllItems();
+
+int checkCollisionPlayer(Item* item);
+
+void getItem(Item* item);
+void useItem(ItemType item);
+
+void showSelectorOnItem();
+# 7 "player.h" 2
+# 1 "laser.h" 1
+       
 # 22 "laser.h"
 typedef struct {
     int screenRow;
@@ -1192,7 +1186,7 @@ typedef struct {
     int distance;
 } SlingData;
 
-extern Laser lasers[65];
+extern Laser lasers[60];
 extern SlingData* nearestLaser;
 
 void initAllLasers();
@@ -1492,9 +1486,7 @@ typedef struct {
     int cdel;
     int width;
     int height;
-    int aniCounter;
     AniState aniState;
-    int prevAniState;
     int curFrame;
     int numFrames;
     int aniSpeed;
@@ -1602,6 +1594,8 @@ extern const unsigned char mus_game1[1749550];
 
 
 
+
+
 extern int debug;
 extern int fadeIn;
 
@@ -1640,6 +1634,8 @@ void init() {
 
     debug = 0;
     fadeIn = 0;
+
+    setupMap();
 }
 
 void initGame() {
@@ -1656,13 +1652,15 @@ void initGame() {
     DMANow(3, GameOverlayMap, &((screenblock *)0x6000000)[22 -1], 2048 / 2);
     (*(volatile unsigned short*)0x4000008) = (0<<7) | (0<<14) | ((0)<<2) | ((22 -1)<<8);
 
+    (*(volatile unsigned short*)0x400000A) = (0<<7) | (3<<14) | ((1)<<2) | ((22 + ((camera.sbbrow)*(2)+(camera.sbbcol)))<<8);
+
     DMANow(3, gameBackgroundTiles, &((charblock *)0x6000000)[2], 64 / 2);
     DMANow(3, gameBackgroundMap, &((screenblock *)0x6000000)[22 -2], 2048 / 2);
     (*(volatile unsigned short*)0x400000C) = (0<<7) | (0<<14) | ((2)<<2) | ((22 -2)<<8);
 
     DMANow(3, gameBackgroundPal, ((unsigned short *)0x5000000), 16);
 
-    setupMap();
+
 
 
     hideSprites();
@@ -1726,18 +1724,8 @@ void update() {
 }
 
 void updateGame() {
-# 119 "game.c"
-    if (player.worldRow < 0) {
-        initWin();
-    }
-
-    if ((!(~(oldButtons)&((1<<2))) && (~buttons & ((1<<2))))) {
-        initPause();
-    }
-
-    if (!debug) {
-        updatePlayer();
-    }
+# 123 "game.c"
+    updatePlayer();
     updateAllItems();
     updateAllLasers();
 
@@ -1749,6 +1737,14 @@ void updateGame() {
 
     if (fadeIn) {
         fade();
+    }
+
+    if (player.worldRow < 0) {
+        initWin();
+    }
+
+    if ((!(~(oldButtons)&((1<<2))) && (~buttons & ((1<<2))))) {
+        initPause();
     }
 }
 
@@ -1764,25 +1760,20 @@ void drawGame() {
 void fade() {
     static int count = 0;
     const static int speed = 1;
-    if (count/speed > 17) {
+
+    u16 blend = 17 - count/speed;
+
+    (*(volatile u16*) 0x04000054) = ((blend) <<0);
+    count++;
+
+    if (blend == 0) {
         fadeIn = 0;
         count = 0;
-    } else {
-        (*(volatile u16*) 0x04000054) = ((17 - count/speed) <<0);
     }
-
-    count++;
 }
 
 void setupMap() {
-# 187 "game.c"
-    (*(volatile unsigned short*)0x400000A) = (0<<7) | (3<<14) | ((1)<<2) | ((22 + ((camera.sbbrow)*(2)+(camera.sbbcol)))<<8);
-
-
-
-
-
-
+# 197 "game.c"
     for (int i = 0; i < 4; i++) {
         DMANow(3, &mapMap[1024 * i * 4], &((screenblock *)0x6000000)[22 + 2*i], 1024 * 2);
     }

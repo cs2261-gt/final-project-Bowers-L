@@ -15,6 +15,8 @@ void init() {
 
     debug = 0;
     fadeIn = 0;
+
+    setupMap();
 }
 
 void initGame() {
@@ -31,13 +33,15 @@ void initGame() {
     DMANow(3, GameOverlayMap, &SCREENBLOCK[MAPSB-1], GameOverlayMapLen / 2);
     REG_BG0CNT = BG_4BPP | BG_SIZE_SMALL | BG_CHARBLOCK(0) | BG_SCREENBLOCK(MAPSB-1);
 
+    REG_BG1CNT = BG_4BPP | BG_SIZE_LARGE | BG_CHARBLOCK(1) | BG_SCREENBLOCK(MAPSB + OFFSET(camera.sbbcol, camera.sbbrow, 2));
+
     DMANow(3, gameBackgroundTiles, &CHARBLOCK[2], gameBackgroundTilesLen / 2);
     DMANow(3, gameBackgroundMap, &SCREENBLOCK[MAPSB-2], gameBackgroundMapLen / 2);
     REG_BG2CNT = BG_4BPP | BG_SIZE_SMALL | BG_CHARBLOCK(2) | BG_SCREENBLOCK(MAPSB-2);
 
     DMANow(3, gameBackgroundPal, PALETTE, 16);
 
-    setupMap();
+    
 
     //setup spritesheet
     hideSprites();
@@ -116,17 +120,7 @@ void updateGame() {
     }
     */
 
-    if (player.worldRow < 0) {
-        initWin();
-    }
-
-    if (BUTTON_PRESSED(BUTTON_SELECT)) {
-        initPause();
-    }
-
-    if (!debug) {
-        updatePlayer();
-    }
+    updatePlayer();
     updateAllItems();
     updateAllLasers();
     
@@ -138,6 +132,14 @@ void updateGame() {
 
     if (fadeIn) {
         fade();
+    }
+
+    if (player.worldRow < 0) {
+        initWin();
+    }
+
+    if (BUTTON_PRESSED(BUTTON_SELECT)) {
+        initPause();
     }
 }
 
@@ -153,14 +155,16 @@ void drawGame() {
 void fade() {
     static int count = 0;
     const static int speed = 1;
-    if (count/speed > 17) {
+
+    u16 blend = 17 - count/speed;
+
+    REG_BLDY = BLD_EY(blend);
+    count++;
+
+    if (blend == 0) {
         fadeIn = 0;
         count = 0;
-    } else {
-        REG_BLDY = BLD_EY(17 - count/speed);
     }
-
-    count++;
 }
 
 void setupMap() {
@@ -184,7 +188,6 @@ void setupMap() {
     |  12  13  14  15   |
     |-------------------|
     */
-    REG_BG1CNT = BG_4BPP | BG_SIZE_LARGE | BG_CHARBLOCK(1) | BG_SCREENBLOCK(MAPSB + OFFSET(camera.sbbcol, camera.sbbrow, 2));
 
     /* DMA Arguments
     src: mapMap[SBBSIZE * coordinate in map.h visual]

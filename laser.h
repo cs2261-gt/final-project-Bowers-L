@@ -13,7 +13,7 @@
 #define NULL ((void*) 0)
 
 #define LASERINDEX 11
-#define NUMLASERS 65
+#define NUMLASERS 60
 
 #define SPRITESHEETINDEX 10
 

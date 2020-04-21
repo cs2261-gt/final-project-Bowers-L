@@ -15,6 +15,8 @@
 //sound
 #include "sound.h"
 #include "mus_game1.h"
+#include "snd_Ding.h"
+#include "snd_Zap.h"
 
 #define MAPWH 1024
 #define MAPSB 22

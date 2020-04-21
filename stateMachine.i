@@ -13,9 +13,9 @@
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
-# 66 "myLib.h"
+# 67 "myLib.h"
 extern unsigned short *videoBuffer;
-# 90 "myLib.h"
+# 91 "myLib.h"
 typedef struct {
  u16 tileimg[8192];
 } charblock;
@@ -70,7 +70,7 @@ typedef struct {
 
 extern OBJ_ATTR shadowOAM[];
 extern OBJ_AFFINE* shadowOAMAffine;
-# 176 "myLib.h"
+# 177 "myLib.h"
 void hideSprites();
 
 
@@ -94,7 +94,7 @@ typedef struct {
     int numFrames;
     int hide;
 } ANISPRITE;
-# 246 "myLib.h"
+# 254 "myLib.h"
 extern unsigned short oldButtons;
 extern unsigned short buttons;
 
@@ -103,7 +103,7 @@ extern unsigned short buttons;
 
 
 void updateInput();
-# 265 "myLib.h"
+# 273 "myLib.h"
 typedef volatile struct {
     volatile const void *src;
     volatile void *dst;
@@ -112,9 +112,9 @@ typedef volatile struct {
 
 
 extern DMA *dma;
-# 305 "myLib.h"
+# 313 "myLib.h"
 void DMANow(int channel, volatile const void *src, volatile void *dst, unsigned int cnt);
-# 399 "myLib.h"
+# 407 "myLib.h"
 typedef struct{
     const unsigned char* data;
     int length;
@@ -301,8 +301,8 @@ typedef struct {
     int index;
 } Item;
 
-extern Item items[10];
-extern ItemType playerInventory[10];
+extern Item items[6];
+extern ItemType playerInventory[6];
 
 void initItem(Item* item, int col, int row, ItemType type);
 
@@ -1163,7 +1163,7 @@ typedef struct {
     int distance;
 } SlingData;
 
-extern Laser lasers[65];
+extern Laser lasers[60];
 extern SlingData* nearestLaser;
 
 void initAllLasers();
@@ -1463,9 +1463,7 @@ typedef struct {
     int cdel;
     int width;
     int height;
-    int aniCounter;
     AniState aniState;
-    int prevAniState;
     int curFrame;
     int numFrames;
     int aniSpeed;
@@ -1573,6 +1571,8 @@ extern const unsigned char mus_game1[1749550];
 
 
 
+
+
 extern int debug;
 extern int fadeIn;
 
@@ -1603,6 +1603,8 @@ void interruptHandler();
 extern const unsigned char mus_start[816943];
 # 19 "stateMachine.h" 2
 
+
+
 typedef enum {
     SPLASH, INSTRUCTIONS, GAME, PAUSED, WIN
 } GameState;
@@ -1631,6 +1633,7 @@ void initSplash() {
 
     (*(unsigned short *)0x4000000) = 0 | (1<<8);
     (*(volatile unsigned short*)0x4000008) = (0<<7) | (0<<14) | ((0)<<2) | ((22 - 1)<<8);
+
     DMANow(3, SplashScreen_StartTiles, &((charblock *)0x6000000)[0], 3392/2);
     DMANow(3, SplashScreen_StartMap, &((screenblock *)0x6000000)[22 - 1], 2048/2);
     DMANow(3, SplashScreenPal, ((unsigned short *)0x5000000), 16);
@@ -1647,7 +1650,7 @@ void initInstructions() {
 void initPause() {
     gameState = PAUSED;
     menuState = OPTRESUME;
-
+    (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<9) | (1<<10);
 
 
     DMANow(3, PauseScreen_ResumeTiles, &((charblock *)0x6000000)[0], 1696/2);
@@ -1668,6 +1671,7 @@ void initWin() {
 }
 
 void updateSplash() {
+
     if ((!(~(oldButtons)&((1<<7))) && (~buttons & ((1<<7)))) && (menuState == OPTSTART)) {
         menuState = OPTINST;
         DMANow(3, SplashScreen_InstructionsTiles, &((charblock *)0x6000000)[0], 3392/2);
@@ -1689,6 +1693,28 @@ void updateSplash() {
                 initInstructions();
                 break;
         }
+    }
+
+    glitchEffect();
+}
+
+void glitchEffect() {
+    static int glitchCounter = 0;
+    static int duration;
+    if (rand() % 100 == 1) {
+        glitchCounter = 1;
+        duration = rand() % 10;
+    }
+
+    if (glitchCounter) {
+        (*(volatile unsigned short*)0x4000008) = (0<<7) | (0<<14) | ((0)<<2) | ((22 - 1)<<8) | (1 << 6);
+        (*(volatile u16*) 0x0400004C) = ((5) << 0);
+        glitchCounter++;
+        if (glitchCounter >= duration) {
+            glitchCounter = 0;
+        }
+    } else {
+        (*(volatile unsigned short*)0x4000008) = (0<<7) | (0<<14) | ((0)<<2) | ((22 - 1)<<8);
     }
 }
 
@@ -1718,6 +1744,7 @@ void updatePause() {
                 break;
             case OPTQUIT:
                 initSplash();
+                playSoundA(mus_start, 816943, 1);
                 break;
         }
     }

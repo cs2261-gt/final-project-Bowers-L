@@ -24,6 +24,9 @@ void initAllItems(int cheat) {
 void initItem(Item* item, int col, int row, ItemType type) {
     static int itemCount = 0;
     itemCount++;
+    if (itemCount > NUMITEMS) {
+        itemCount = 1;
+    }
 
     item->worldRow = ENCODE4(row);
     item->worldCol = ENCODE4(col);

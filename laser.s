@@ -21,86 +21,89 @@ initLaser:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	ip, .L12
-	push	{r4, r5, r6, r7, lr}
-	ldr	r4, [r0, #40]
-	ldr	lr, [ip]
+	push	{r4, r5, r6, r7, r8, lr}
+	ldr	r6, .L14
+	ldr	r4, [r6]
+	cmp	r4, #60
+	movgt	ip, #0
+	ldr	lr, .L14+4
+	ldr	r7, [r0, #40]
+	strgt	ip, [r6]
+	ldm	lr, {ip, lr}
 	lsl	r2, r2, #4
-	cmp	r4, #3
-	sub	lr, r2, lr
+	addle	r5, r4, #11
+	movgt	r4, #1
+	movgt	r5, #11
+	addle	r4, r4, #1
+	cmp	r7, #3
+	sub	ip, r2, ip
 	str	r2, [r0, #8]
 	moveq	r2, #256
-	ldr	ip, [ip, #4]
 	lsl	r1, r1, #4
-	sub	ip, r1, ip
-	moveq	r7, #128
+	sub	lr, r1, lr
+	moveq	r8, #128
+	stm	r0, {ip, lr}
 	str	r1, [r0, #12]
-	str	lr, [r0]
-	str	ip, [r0, #4]
 	streq	r2, [r0, #16]
-	beq	.L3
+	beq	.L5
 	mov	r2, #128
-	cmp	r4, #1
-	moveq	r7, #256
-	movne	r7, r2
+	cmp	r7, #1
+	moveq	r8, #256
+	movne	r8, r2
 	str	r2, [r0, #16]
-.L3:
-	mov	r1, #1
-	mov	r6, #0
-	mov	r5, #60
-	ldr	r4, .L12+4
-	ldr	r2, [r4]
-	str	r7, [r0, #20]
-	lsr	lr, lr, #4
-	add	r7, r2, r1
-	lsl	ip, ip, #19
-	add	r2, r2, #11
-	tst	r3, #1
-	str	r1, [r0, #32]
-	str	r1, [r0, #36]
-	str	r3, [r0, #40]
-	str	r7, [r4]
-	str	r2, [r0, #44]
-	str	r6, [r0, #24]
-	str	r5, [r0, #28]
-	ldr	r1, .L12+8
-	and	lr, lr, #255
-	lsr	ip, ip, #23
-	bne	.L4
-	lsl	r0, r2, #3
-	orr	lr, lr, #512
-	strh	lr, [r1, r0]	@ movhi
 .L5:
+	mov	r2, #1
+	mov	r7, #0
+	mov	r1, #60
+	lsr	ip, ip, #4
+	lsl	lr, lr, #19
+	tst	r3, #1
+	str	r2, [r0, #32]
+	str	r2, [r0, #36]
+	str	r8, [r0, #20]
+	str	r3, [r0, #40]
+	str	r5, [r0, #44]
+	str	r4, [r6]
+	str	r7, [r0, #24]
+	str	r1, [r0, #28]
+	ldr	r2, .L14+8
+	and	ip, ip, #255
+	lsr	lr, lr, #23
+	bne	.L6
+	lsl	r1, r5, #3
+	orr	ip, ip, #512
+	strh	ip, [r2, r1]	@ movhi
+.L7:
 	cmp	r3, #1
 	movgt	r3, #11
 	movle	r3, #10
-	add	r2, r1, r0
-	add	r1, r1, r0
-	strh	ip, [r2, #2]	@ movhi
-	pop	{r4, r5, r6, r7, lr}
-	strh	r3, [r1, #4]	@ movhi
+	add	r0, r2, r1
+	add	r2, r2, r1
+	strh	lr, [r0, #2]	@ movhi
+	strh	r3, [r2, #4]	@ movhi
+	pop	{r4, r5, r6, r7, r8, lr}
 	bx	lr
-.L4:
+.L6:
 	cmp	r3, #1
-	lslne	r0, r2, #3
-	orrne	lr, lr, #16896
-	strhne	lr, [r1, r0]	@ movhi
-	bne	.L5
+	lslne	r1, r5, #3
+	orrne	ip, ip, #16896
+	strhne	ip, [r2, r1]	@ movhi
+	bne	.L7
 	mov	r3, #10
-	lsl	r0, r2, #3
-	orr	lr, lr, #33280
-	strh	lr, [r1, r0]	@ movhi
-	add	r2, r1, r2, lsl #3
-	add	r1, r1, r0
-	strh	ip, [r2, #2]	@ movhi
-	pop	{r4, r5, r6, r7, lr}
-	strh	r3, [r1, #4]	@ movhi
+	lsl	r1, r5, #3
+	orr	ip, ip, #33280
+	strh	ip, [r2, r1]	@ movhi
+	add	r5, r2, r5, lsl #3
+	add	r2, r2, r1
+	strh	lr, [r5, #2]	@ movhi
+	strh	r3, [r2, #4]	@ movhi
+	pop	{r4, r5, r6, r7, r8, lr}
 	bx	lr
-.L13:
+.L15:
 	.align	2
-.L12:
-	.word	camera
+.L14:
 	.word	.LANCHOR0
+	.word	camera
 	.word	shadowOAM
 	.size	initLaser, .-initLaser
 	.align	2
@@ -115,42 +118,42 @@ initAllLasers:
 	@ frame_needed = 0, uses_anonymous_args = 0
 	mov	r1, #0
 	push	{r4, r5, r6, lr}
-	ldr	r3, .L23
-	add	r2, r3, #3120
-.L15:
+	ldr	r3, .L25
+	add	r2, r3, #2880
+.L17:
 	str	r1, [r3, #36]
 	add	r3, r3, #48
 	cmp	r3, r2
-	bne	.L15
+	bne	.L17
 	mov	r3, #1
 	mov	r2, #704
 	mov	r1, #376
-	ldr	r0, .L23
+	ldr	r0, .L25
 	bl	initLaser
 	mov	r3, #1
 	mov	r2, #688
 	mov	r1, #376
-	ldr	r0, .L23+4
+	ldr	r0, .L25+4
 	bl	initLaser
 	mov	r3, #1
 	mov	r2, #672
 	mov	r1, #376
-	ldr	r0, .L23+8
+	ldr	r0, .L25+8
 	bl	initLaser
 	mov	r3, #1
 	mov	r2, #656
 	mov	r1, #376
-	ldr	r0, .L23+12
+	ldr	r0, .L25+12
 	bl	initLaser
 	mov	r6, #704
 	mov	r5, #4
-	ldr	r4, .L23+16
-	b	.L17
-.L18:
+	ldr	r4, .L25+16
+	b	.L19
+.L20:
 	add	r5, r5, #1
 	add	r4, r4, #48
 	sub	r6, r6, #16
-.L17:
+.L19:
 	mov	r0, r4
 	mov	r3, #1
 	mov	r2, r6
@@ -158,16 +161,16 @@ initAllLasers:
 	bl	initLaser
 	cmp	r5, #4
 	add	r0, r4, #384
-	beq	.L18
+	beq	.L20
 	mov	r3, #1
 	mov	r2, r6
 	mov	r1, #80
 	bl	initLaser
 	cmp	r5, #11
-	bne	.L18
+	bne	.L20
 	mov	r4, #376
-	ldr	r5, .L23+20
-.L19:
+	ldr	r5, .L25+20
+.L21:
 	mov	r1, r4
 	mov	r0, r5
 	mov	r3, #3
@@ -176,96 +179,121 @@ initAllLasers:
 	bl	initLaser
 	cmp	r4, #72
 	add	r5, r5, #48
-	bne	.L19
+	bne	.L21
 	mov	r3, #1
 	mov	r2, #488
 	mov	r1, #632
-	ldr	r0, .L23+24
+	ldr	r0, .L25+24
 	bl	initLaser
 	mov	r3, #1
 	mov	r2, #472
 	mov	r1, #632
-	ldr	r0, .L23+28
+	ldr	r0, .L25+28
 	bl	initLaser
 	mov	r3, #1
 	mov	r2, #456
 	mov	r1, #632
-	ldr	r0, .L23+32
+	ldr	r0, .L25+32
 	bl	initLaser
 	mov	r3, #1
 	mov	r2, #448
 	mov	r1, #664
-	ldr	r0, .L23+36
+	ldr	r0, .L25+36
 	bl	initLaser
 	mov	r3, #1
 	mov	r2, #432
 	mov	r1, #664
-	ldr	r0, .L23+40
+	ldr	r0, .L25+40
 	bl	initLaser
 	mov	r3, #1
 	mov	r2, #416
 	mov	r1, #632
-	ldr	r0, .L23+44
+	ldr	r0, .L25+44
 	bl	initLaser
 	mov	r3, #1
-	mov	r2, #304
-	mov	r1, #472
-	ldr	r0, .L23+48
-	bl	initLaser
-	mov	r3, #1
-	mov	r2, #288
-	mov	r1, #472
-	ldr	r0, .L23+52
-	bl	initLaser
-	mov	r3, #0
 	mov	r2, #280
 	mov	r1, #472
-	ldr	r0, .L23+56
+	ldr	r0, .L25+48
 	bl	initLaser
-	mov	r3, #1
-	mov	r2, #232
+	mov	r3, #0
+	mov	r2, #296
 	mov	r1, #472
-	ldr	r0, .L23+60
+	ldr	r0, .L25+52
 	bl	initLaser
 	mov	r3, #1
 	mov	r2, #216
 	mov	r1, #472
-	ldr	r0, .L23+64
+	ldr	r0, .L25+56
 	bl	initLaser
 	mov	r3, #1
-	mov	r2, #200
-	mov	r1, #504
-	ldr	r0, .L23+68
+	mov	r2, #232
+	mov	r1, #472
+	ldr	r0, .L25+56
+	bl	initLaser
+	mov	r3, #1
+	mov	r2, #232
+	mov	r1, #472
+	ldr	r0, .L25+60
+	bl	initLaser
+	mov	r3, #1
+	mov	r2, #216
+	mov	r1, #472
+	ldr	r0, .L25+64
 	bl	initLaser
 	mov	r3, #1
 	mov	r2, #184
-	mov	r1, #504
-	ldr	r0, .L23+72
-	bl	initLaser
-	mov	r3, #1
-	mov	r2, #120
-	mov	r1, #504
-	ldr	r0, .L23+76
+	mov	r1, #496
+	ldr	r0, .L25+68
 	bl	initLaser
 	mov	r3, #0
-	mov	r2, #112
-	mov	r1, #504
-	ldr	r0, .L23+80
+	mov	r2, #200
+	mov	r1, #496
+	ldr	r0, .L25+72
+	bl	initLaser
+	mov	r3, #1
+	mov	r2, #144
+	mov	r1, #416
+	ldr	r0, .L25+76
 	bl	initLaser
 	mov	r3, #3
-	mov	r2, #112
-	mov	r1, #288
-	ldr	r0, .L23+84
+	mov	r2, #136
+	mov	r1, #376
+	ldr	r0, .L25+80
 	bl	initLaser
 	mov	r3, #2
+	mov	r2, #136
+	mov	r1, #392
+	ldr	r0, .L25+84
+	bl	initLaser
+	mov	r3, #3
+	mov	r2, #136
+	mov	r1, #344
+	ldr	r0, .L25+88
+	bl	initLaser
+	mov	r3, #2
+	mov	r2, #136
+	mov	r1, #360
+	ldr	r0, .L25+92
+	bl	initLaser
+	mov	r3, #1
 	mov	r2, #112
-	mov	r1, #304
-	ldr	r0, .L23+88
+	mov	r1, #336
+	ldr	r0, .L25+96
+	bl	initLaser
+	mov	r3, #3
+	mov	r2, #104
+	mov	r1, #296
+	ldr	r0, .L25+100
+	bl	initLaser
+	mov	r3, #2
+	mov	r2, #104
+	mov	r1, #312
+	ldr	r0, .L25+104
 	pop	{r4, r5, r6, lr}
 	b	initLaser
-.L24:
+.L26:
 	.align	2
-.L23:
+.L25:
 	.word	lasers
 	.word	lasers+48
 	.word	lasers+96
@@ -285,10 +313,14 @@ initAllLasers:
 	.word	lasers+2352
 	.word	lasers+2400
 	.word	lasers+2448
+	.word	lasers+2496
+	.word	lasers+2544
+	.word	lasers+2592
+	.word	lasers+2640
+	.word	lasers+2688
+	.word	lasers+2736
 	.word	lasers+2784
 	.word	lasers+2832
-	.word	lasers+2880
-	.word	lasers+2928
 	.size	initAllLasers, .-initAllLasers
 	.align	2
 	.global	checkCollisionPlayerLaser
@@ -306,7 +338,7 @@ checkCollisionPlayerLaser:
 	ldm	r1, {r1, lr}
 	ldm	r2, {r2, r3}
 	sub	sp, sp, #16
-	ldr	ip, .L27
+	ldr	ip, .L29
 	str	r1, [sp, #8]
 	str	r2, [sp, #4]
 	str	lr, [sp, #12]
@@ -315,16 +347,16 @@ checkCollisionPlayerLaser:
 	ldm	r2, {r2, r3}
 	ldr	r1, [ip, #8]
 	ldr	r0, [ip, #12]
-	ldr	r4, .L27+4
+	ldr	r4, .L29+4
 	mov	lr, pc
 	bx	r4
 	add	sp, sp, #16
 	@ sp needed
 	pop	{r4, lr}
 	bx	lr
-.L28:
+.L30:
 	.align	2
-.L27:
+.L29:
 	.word	player
 	.word	collision
 	.size	checkCollisionPlayerLaser, .-checkCollisionPlayerLaser
@@ -349,21 +381,21 @@ updateLaser:
 	strge	r3, [r0, #24]
 	cmp	r5, #0
 	mov	r4, r0
-	beq	.L39
-.L29:
+	beq	.L41
+.L31:
 	pop	{r4, r5, r6, lr}
 	bx	lr
-.L39:
+.L41:
 	bl	checkCollisionPlayerLaser
 	cmp	r0, #0
-	beq	.L29
+	beq	.L31
 	ldr	r3, [r4, #40]
 	cmp	r3, #1
-	ldr	r6, .L40
-	ble	.L34
+	ldr	r6, .L42
+	ble	.L36
 	ldr	r2, [r4, #8]
 	ldr	r0, [r6, #8]
-	ldr	r3, .L40+4
+	ldr	r3, .L42+4
 	sub	r0, r0, r2
 	mov	lr, pc
 	bx	r3
@@ -371,11 +403,11 @@ updateLaser:
 	add	r3, r3, r0, lsl #7
 	str	r5, [r6, #16]
 	str	r3, [r6, #8]
-	b	.L29
-.L34:
+	b	.L31
+.L36:
 	ldr	r2, [r4, #12]
 	ldr	r0, [r6, #12]
-	ldr	r3, .L40+4
+	ldr	r3, .L42+4
 	sub	r0, r0, r2
 	mov	lr, pc
 	bx	r3
@@ -383,10 +415,10 @@ updateLaser:
 	add	r3, r3, r0, lsl #7
 	str	r5, [r6, #20]
 	str	r3, [r6, #12]
-	b	.L29
-.L41:
+	b	.L31
+.L43:
 	.align	2
-.L40:
+.L42:
 	.word	player
 	.word	signOf
 	.size	updateLaser, .-updateLaser
@@ -401,28 +433,28 @@ updateAllLasers:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, lr}
-	ldr	r4, .L51
-	add	r5, r4, #3120
-	b	.L44
-.L43:
+	ldr	r4, .L53
+	add	r5, r4, #2880
+	b	.L46
+.L45:
 	add	r4, r4, #48
 	cmp	r4, r5
-	beq	.L50
-.L44:
+	beq	.L52
+.L46:
 	ldr	r3, [r4, #36]
 	cmp	r3, #0
-	beq	.L43
+	beq	.L45
 	mov	r0, r4
 	add	r4, r4, #48
 	bl	updateLaser
 	cmp	r4, r5
-	bne	.L44
-.L50:
+	bne	.L46
+.L52:
 	pop	{r4, r5, r6, lr}
 	bx	lr
-.L52:
+.L54:
 	.align	2
-.L51:
+.L53:
 	.word	lasers
 	.size	updateAllLasers, .-updateAllLasers
 	.global	__aeabi_idiv
@@ -436,7 +468,7 @@ showLaser:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	ip, .L69
+	ldr	ip, .L71
 	ldr	r1, [r0, #8]
 	ldr	r2, [ip]
 	sub	r2, r1, r2
@@ -456,15 +488,15 @@ showLaser:
 	movne	r4, #1
 	str	r2, [r3]
 	str	r0, [r3, #4]
-	beq	.L66
-.L54:
+	beq	.L68
+.L56:
 	ldr	r1, [r3, #28]
 	cmp	r1, #0
 	add	ip, r1, #3
 	movlt	r1, ip
 	str	r4, [r3, #32]
 	lsl	ip, r0, #19
-	ldr	r9, .L69+4
+	ldr	r9, .L71+4
 	ldr	r0, [r3, #24]
 	asr	r1, r1, #2
 	add	r7, r3, #40
@@ -476,20 +508,20 @@ showLaser:
 	lsl	r0, r0, #16
 	tst	r7, #1
 	lsr	r0, r0, #16
-	bne	.L55
-	ldr	r3, .L69+8
+	bne	.L57
+	ldr	r3, .L71+8
 	lsl	r1, r8, #3
 	and	r2, r5, #255
 	strh	r2, [r3, r1]	@ movhi
 	cmp	r7, #1
 	add	r2, r3, r1
 	strh	r6, [r2, #2]	@ movhi
-	ble	.L58
-.L68:
+	ble	.L60
+.L70:
 	lsl	r0, r0, #21
 	add	r0, r0, #720896
 	lsr	r0, r0, #16
-.L59:
+.L61:
 	add	r2, r3, r1
 	strh	r0, [r2, #4]	@ movhi
 	cmp	r4, #0
@@ -498,24 +530,24 @@ showLaser:
 	strhne	r2, [r3, r1]	@ movhi
 	pop	{r4, r5, r6, r7, r8, r9, r10, lr}
 	bx	lr
-.L55:
+.L57:
 	cmp	r7, #1
 	and	r2, r5, #255
-	beq	.L67
-	ldr	r3, .L69+8
+	beq	.L69
+	ldr	r3, .L71+8
 	lsl	r1, r8, #3
 	orr	r2, r2, #16384
 	strh	r2, [r3, r1]	@ movhi
 	cmp	r7, #1
 	add	r2, r3, r1
 	strh	r6, [r2, #2]	@ movhi
-	bgt	.L68
-.L58:
+	bgt	.L70
+.L60:
 	lsl	r0, r0, #22
 	add	r0, r0, #655360
 	lsr	r0, r0, #16
-	b	.L59
-.L66:
+	b	.L61
+.L68:
 	cmp	r0, #3824
 	movle	r4, #0
 	movgt	r4, #1
@@ -523,11 +555,11 @@ showLaser:
 	rsb	r1, r1, #0
 	cmp	r0, r1
 	orrlt	r4, r4, #1
-	b	.L54
-.L67:
+	b	.L56
+.L69:
 	mvn	r2, r2, lsl #17
 	mvn	r2, r2, lsr #17
-	ldr	r3, .L69+8
+	ldr	r3, .L71+8
 	lsl	r0, r0, #22
 	lsl	r1, r8, #3
 	add	r0, r0, #655360
@@ -535,10 +567,10 @@ showLaser:
 	strh	r2, [r3, r1]	@ movhi
 	lsr	r0, r0, #16
 	strh	r6, [r8, #2]	@ movhi
-	b	.L59
-.L70:
+	b	.L61
+.L72:
 	.align	2
-.L69:
+.L71:
 	.word	camera
 	.word	__aeabi_idiv
 	.word	shadowOAM
@@ -554,28 +586,28 @@ showAllLasers:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, lr}
-	ldr	r4, .L80
-	add	r5, r4, #3120
-	b	.L73
-.L72:
+	ldr	r4, .L82
+	add	r5, r4, #2880
+	b	.L75
+.L74:
 	add	r4, r4, #48
 	cmp	r4, r5
-	beq	.L79
-.L73:
+	beq	.L81
+.L75:
 	ldr	r3, [r4, #36]
 	cmp	r3, #0
-	beq	.L72
+	beq	.L74
 	mov	r0, r4
 	add	r4, r4, #48
 	bl	showLaser
 	cmp	r4, r5
-	bne	.L73
-.L79:
+	bne	.L75
+.L81:
 	pop	{r4, r5, r6, lr}
 	bx	lr
-.L81:
+.L83:
 	.align	2
-.L80:
+.L82:
 	.word	lasers
 	.size	showAllLasers, .-showAllLasers
 	.align	2
@@ -590,18 +622,18 @@ findCloseLaser:
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, lr}
 	mov	r4, #0
-	ldr	r2, .L97
+	ldr	r2, .L99
 	add	r0, r2, #8
-	ldr	r3, .L97+4
+	ldr	r3, .L99+4
 	ldm	r0, {r0, ip}
-	ldr	r1, .L97+8
-.L87:
+	ldr	r1, .L99+8
+.L89:
 	ldr	r2, [r3, #28]
 	cmp	r2, #0
-	beq	.L83
+	beq	.L85
 	ldr	r2, [r3, #24]
 	cmp	r2, #0
-	bne	.L83
+	bne	.L85
 	ldr	r2, [r3, #32]
 	cmp	r2, #1
 	ldrgt	r5, [r3]
@@ -610,32 +642,32 @@ findCloseLaser:
 	suble	r5, r5, ip
 	add	r2, r5, #255
 	cmp	r2, r1
-	bls	.L96
-.L83:
+	bls	.L98
+.L85:
 	add	r4, r4, #1
-	cmp	r4, #65
+	cmp	r4, #60
 	add	r3, r3, #48
-	bne	.L87
+	bne	.L89
 	mov	r0, #0
-.L82:
+.L84:
 	pop	{r4, r5, r6, lr}
 	bx	lr
-.L96:
+.L98:
 	mov	r0, #8
-	ldr	r3, .L97+12
+	ldr	r3, .L99+12
 	mov	lr, pc
 	bx	r3
 	cmp	r0, #0
-	beq	.L82
-	ldr	r3, .L97+16
+	beq	.L84
+	ldr	r3, .L99+16
 	add	r4, r4, r4, lsl #1
 	add	r4, r3, r4, lsl #4
 	stm	r0, {r4, r5}
 	pop	{r4, r5, r6, lr}
 	bx	lr
-.L98:
+.L100:
 	.align	2
-.L97:
+.L99:
 	.word	player
 	.word	lasers+8
 	.word	510
@@ -643,14 +675,14 @@ findCloseLaser:
 	.word	lasers
 	.size	findCloseLaser, .-findCloseLaser
 	.comm	nearestLaser,4,4
-	.comm	lasers,3120,4
+	.comm	lasers,2880,4
 	.comm	soundB,32,4
 	.comm	soundA,32,4
 	.bss
 	.align	2
 	.set	.LANCHOR0,. + 0
-	.type	laserCount.5350, %object
-	.size	laserCount.5350, 4
-laserCount.5350:
+	.type	laserCount.5348, %object
+	.size	laserCount.5348, 4
+laserCount.5348:
 	.space	4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"
